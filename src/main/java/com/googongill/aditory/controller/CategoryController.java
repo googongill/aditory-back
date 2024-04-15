@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
     // ======= Create =======
 
+
     // ======== Read ========
+
 
     // ======= Update =======
 
+
     // ======= Delete =======
+
 
 }
