@@ -21,8 +21,7 @@ public enum CommonErrorCode implements BusinessErrorCode {
     /**
      * 401 Unauthorized
      */
-    FAIL_TO_AUTHENTICATE_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "내부 인증 필터를 거치는 데 실패한 액세스 토큰입니다"),
-    TOKEN_NOT_CONTAINS_USER_ID(HttpStatus.UNAUTHORIZED, "리프레시 토큰은 유저 아이디를 담고있지 않습니다."),
+    FAIL_TO_AUTHENTICATE_JWT(HttpStatus.UNAUTHORIZED, "내부 인증 필터를 거치는 데 실패한 액세스 토큰입니다"),
 
     /**
      * 405 Method Not Allowed
