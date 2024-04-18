@@ -23,7 +23,7 @@ public class Category extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "category", orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Link> links = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", orphanRemoval = true)
