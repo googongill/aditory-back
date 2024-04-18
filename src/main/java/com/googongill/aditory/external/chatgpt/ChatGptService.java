@@ -1,4 +1,4 @@
-package com.googongill.aditory.chatgpt;
+package com.googongill.aditory.external.chatgpt;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
