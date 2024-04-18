@@ -17,13 +17,13 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String email;
+    private String username;
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private String name;
+    private String nickname;
     private String contact;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
