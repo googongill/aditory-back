@@ -18,10 +18,11 @@ public enum UserErrorCode implements BusinessErrorCode {
     /**
      * 401 Unauthorized
      */
-    EMPTY_PRINCIPLE_EXCEPTION(HttpStatus.UNAUTHORIZED, "액세스 토큰이 비어있거나, 유효하지 않은 엑세스 토큰입니다."),
+    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "액세스 토큰이 비어있거나, 유효하지 않은 엑세스 토큰입니다."),
     TOKEN_UNSUPPORTED(HttpStatus.UNAUTHORIZED, "지원되지 않는 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "토큰을 찾을 수 없습니다."),
+    TOKEN_NOT_CONTAINS_USERNAME(HttpStatus.UNAUTHORIZED, "토큰이 사용자 아이디를 담고있지 않습니다."),
 
     /**
      * 404 Not Found

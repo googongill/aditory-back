@@ -1,5 +1,6 @@
 package com.googongill.aditory.security.jwt;
 
+import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.security.jwt.auth.PrincipalDetails;
 import com.googongill.aditory.security.jwt.dto.JwtDto;
 import io.jsonwebtoken.*;
@@ -17,6 +18,8 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static com.googongill.aditory.exception.code.UserErrorCode.*;
 
 @Slf4j
 @Component
@@ -93,14 +96,18 @@ public class TokenProvider {
                     .parseClaimsJws(accessToken)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            log.info("토큰이 만료되었습니다.");
-            // 추후에 Exception Refactoring
-            return e.getClaims();
+            throw new UserException(TOKEN_EXPIRED);
+        } catch (JwtException e) {
+            throw new RuntimeException(String.valueOf(TOKEN_INVALID));
         }
     }
 
     public static String getUsername(String accessToken) {
-        return parseClaims(accessToken).get("username", String.class);
+        try {
+            return parseClaims(accessToken).get("username", String.class);
+        } catch (IllegalArgumentException e) {
+            throw new UserException(TOKEN_NOT_CONTAINS_USERNAME);
+        }
     }
 
     public static UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails) {
@@ -111,8 +118,7 @@ public class TokenProvider {
         );
     }
 
-    // 사용할지는 추후에
-    public boolean validateToken(String token) {
+    public void validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             Claims claims = parseClaims(token);
@@ -120,16 +126,14 @@ public class TokenProvider {
             log.info("username: {}", claims.get("username"));
             log.info("role: {}", claims.get("role"));
             log.info("expiration: {}", claims.getExpiration());
-            return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+            throw new UserException(TOKEN_NOT_FOUND);
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            throw new UserException(TOKEN_EXPIRED);
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            throw new UserException(TOKEN_UNSUPPORTED);
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            throw new UserException(TOKEN_NOT_FOUND);
         }
-        return false;
     }
 }

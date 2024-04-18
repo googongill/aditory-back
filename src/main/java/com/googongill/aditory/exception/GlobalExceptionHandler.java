@@ -1,6 +1,7 @@
 package com.googongill.aditory.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> bindException(BindException e) {
         log.error("BindException: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(new ErrorResponse(400, "Spring Bean Validation 에러입니다."));
+        return ResponseEntity.badRequest().body(new ErrorResponse(HttpStatus.BAD_REQUEST, "Spring Bean Validation 에러입니다."));
     }
 
     /**
