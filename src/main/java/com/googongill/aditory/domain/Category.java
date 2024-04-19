@@ -18,10 +18,11 @@ public class Category extends BaseEntity {
 
     @Column(nullable = false)
     private String categoryName;
+    @Column(nullable = false)
     private Integer viewCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
