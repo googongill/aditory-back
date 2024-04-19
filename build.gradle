@@ -41,6 +41,7 @@ dependencies {
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.projectlombok:lombok'
 
 	// JWT
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
