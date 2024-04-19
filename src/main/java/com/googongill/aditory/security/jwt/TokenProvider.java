@@ -1,7 +1,7 @@
 package com.googongill.aditory.security.jwt;
 
+import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.exception.UserException;
-import com.googongill.aditory.security.jwt.auth.PrincipalDetails;
 import com.googongill.aditory.security.jwt.dto.JwtDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -9,17 +9,14 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.stream.Collectors;
 
-import static com.googongill.aditory.exception.code.UserErrorCode.*;
+import static com.googongill.aditory.common.code.UserErrorCode.*;
 
 @Slf4j
 @Component
@@ -38,27 +35,20 @@ public class TokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public static JwtDto createTokens(Authentication authentication) {
+    public static JwtDto createTokens(Long userId, String username, Role role) {
         // access-token 발급
-        String accessToken = createAccessToken(authentication);
+        String accessToken = createAccessToken(userId, username, role);
         // refresh-token 발급
         String refreshToken = createRefreshToken();
 
         return new JwtDto(accessToken, refreshToken);
     }
 
-    private static String createAccessToken(Authentication authentication) {
-        // UserDetails 가져오기
-        PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
-        // 권한 목록만 가져오기
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    private static String createAccessToken(Long userId, String username, Role role) {
         Claims claims = Jwts.claims();
-        claims.put("userId", userDetails.getUserId());
-        claims.put("username", userDetails.getUsername());
-        claims.put("role", authorities);
+        claims.put("userId", userId);
+        claims.put("username", username);
+        claims.put("role", role);
 
         return Jwts.builder()
                 .setSubject("access-token")

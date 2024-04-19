@@ -1,4 +1,4 @@
-package com.googongill.aditory.exception.code;
+package com.googongill.aditory.common.code;
 
 import org.springframework.http.HttpStatus;
 

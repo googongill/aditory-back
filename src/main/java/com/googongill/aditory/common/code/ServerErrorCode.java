@@ -1,4 +1,4 @@
-package com.googongill.aditory.exception.code;
+package com.googongill.aditory.common.code;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum ErrorCode {
+public enum ServerErrorCode implements BusinessErrorCode {
 
     /**
      * 500 Internal Server Error

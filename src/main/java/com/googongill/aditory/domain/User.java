@@ -24,7 +24,7 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role = Role.ROLE_USER;
+    private Role role;
 
     @Column(nullable = false)
     private String nickname;
@@ -36,4 +36,12 @@ public class User extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profile_image_id")
     private ProfileImage profileImage;
+
+    public User(String username, String password, Role role, String nickname, String contact) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.nickname = nickname;
+        this.contact = contact;
+    }
 }
