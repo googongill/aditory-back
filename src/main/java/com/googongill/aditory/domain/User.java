@@ -17,12 +17,16 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.ROLE_USER;
 
+    @Column(nullable = false)
     private String nickname;
     private String contact;
 

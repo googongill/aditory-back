@@ -13,6 +13,8 @@ public class ProfileImage extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String originalName;
+    @Column(nullable = false)
     private String uploadedName;
 }

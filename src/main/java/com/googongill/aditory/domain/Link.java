@@ -13,10 +13,13 @@ public class Link extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
     private String summary;
+    @Column(nullable = false)
     private String url;
-    private Boolean status;
+    @Column(nullable = false)
+    private Boolean status = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
