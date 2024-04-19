@@ -1,4 +1,4 @@
-package com.googongill.aditory.exception.code;
+package com.googongill.aditory.common.code;
 
 import lombok.AccessLevel;
 import lombok.Getter;

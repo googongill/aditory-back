@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.googongill.aditory.exception.code.CommonErrorCode.FAIL_TO_AUTHENTICATE_JWT;
+import static com.googongill.aditory.common.code.CommonErrorCode.FAIL_TO_AUTHENTICATE_JWT;
 
 @Slf4j
 @Component

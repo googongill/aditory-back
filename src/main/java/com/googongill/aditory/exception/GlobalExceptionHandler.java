@@ -7,6 +7,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import static com.googongill.aditory.common.code.CommonErrorCode.BINDING_EXCEPTION;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,7 +20,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> bindException(BindException e) {
         log.error("BindException: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(new ErrorResponse(HttpStatus.BAD_REQUEST, "Spring Bean Validation 에러입니다."));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.error(BINDING_EXCEPTION));
     }
 
     /**
@@ -28,6 +31,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> businessException(BusinessException e) {
         log.error("BusinessException: {}", e.getMessage());
         return ResponseEntity.status(e.getHttpStatus())
-                .body(ErrorResponse.of(e.getErrorCode()));
+                .body(ErrorResponse.error(e.getErrorCode()));
     }
 }

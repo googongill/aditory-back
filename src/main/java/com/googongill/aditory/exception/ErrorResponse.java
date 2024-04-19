@@ -1,25 +1,27 @@
 package com.googongill.aditory.exception;
 
-import com.googongill.aditory.exception.code.BusinessErrorCode;
-import com.googongill.aditory.exception.code.ErrorCode;
+import com.googongill.aditory.common.code.BusinessErrorCode;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-public record ErrorResponse(
-        HttpStatus status,
-        String message
-) {
+@Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class ErrorResponse {
 
-        public static ErrorResponse of(ErrorCode errorCode) {
-            return new ErrorResponse(
-                errorCode.getHttpStatus(),
-                errorCode.getMessage()
-            );
-        }
+    private final HttpStatus httpStatus;
+    private final String message;
+    private final boolean success;
 
-        public static ErrorResponse of(BusinessErrorCode exceptionType) {
-            return new ErrorResponse(
-                    exceptionType.getHttpStatus(),
-                    exceptionType.getMessage()
-            );
-        }
+
+    public static ErrorResponse error(BusinessErrorCode businessErrorCode) {
+        return ErrorResponse.builder()
+                .httpStatus(businessErrorCode.getHttpStatus())
+                .message(businessErrorCode.getMessage())
+                .success(false)
+                .build();
+    }
 }

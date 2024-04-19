@@ -1,6 +1,6 @@
 package com.googongill.aditory.exception;
 
-import com.googongill.aditory.exception.code.BusinessErrorCode;
+import com.googongill.aditory.common.code.BusinessErrorCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
