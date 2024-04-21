@@ -7,7 +7,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.googongill.aditory.common.code.CommonErrorCode.BINDING_EXCEPTION;
+import static com.googongill.aditory.common.code.CommonErrorCode.BIND_EXCEPTION;
 
 @Slf4j
 @RestControllerAdvice
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> bindException(BindException e) {
         log.error("BindException: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.error(BINDING_EXCEPTION));
+                .body(ErrorResponse.error(BIND_EXCEPTION));
     }
 
     /**
