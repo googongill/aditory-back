@@ -2,12 +2,12 @@ package com.googongill.aditory.controller.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.googongill.aditory.service.dto.user.LoginResult;
+import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.Builder;
 
 @Builder
 @JsonSerialize
-public class LoginResponse {
+public class UserTokenResponse {
     @JsonProperty("userId")
     private Long userId;
     @JsonProperty("nickname")
@@ -17,12 +17,12 @@ public class LoginResponse {
     @JsonProperty("refreshToken")
     private String refreshToken;
 
-    public static LoginResponse of(LoginResult loginResult) {
-        return LoginResponse.builder()
-                .userId(loginResult.getUserId())
-                .nickname(loginResult.getNickname())
-                .accessToken(loginResult.getAccessToken())
-                .refreshToken(loginResult.getRefreshToken())
+    public static UserTokenResponse of(UserTokenResult userTokenResult) {
+        return UserTokenResponse.builder()
+                .userId(userTokenResult.getUserId())
+                .nickname(userTokenResult.getNickname())
+                .accessToken(userTokenResult.getAccessToken())
+                .refreshToken(userTokenResult.getRefreshToken())
                 .build();
     }
 }

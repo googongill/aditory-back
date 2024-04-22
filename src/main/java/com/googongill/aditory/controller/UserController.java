@@ -1,15 +1,9 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.user.LoginRequest;
-import com.googongill.aditory.controller.dto.user.LoginResponse;
-import com.googongill.aditory.controller.dto.user.SignupRequest;
-import com.googongill.aditory.controller.dto.user.SignupResponse;
+import com.googongill.aditory.controller.dto.user.*;
 import com.googongill.aditory.domain.enums.Role;
-import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.service.UserService;
-import com.googongill.aditory.service.dto.user.LoginResult;
-import com.googongill.aditory.service.dto.user.SignupResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
-import static com.googongill.aditory.common.code.UserErrorCode.TOKEN_INVALID;
 
 @Slf4j
 @RestController
@@ -32,9 +25,9 @@ public class UserController {
     // ======= Create =======
 
     @PostMapping("/users/signup")
-    public ResponseEntity<ApiResponse<SignupResponse>> signup(@Valid @ModelAttribute SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<SignResponse>> signup(@Valid @ModelAttribute SignupRequest signupRequest) {
         return ApiResponse.success(SIGNUP_SUCCESS,
-                SignupResponse.of(userService.createUser(
+                SignResponse.of(userService.createUser(
                         signupRequest.getUsername(),
                         signupRequest.getPassword(),
                         role,
@@ -45,9 +38,9 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @ModelAttribute LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<UserTokenResponse>> login(@Valid @ModelAttribute LoginRequest loginRequest) {
         return ApiResponse.success(LOGIN_SUCCESS,
-                LoginResponse.of(userService.login(
+                UserTokenResponse.of(userService.login(
                         loginRequest.getUsername(),
                         loginRequest.getPassword())
                 )
@@ -61,8 +54,10 @@ public class UserController {
     }
 
     @PostMapping("/users/refresh")
-    public ResponseEntity<ApiResponse> refresh() {
-        return null;
+    public ResponseEntity<ApiResponse<UserTokenResponse>> refresh(@Valid @ModelAttribute RefreshRequest refreshRequest) {
+        return ApiResponse.success(REFRESH_SUCCESS,
+                UserTokenResponse.of(userService.refresh(refreshRequest.getRefreshToken()))
+        );
     }
 
     // ======== Read ========

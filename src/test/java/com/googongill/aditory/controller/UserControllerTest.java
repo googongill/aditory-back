@@ -11,8 +11,8 @@ import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.auth.PrincipalDetails;
 import com.googongill.aditory.security.jwt.auth.PrincipalDetailsService;
 import com.googongill.aditory.service.UserService;
-import com.googongill.aditory.service.dto.user.LoginResult;
-import com.googongill.aditory.service.dto.user.SignupResult;
+import com.googongill.aditory.service.dto.user.UserTokenResult;
+import com.googongill.aditory.service.dto.user.SignResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,26 +23,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import static com.googongill.aditory.common.code.UserErrorCode.ALREADY_EXISTING_USERNAME;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -77,7 +66,7 @@ class UserControllerTest {
     public void signup_Success() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
-        SignupResult signupResult = createSignupResult();
+        SignResult signResult = createSignupResult();
 
         given(userService.createUser(
                 signupRequest.getUsername(),
@@ -86,7 +75,7 @@ class UserControllerTest {
                 signupRequest.getNickname(),
                 signupRequest.getContact()
                 )
-        ).willReturn(signupResult);
+        ).willReturn(signResult);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -108,7 +97,7 @@ class UserControllerTest {
     public void signup_Failed_Without_RequiredField() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
-        SignupResult signupResult = createSignupResult();
+        SignResult signResult = createSignupResult();
 
         given(userService.createUser(
                         signupRequest.getUsername(),
@@ -117,7 +106,7 @@ class UserControllerTest {
                         signupRequest.getNickname(),
                         signupRequest.getContact()
                 )
-        ).willReturn(signupResult);
+        ).willReturn(signResult);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -140,7 +129,7 @@ class UserControllerTest {
     public void signup_Failed_With_ExistingUsername() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
-        SignupResult signupResult = createSignupResult();
+        SignResult signResult = createSignupResult();
 
         given(userService.createUser(
                 signupRequest.getUsername(),
@@ -171,13 +160,13 @@ class UserControllerTest {
     public void login_Success() throws Exception {
         // given
         LoginRequest loginRequest = createLoginRequest();
-        LoginResult loginResult = createLoginResult();
+        UserTokenResult userTokenResult = createUserTokenResult();
 
         given(userService.login(
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
                 )
-        ).willReturn(loginResult);
+        ).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -197,13 +186,13 @@ class UserControllerTest {
     public void login_Failed_Without_RequireField() throws Exception {
         // given
         LoginRequest loginRequest = createLoginRequest();
-        LoginResult loginResult = createLoginResult();
+        UserTokenResult userTokenResult = createUserTokenResult();
 
         given(userService.login(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
-        ).willReturn(loginResult);
+        ).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -222,7 +211,7 @@ class UserControllerTest {
     @Test
     public void logout_Success() throws Exception {
         // given
-        User user = new User("testUser", "testPw", Role.ROLE_USER, "testNickname", "010-1234-5678");
+        User user = createUser();
         String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
 
         given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
@@ -244,7 +233,7 @@ class UserControllerTest {
 //    @Test
     public void logout_Failed_Without_Token() throws Exception {
         // given
-        User user = new User("testUser", "testPw", Role.ROLE_USER, "testNickname", "010-1234-5678");
+        User user = createUser();
         String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
 
         given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
@@ -262,6 +251,27 @@ class UserControllerTest {
         Assertions.assertThat(emptyTokenResult.getResolvedException()).isExactlyInstanceOf(UserException.class);
     }
 
+    @Test
+    public void refresh_Success() throws Exception {
+        // given
+        String refreshToken = "refreshToken";
+        UserTokenResult userTokenResult = createUserTokenResult();
+
+        given(userService.refresh(refreshToken)).willReturn(userTokenResult);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                post("/users/refresh")
+                        .with(csrf())
+                        .queryParam("refreshToken", "refreshToken")
+        );
+
+        // then
+        actions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.userId").value(0L))
+                .andExpect(jsonPath("$.data.nickname").value("testNickname"));
+    }
+
     private static SignupRequest createSignupRequest() {
         return SignupRequest.builder()
                 .username("testUser")
@@ -271,19 +281,10 @@ class UserControllerTest {
                 .build();
     }
 
-    private static SignupResult createSignupResult() {
-        return SignupResult.builder()
+    private static SignResult createSignupResult() {
+        return SignResult.builder()
                 .userId(0L)
                 .nickname("testNickname")
-                .build();
-    }
-
-    private LoginResult createLoginResult() {
-        return LoginResult.builder()
-                .userId(0L)
-                .nickname("testNickname")
-                .accessToken("accessToken")
-                .refreshToken("refreshToken")
                 .build();
     }
 
@@ -292,5 +293,19 @@ class UserControllerTest {
                 .username("testUser")
                 .password("testPw")
                 .build();
+    }
+
+    private UserTokenResult createUserTokenResult() {
+        return UserTokenResult.builder()
+                .userId(0L)
+                .nickname("testNickname")
+                .accessToken("accessToken")
+                .refreshToken("refreshToken")
+                .build();
+    }
+
+    private User createUser() {
+        User user = new User("testUser", "testPw", Role.ROLE_USER, "testNickname", "010-1234-5678");
+        return user;
     }
 }

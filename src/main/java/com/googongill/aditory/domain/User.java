@@ -46,4 +46,8 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.contact = contact;
     }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
