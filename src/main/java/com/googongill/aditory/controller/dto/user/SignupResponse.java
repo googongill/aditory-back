@@ -2,7 +2,7 @@ package com.googongill.aditory.controller.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.googongill.aditory.service.dto.SignupResult;
+import com.googongill.aditory.service.dto.user.SignupResult;
 import lombok.Builder;
 
 @Builder

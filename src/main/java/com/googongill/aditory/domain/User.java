@@ -30,6 +30,8 @@ public class User extends BaseTimeEntity {
     private String nickname;
     private String contact;
 
+    private String refreshToken;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
 

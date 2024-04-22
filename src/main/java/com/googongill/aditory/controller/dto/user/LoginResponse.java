@@ -2,7 +2,7 @@ package com.googongill.aditory.controller.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.googongill.aditory.service.dto.LoginResult;
+import com.googongill.aditory.service.dto.user.LoginResult;
 import lombok.Builder;
 
 @Builder
@@ -12,7 +12,7 @@ public class LoginResponse {
     private Long userId;
     @JsonProperty("nickname")
     private String nickname;
-    @JsonProperty("acccessToken")
+    @JsonProperty("accessToken")
     private String accessToken;
     @JsonProperty("refreshToken")
     private String refreshToken;

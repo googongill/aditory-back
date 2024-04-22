@@ -1,31 +1,52 @@
 package com.googongill.aditory.controller;
 
+import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
+import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.exception.BusinessException;
+import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.repository.UserRepository;
+import com.googongill.aditory.security.jwt.TokenProvider;
+import com.googongill.aditory.security.jwt.auth.PrincipalDetails;
 import com.googongill.aditory.security.jwt.auth.PrincipalDetailsService;
 import com.googongill.aditory.service.UserService;
-import com.googongill.aditory.service.dto.SignupResult;
+import com.googongill.aditory.service.dto.user.LoginResult;
+import com.googongill.aditory.service.dto.user.SignupResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import static com.googongill.aditory.common.code.UserErrorCode.ALREADY_EXISTING_USERNAME;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
 @WithMockUser
@@ -39,7 +60,18 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
     @MockBean
+    private UserRepository userRepository;
+    @MockBean
+    private PrincipalDetails principalDetails;
+    @MockBean
     private PrincipalDetailsService principalDetailsService;
+    @MockBean
+    private TokenProvider tokenProvider;
+
+    @BeforeEach
+    public void setUp(@Value("${jwt.secret}") String TEST_SECRET) {
+        tokenProvider = new TokenProvider(TEST_SECRET);
+    }
 
     @Test
     public void signup_Success() throws Exception {
@@ -48,11 +80,11 @@ class UserControllerTest {
         SignupResult signupResult = createSignupResult();
 
         given(userService.createUser(
-                        signupRequest.getUsername(),
-                        signupRequest.getPassword(),
-                        Role.ROLE_USER,
-                        signupRequest.getNickname(),
-                        signupRequest.getContact()
+                signupRequest.getUsername(),
+                signupRequest.getPassword(),
+                Role.ROLE_USER,
+                signupRequest.getNickname(),
+                signupRequest.getContact()
                 )
         ).willReturn(signupResult);
 
@@ -135,6 +167,101 @@ class UserControllerTest {
         Assertions.assertThat(existingUsernameResult.getResolvedException()).isExactlyInstanceOf(BusinessException.class); // UserErrorCode에 중복 회원 추가.
     }
 
+    @Test
+    public void login_Success() throws Exception {
+        // given
+        LoginRequest loginRequest = createLoginRequest();
+        LoginResult loginResult = createLoginResult();
+
+        given(userService.login(
+                loginRequest.getUsername(),
+                loginRequest.getPassword()
+                )
+        ).willReturn(loginResult);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                post("/users/login")
+                        .with(csrf())
+                        .queryParam("username", "testUser")
+                        .queryParam("password", "testPw")
+        );
+
+        // then
+        actions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.userId").value(0L))
+                .andExpect(jsonPath("$.data.nickname").value("testNickname"));
+    }
+
+    @Test
+    public void login_Failed_Without_RequireField() throws Exception {
+        // given
+        LoginRequest loginRequest = createLoginRequest();
+        LoginResult loginResult = createLoginResult();
+
+        given(userService.login(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        ).willReturn(loginResult);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                post("/users/login")
+                        .with(csrf())
+                        .queryParam("username", "testUser")
+                        .queryParam("password", "")
+        );
+
+        // then
+        MvcResult emptyPasswordResult = actions.andExpect(status().isBadRequest())
+                .andReturn();
+        Assertions.assertThat(emptyPasswordResult.getResolvedException()).isExactlyInstanceOf(MethodArgumentNotValidException.class);
+    }
+
+    @Test
+    public void logout_Success() throws Exception {
+        // given
+        User user = new User("testUser", "testPw", Role.ROLE_USER, "testNickname", "010-1234-5678");
+        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
+
+        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
+        willDoNothing().given(userService).logout(user.getUsername(), accessToken);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                post("/users/logout")
+                        .with(csrf())
+                        .header("Authorization", "Bearer " + accessToken)
+        );
+
+        // then
+        actions.andExpect(status().isOk())
+                .andExpect(content().json("{message: '로그아웃에 성공했습니다.'}"));
+    }
+
+//    Token 에 대한 검사는 JwtFilter 해서 해줌.
+//    @Test
+    public void logout_Failed_Without_Token() throws Exception {
+        // given
+        User user = new User("testUser", "testPw", Role.ROLE_USER, "testNickname", "010-1234-5678");
+        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
+
+        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
+        willDoNothing().given(userService).logout(user.getUsername(), accessToken);
+
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                post("/users/logout")
+        );
+
+        // then
+        MvcResult emptyTokenResult = actions.andExpect(status().isUnauthorized())
+                .andReturn();
+        Assertions.assertThat(emptyTokenResult.getResolvedException()).isExactlyInstanceOf(UserException.class);
+    }
+
     private static SignupRequest createSignupRequest() {
         return SignupRequest.builder()
                 .username("testUser")
@@ -148,6 +275,22 @@ class UserControllerTest {
         return SignupResult.builder()
                 .userId(0L)
                 .nickname("testNickname")
+                .build();
+    }
+
+    private LoginResult createLoginResult() {
+        return LoginResult.builder()
+                .userId(0L)
+                .nickname("testNickname")
+                .accessToken("accessToken")
+                .refreshToken("refreshToken")
+                .build();
+    }
+
+    private LoginRequest createLoginRequest() {
+        return LoginRequest.builder()
+                .username("testUser")
+                .password("testPw")
                 .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.googongill.aditory.service.dto;
+package com.googongill.aditory.service.dto.user;
 
 import lombok.Builder;
 import lombok.Getter;
