@@ -3,6 +3,7 @@ package com.googongill.aditory.domain;
 import com.googongill.aditory.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
     @Id @Column(name = "user_id")
@@ -30,6 +32,8 @@ public class User extends BaseTimeEntity {
     private String nickname;
     private String contact;
 
+    private String refreshToken;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
 
@@ -43,5 +47,9 @@ public class User extends BaseTimeEntity {
         this.role = role;
         this.nickname = nickname;
         this.contact = contact;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

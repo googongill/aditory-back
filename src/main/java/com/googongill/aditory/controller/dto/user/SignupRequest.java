@@ -1,19 +1,26 @@
 package com.googongill.aditory.controller.dto.user;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import com.googongill.aditory.domain.User;
+import com.googongill.aditory.domain.enums.Role;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class SignupRequest {
-    @NotNull
+    @NotBlank
     private String username;
-    @NotNull
+    @NotBlank
     private String password;
-    @NotNull
+    @NotBlank
     private String nickname;
     private String contact;
+
+    public User toEntity() {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        return new User(username, encodedPassword, Role.ROLE_USER, nickname, contact);
+    }
 }

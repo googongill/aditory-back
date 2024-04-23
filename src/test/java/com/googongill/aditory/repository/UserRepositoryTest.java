@@ -21,7 +21,7 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private TestEntityManager em;
+    private TestEntityManager testEntityManager;
 
     @Test
     public void findByUsername_Success() {

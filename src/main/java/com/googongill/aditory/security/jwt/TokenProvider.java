@@ -88,7 +88,7 @@ public class TokenProvider {
         } catch (ExpiredJwtException e) {
             throw new UserException(TOKEN_EXPIRED);
         } catch (JwtException e) {
-            throw new RuntimeException(String.valueOf(TOKEN_INVALID));
+            throw new UserException(TOKEN_INVALID);
         }
     }
 
@@ -101,6 +101,9 @@ public class TokenProvider {
     }
 
     public static UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails) {
+        if (userDetails == null) {
+            log.error("userDetails == null");
+        }
         return new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
