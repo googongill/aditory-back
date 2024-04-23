@@ -2,7 +2,6 @@ package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
 import com.googongill.aditory.controller.dto.user.*;
-import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,31 +19,19 @@ import static com.googongill.aditory.common.code.SuccessCode.*;
 public class UserController {
 
     private final UserService userService;
-    private static final Role role = Role.valueOf("ROLE_USER");
 
     // ======= Create =======
 
     @PostMapping("/users/signup")
     public ResponseEntity<ApiResponse<SignResponse>> signup(@Valid @ModelAttribute SignupRequest signupRequest) {
         return ApiResponse.success(SIGNUP_SUCCESS,
-                SignResponse.of(userService.createUser(
-                        signupRequest.getUsername(),
-                        signupRequest.getPassword(),
-                        role,
-                        signupRequest.getNickname(),
-                        signupRequest.getContact())
-                )
-        );
+                SignResponse.of(userService.createUser(signupRequest)));
     }
 
     @PostMapping("/users/login")
     public ResponseEntity<ApiResponse<UserTokenResponse>> login(@Valid @ModelAttribute LoginRequest loginRequest) {
         return ApiResponse.success(LOGIN_SUCCESS,
-                UserTokenResponse.of(userService.login(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword())
-                )
-        );
+                UserTokenResponse.of(userService.login(loginRequest)));
     }
 
     @PostMapping("/users/logout")
@@ -56,8 +43,7 @@ public class UserController {
     @PostMapping("/users/refresh")
     public ResponseEntity<ApiResponse<UserTokenResponse>> refresh(@Valid @ModelAttribute RefreshRequest refreshRequest) {
         return ApiResponse.success(REFRESH_SUCCESS,
-                UserTokenResponse.of(userService.refresh(refreshRequest.getRefreshToken()))
-        );
+                UserTokenResponse.of(userService.refresh(refreshRequest)));
     }
 
     // ======== Read ========
