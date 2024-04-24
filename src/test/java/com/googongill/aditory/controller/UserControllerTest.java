@@ -157,7 +157,7 @@ class UserControllerTest {
         String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
 
         given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        willDoNothing().given(userService).logout(user.getUsername(), accessToken);
+        willDoNothing().given(userService).logoutUser(user.getUsername(), accessToken);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -177,7 +177,7 @@ class UserControllerTest {
         RefreshRequest refreshRequest = createRefreshRequest();
         UserTokenResult userTokenResult = createUserTokenResult();
 
-        given(userService.refresh(refreshRequest)).willReturn(userTokenResult);
+        given(userService.refreshUser(refreshRequest)).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(

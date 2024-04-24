@@ -36,18 +36,22 @@ public class UserController {
 
     @PostMapping("/users/logout")
     public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken, @AuthenticationPrincipal UserDetails userDetails) {
-        userService.logout(userDetails.getUsername(), accessToken);
+        userService.logoutUser(userDetails.getUsername(), accessToken);
         return ApiResponse.success(LOGOUT_SUCCESS);
     }
 
     @PostMapping("/users/refresh")
     public ResponseEntity<ApiResponse<UserTokenResponse>> refresh(@Valid @ModelAttribute RefreshRequest refreshRequest) {
         return ApiResponse.success(REFRESH_SUCCESS,
-                UserTokenResponse.of(userService.refresh(refreshRequest)));
+                UserTokenResponse.of(userService.refreshUser(refreshRequest)));
     }
 
     // ======== Read ========
 
+    @GetMapping("/users/test")
+    public String test() {
+        return "test success!";
+    }
 
     // ======= Update =======
 

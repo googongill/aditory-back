@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
     @Id @Column(name = "user_id")
@@ -51,5 +50,9 @@ public class User extends BaseTimeEntity {
 
     public void saveRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
     }
 }

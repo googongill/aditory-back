@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static com.googongill.aditory.common.code.UserErrorCode.*;
 
 @Slf4j
@@ -35,7 +37,7 @@ public class UserService {
     }
 
     public UserTokenResult loginUser(LoginRequest loginRequest) {
-        // username 존재하는지 확인하고 반환
+        // username 확인
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 비밀번호 일치 확인
@@ -52,10 +54,16 @@ public class UserService {
         return UserTokenResult.of(user, jwtDto);
     }
 
-    public void logout(String username, String accessToken) {
+    public void logoutUser(String username, String accessToken) {
+        // username 확인
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        // refreshToken 삭제
+        user.deleteRefreshToken();
+        userRepository.save(user);
     }
 
-    public UserTokenResult refresh(RefreshRequest refreshRequest) {
+    public UserTokenResult refreshUser(RefreshRequest refreshRequest) {
         return null;
     }
 }
