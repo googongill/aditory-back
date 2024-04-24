@@ -132,4 +132,35 @@ class UserServiceTest {
         // then
         org.junit.jupiter.api.Assertions.assertEquals(INVALID_PASSWORD, exception.getErrorCode());
     }
+
+    @Test
+    public void logoutUser_Success_DeletingRefreshToken() throws Exception {
+        // given
+        User user = createUser();
+        String accessToken = "accessToken";
+
+        given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.of(user));
+
+        // when
+        userService.logoutUser(user.getUsername(), accessToken);
+
+        // then
+        verify(userRepository, times(1)).save(user);
+        org.junit.jupiter.api.Assertions.assertNull(user.getRefreshToken());
+    }
+
+    @Test
+    public void logout_Failed_NotExistingUser() throws Exception {
+        // given
+        String username = "nonExistingUsername";
+        String accessToken = "accessToken";
+
+        given(userRepository.findByUsername(username)).willReturn(Optional.empty());
+
+        // when
+        UserException exception = org.junit.jupiter.api.Assertions.assertThrows(UserException.class, () -> userService.logoutUser(username, accessToken));
+
+        // then
+        org.junit.jupiter.api.Assertions.assertEquals(USER_NOT_FOUND, exception.getErrorCode());
+    }
 }
