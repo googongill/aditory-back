@@ -5,18 +5,13 @@ import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
-import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.Getter;
 import org.springframework.boot.test.context.TestComponent;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 @Getter
 @TestComponent
 public class TestDataRepository {
-
-    @MockBean
-    private TokenProvider tokenProvider;
 
     public static User createUser() {
         User user = new User("testUser", "testPw", Role.ROLE_USER, "testNickname", "010-1234-5678");
