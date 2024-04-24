@@ -12,6 +12,7 @@ public enum UserErrorCode implements BusinessErrorCode {
     /**
      * 400 Bad Request
      */
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     INVALID_SOCIAL_PLATFORM(HttpStatus.BAD_REQUEST, "유효하지 않은 소셜 플랫폼입니다."),
     ALREADY_WITHDRAW_USER(HttpStatus.BAD_REQUEST, "이미 탈퇴한 사용자입니다."),
 
