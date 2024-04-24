@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping("/users/login")
     public ResponseEntity<ApiResponse<UserTokenResponse>> login(@Valid @ModelAttribute LoginRequest loginRequest) {
         return ApiResponse.success(LOGIN_SUCCESS,
-                UserTokenResponse.of(userService.login(loginRequest)));
+                UserTokenResponse.of(userService.loginUser(loginRequest)));
     }
 
     @PostMapping("/users/logout")

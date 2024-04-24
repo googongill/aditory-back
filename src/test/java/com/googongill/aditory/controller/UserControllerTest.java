@@ -55,7 +55,7 @@ class UserControllerTest {
     private TokenProvider tokenProvider;
 
     @BeforeEach
-    public void init(@Value("${jwt.secret}") String TEST_SECRET) {
+    public void init(@Value("${jwt.test-secret}") String TEST_SECRET) {
         tokenProvider = new TokenProvider(TEST_SECRET);
     }
 
@@ -112,7 +112,7 @@ class UserControllerTest {
         LoginRequest loginRequest = createLoginRequest();
         UserTokenResult userTokenResult = createUserTokenResult();
 
-        given(userService.login(loginRequest)).willReturn(userTokenResult);
+        given(userService.loginUser(loginRequest)).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -134,7 +134,7 @@ class UserControllerTest {
         LoginRequest loginRequest = createLoginRequest();
         UserTokenResult userTokenResult = createUserTokenResult();
 
-        given(userService.login(loginRequest)).willReturn(userTokenResult);
+        given(userService.loginUser(loginRequest)).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(
