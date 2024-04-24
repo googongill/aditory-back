@@ -111,14 +111,9 @@ public class TokenProvider {
         );
     }
 
-    public void validateToken(String token) {
+    public static void validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            Claims claims = parseClaims(token);
-            log.info("userId: {}", claims.get("userId"));
-            log.info("username: {}", claims.get("username"));
-            log.info("role: {}", claims.get("role"));
-            log.info("expiration: {}", claims.getExpiration());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             throw new UserException(TOKEN_NOT_FOUND);
         } catch (ExpiredJwtException e) {

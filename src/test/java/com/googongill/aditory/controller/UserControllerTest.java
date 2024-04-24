@@ -183,7 +183,8 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 post("/users/refresh")
                         .with(csrf())
-                        .queryParam("refreshToken", "refreshToken")
+                        .queryParam("userId", refreshRequest.getUserId().toString())
+                        .queryParam("refreshToken", refreshRequest.getRefreshToken())
         );
 
         // then

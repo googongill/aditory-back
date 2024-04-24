@@ -16,9 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 import static com.googongill.aditory.common.code.UserErrorCode.*;
+import static com.googongill.aditory.security.jwt.TokenProvider.*;
 
 @Slf4j
 @Service
@@ -64,6 +63,27 @@ public class UserService {
     }
 
     public UserTokenResult refreshUser(RefreshRequest refreshRequest) {
-        return null;
+        // request refreshToken 검증
+        String requestRefreshToken = refreshRequest.getRefreshToken();
+        validateToken(requestRefreshToken);
+        // userId 확인
+        User user = userRepository.findById(refreshRequest.getUserId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        // db 의 refreshToken
+        String dbRefreshToken = getDbRefreshToken(user);
+        // db 와 request 토큰 일치 확인
+        if (!requestRefreshToken.equals(dbRefreshToken)) {
+            throw new UserException(TOKEN_INVALID);
+        }
+        JwtDto newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
+        return UserTokenResult.of(user, newToken);
+    }
+
+    private static String getDbRefreshToken(User user) {
+        String dbRefreshToken = user.getRefreshToken();
+        if (dbRefreshToken == null)  {
+            throw new UserException(TOKEN_NOT_FOUND);
+        }
+        return dbRefreshToken;
     }
 }
