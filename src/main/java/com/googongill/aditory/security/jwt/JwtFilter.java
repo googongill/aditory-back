@@ -1,7 +1,7 @@
 package com.googongill.aditory.security.jwt;
 
 import com.googongill.aditory.exception.BusinessException;
-import com.googongill.aditory.security.jwt.auth.PrincipalDetailsService;
+import com.googongill.aditory.security.jwt.user.PrincipalDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

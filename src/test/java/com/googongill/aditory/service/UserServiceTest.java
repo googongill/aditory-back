@@ -9,7 +9,7 @@ import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
-import com.googongill.aditory.security.jwt.dto.JwtDto;
+import com.googongill.aditory.security.jwt.dto.JwtResult;
 import com.googongill.aditory.service.dto.user.SignResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.extern.slf4j.Slf4j;
@@ -169,11 +169,11 @@ class UserServiceTest {
         // given
         User user = createUser();
         TestUtils.setEntityId(0L, user);
-        JwtDto jwtDto = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
-        user.saveRefreshToken(jwtDto.getRefreshToken());
+        JwtResult jwtResult = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
+        user.saveRefreshToken(jwtResult.getRefreshToken());
 
-        RefreshRequest refreshRequest = createRefreshRequest("Bearer " + jwtDto.getRefreshToken());
-        UserTokenResult targetResult = createUserTokenResult(jwtDto.getAccessToken(), jwtDto.getRefreshToken());
+        RefreshRequest refreshRequest = createRefreshRequest("Bearer " + jwtResult.getRefreshToken());
+        UserTokenResult targetResult = createUserTokenResult(jwtResult.getAccessToken(), jwtResult.getRefreshToken());
 
         given(userRepository.findById(refreshRequest.getUserId())).willReturn(Optional.of(user));
 

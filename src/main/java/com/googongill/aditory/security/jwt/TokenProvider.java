@@ -2,7 +2,7 @@ package com.googongill.aditory.security.jwt;
 
 import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.exception.UserException;
-import com.googongill.aditory.security.jwt.dto.JwtDto;
+import com.googongill.aditory.security.jwt.dto.JwtResult;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -35,13 +35,13 @@ public class TokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public static JwtDto createTokens(Long userId, String username, Role role) {
+    public static JwtResult createTokens(Long userId, String username, Role role) {
         // access-token 발급
         String accessToken = createAccessToken(userId, username, role);
         // refresh-token 발급
         String refreshToken = createRefreshToken();
 
-        return new JwtDto(accessToken, refreshToken);
+        return new JwtResult(accessToken, refreshToken);
     }
 
     private static String createAccessToken(Long userId, String username, Role role) {

@@ -7,7 +7,7 @@ import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
-import com.googongill.aditory.security.jwt.dto.JwtDto;
+import com.googongill.aditory.security.jwt.dto.JwtResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import com.googongill.aditory.service.dto.user.SignResult;
 import jakarta.transaction.Transactional;
@@ -44,13 +44,13 @@ public class UserService {
             throw new UserException(INVALID_PASSWORD);
         }
         // 토큰 발급
-        JwtDto jwtDto = TokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
+        JwtResult jwtResult = TokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
         // User 에 refresh Token 저장
-        String refreshToken = jwtDto.getRefreshToken();
+        String refreshToken = jwtResult.getRefreshToken();
         user.saveRefreshToken(refreshToken);
         userRepository.save(user);
         // 로그인 완료
-        return UserTokenResult.of(user, jwtDto);
+        return UserTokenResult.of(user, jwtResult);
     }
 
     public void logoutUser(String username, String accessToken) {
@@ -75,7 +75,7 @@ public class UserService {
         if (!requestRefreshToken.equals(dbRefreshToken)) {
             throw new UserException(TOKEN_INVALID);
         }
-        JwtDto newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
+        JwtResult newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
         return UserTokenResult.of(user, newToken);
     }
 
