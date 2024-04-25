@@ -60,7 +60,21 @@ public class TokenProvider {
                 .compact();
     }
 
-    private static String createRefreshToken() {
+    public static String createAccessToken(String email) {
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+
+        return Jwts.builder()
+                .setSubject("access-token")
+                .setClaims(claims)
+                .setIssuer("social")
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredMs * 1000))
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public static String createRefreshToken() {
         return Jwts.builder()
                 .setSubject("refresh-token")
                 .setIssuer("googongill")
@@ -74,8 +88,9 @@ public class TokenProvider {
     public static String resolveToken(String token) {
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
             return token.substring(7);
+        } else  {
+            throw new UserException(TOKEN_INVALID);
         }
-        return null;
     }
 
     public static Claims parseClaims(String accessToken) {

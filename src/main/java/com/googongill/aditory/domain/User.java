@@ -1,6 +1,7 @@
 package com.googongill.aditory.domain;
 
 import com.googongill.aditory.domain.enums.Role;
+import com.googongill.aditory.domain.enums.SocialType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -18,16 +19,16 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String username;
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+    private String socialId;
+
     private String nickname;
     private String contact;
 
@@ -40,12 +41,21 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "profile_image_id")
     private ProfileImage profileImage;
 
-    public User(String username, String password, Role role, String nickname, String contact) {
+    public User(String username, String password, Role role, SocialType socialType, String nickname, String contact) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.socialType = socialType;
         this.nickname = nickname;
         this.contact = contact;
+    }
+
+    public User(SocialType socialType, String socialId, String username, String nickname, Role role) {
+        this.socialType = socialType;
+        this.socialId = socialId;
+        this.username = username;
+        this.nickname = nickname;
+        this.role = role;
     }
 
     public void saveRefreshToken(String refreshToken) {

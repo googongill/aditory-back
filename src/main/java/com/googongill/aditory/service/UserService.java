@@ -64,8 +64,7 @@ public class UserService {
 
     public UserTokenResult refreshUser(RefreshRequest refreshRequest) {
         // request refreshToken 검증
-        String requestRefreshToken = refreshRequest.getRefreshToken();
-        validateToken(requestRefreshToken);
+        String requestRefreshToken = getRequestRefreshToken(refreshRequest);
         // userId 확인
         User user = userRepository.findById(refreshRequest.getUserId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
@@ -77,6 +76,12 @@ public class UserService {
         }
         JwtResult newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
         return UserTokenResult.of(user, newToken);
+    }
+
+    private static String getRequestRefreshToken(RefreshRequest refreshRequest) {
+        String requestRefreshToken = resolveToken(refreshRequest.getRefreshToken());
+        validateToken(requestRefreshToken);
+        return requestRefreshToken;
     }
 
     private static String getDbRefreshToken(User user) {

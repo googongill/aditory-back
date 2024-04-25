@@ -3,6 +3,9 @@ package com.googongill.aditory.security.config;
 import com.googongill.aditory.security.jwt.JwtAccessDeniedHandler;
 import com.googongill.aditory.security.jwt.JwtAuthenticationEntryPoint;
 import com.googongill.aditory.security.jwt.JwtFilter;
+import com.googongill.aditory.security.oauth2.handler.OAuth2LoginFailureHandler;
+import com.googongill.aditory.security.oauth2.handler.OAuth2LoginSuccessHandler;
+import com.googongill.aditory.security.oauth2.user.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +29,9 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
