@@ -2,13 +2,14 @@ package com.googongill.aditory.service;
 
 import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
+import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
-import com.googongill.aditory.security.jwt.dto.JwtDto;
+import com.googongill.aditory.security.jwt.dto.JwtResult;
 import com.googongill.aditory.service.dto.user.SignResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +45,8 @@ class UserServiceTest {
 
     @BeforeEach
     public void init() {
-        // secret 을 불러오지 못해서 임의로 secret 넣음 -> 추후 수정
-        tokenProvider = new TokenProvider("7Jyg7KCA7ISc67mE7Iqk7YWM7Iqk7Yq47Jqp7Iuc7YGs66a/7YKk6rCA7ZWE7JqU7ZW07ISc7JWE66y06rCS7J2064KY64Sj7Ja07ISc7JWU7Zi47ZmU7ZaI7J2M");
+        // test 를 위한 더미 secret 주입 -> 추후 수정
+        tokenProvider = new TokenProvider("YWRpdG9yeS1iYWNrZW5kLXRlc3QtZ29vZ29uZ2lsbC1zZXVuZ2p1bmh3YW5nLWV1Z2VuZWxlZS1qaWV1bnBhcms=");
     }
 
     @Test
@@ -89,7 +90,6 @@ class UserServiceTest {
         User user = createUser();
         LoginRequest loginRequest = createLoginRequest();
         UserTokenResult targetResult = createUserTokenResult();
-        JwtDto jwtDto = new JwtDto("accessToken", "refreshToken");
 
         given(userRepository.findByUsername(loginRequest.getUsername())).willReturn(Optional.of(user));
         given(bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())).willReturn(true);
@@ -150,7 +150,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void logout_Failed_NotExistingUser() throws Exception {
+    public void logoutUser_Failed_NotExistingUser() throws Exception {
         // given
         String username = "nonExistingUsername";
         String accessToken = "accessToken";
@@ -162,5 +162,27 @@ class UserServiceTest {
 
         // then
         org.junit.jupiter.api.Assertions.assertEquals(USER_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    public void refreshUser_Success() throws Exception {
+        // given
+        User user = createUser();
+        TestUtils.setEntityId(0L, user);
+        JwtResult jwtResult = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
+        user.saveRefreshToken(jwtResult.getRefreshToken());
+
+        RefreshRequest refreshRequest = createRefreshRequest("Bearer " + jwtResult.getRefreshToken());
+        UserTokenResult targetResult = createUserTokenResult(jwtResult.getAccessToken(), jwtResult.getRefreshToken());
+
+        given(userRepository.findById(refreshRequest.getUserId())).willReturn(Optional.of(user));
+
+        // when
+        UserTokenResult actualResult = userService.refreshUser(refreshRequest);
+
+        // then
+        Assertions.assertThat(actualResult).isNotNull();
+        Assertions.assertThat(actualResult.getUserId()).isEqualTo(targetResult.getUserId());
+        Assertions.assertThat(actualResult.getNickname()).isEqualTo(targetResult.getNickname());
     }
 }

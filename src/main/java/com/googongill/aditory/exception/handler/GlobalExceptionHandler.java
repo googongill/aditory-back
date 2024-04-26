@@ -1,5 +1,7 @@
-package com.googongill.aditory.exception;
+package com.googongill.aditory.exception.handler;
 
+import com.googongill.aditory.common.ErrorResponse;
+import com.googongill.aditory.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

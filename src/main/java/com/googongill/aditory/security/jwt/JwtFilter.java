@@ -1,7 +1,7 @@
 package com.googongill.aditory.security.jwt;
 
 import com.googongill.aditory.exception.BusinessException;
-import com.googongill.aditory.security.jwt.auth.PrincipalDetailsService;
+import com.googongill.aditory.security.jwt.user.PrincipalDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,19 +32,16 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+            log.info("token: {}", authorization);
 
-            // 접두사 제외한 실제 token
-            String token = TokenProvider.resolveToken(authorization);
-            log.info("token: {}", token);
-
-            if (token != null) {
+            if (authorization != null) {
+                // 접두사 제외한 실제 token
+                String token = TokenProvider.resolveToken(authorization);
                 // 토큰 검증
                 tokenProvider.validateToken(token);
-
                 // 토큰에서 username 추출
                 String username = tokenProvider.getUsername(token);
                 UserDetails userDetails = principalDetailsService.loadUserByUsername(username);
-
                 // authentication 객체 생성, UserDetails 담기
                 UsernamePasswordAuthenticationToken authentication = tokenProvider.getAuthentication(userDetails);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

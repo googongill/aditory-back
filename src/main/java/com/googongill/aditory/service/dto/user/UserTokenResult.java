@@ -1,7 +1,7 @@
 package com.googongill.aditory.service.dto.user;
 
 import com.googongill.aditory.domain.User;
-import com.googongill.aditory.security.jwt.dto.JwtDto;
+import com.googongill.aditory.security.jwt.dto.JwtResult;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,12 +13,12 @@ public class UserTokenResult {
     private String accessToken;
     private String refreshToken;
 
-    public static UserTokenResult of(User user, JwtDto jwtDto) {
+    public static UserTokenResult of(User user, JwtResult jwtResult) {
         return UserTokenResult.builder()
                 .userId(user.getId())
                 .nickname(user.getNickname())
-                .accessToken(jwtDto.getAccessToken())
-                .refreshToken(jwtDto.getRefreshToken())
+                .accessToken(jwtResult.getAccessToken())
+                .refreshToken(jwtResult.getRefreshToken())
                 .build();
     }
 }

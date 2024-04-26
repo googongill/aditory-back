@@ -1,4 +1,4 @@
-package com.googongill.aditory.exception;
+package com.googongill.aditory.common;
 
 import com.googongill.aditory.common.code.BusinessErrorCode;
 import lombok.AccessLevel;

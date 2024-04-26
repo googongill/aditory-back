@@ -2,6 +2,7 @@ package com.googongill.aditory.controller.dto.user;
 
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
+import com.googongill.aditory.domain.enums.SocialType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,6 @@ public class SignupRequest {
     public User toEntity() {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = bCryptPasswordEncoder.encode(password);
-        return new User(username, encodedPassword, Role.ROLE_USER, nickname, contact);
+        return new User(username, encodedPassword, Role.ROLE_USER, SocialType.LOCAL, nickname, contact);
     }
 }

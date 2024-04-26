@@ -43,9 +43,26 @@ public class TestDataRepository {
                 .build();
     }
 
+    public static UserTokenResult createUserTokenResult(String accessToken, String refreshToken) {
+        return UserTokenResult.builder()
+                .userId(0L)
+                .nickname("testNickname")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
     public static RefreshRequest createRefreshRequest() {
         return RefreshRequest.builder()
+                .userId(0L)
                 .refreshToken("refreshToken")
+                .build();
+    }
+
+    public static RefreshRequest createRefreshRequest(String refreshToken) {
+        return RefreshRequest.builder()
+                .userId(0L)
+                .refreshToken(refreshToken)
                 .build();
     }
 }

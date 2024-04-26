@@ -1,4 +1,4 @@
-package com.googongill.aditory.security.jwt.auth;
+package com.googongill.aditory.security.jwt.user;
 
 import com.googongill.aditory.domain.User;
 import org.springframework.security.core.GrantedAuthority;

@@ -2,7 +2,7 @@ package com.googongill.aditory.security.jwt;
 
 import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.exception.UserException;
-import com.googongill.aditory.security.jwt.dto.JwtDto;
+import com.googongill.aditory.security.jwt.dto.JwtResult;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -35,13 +35,13 @@ public class TokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public static JwtDto createTokens(Long userId, String username, Role role) {
+    public static JwtResult createTokens(Long userId, String username, Role role) {
         // access-token 발급
         String accessToken = createAccessToken(userId, username, role);
         // refresh-token 발급
         String refreshToken = createRefreshToken();
 
-        return new JwtDto(accessToken, refreshToken);
+        return new JwtResult(accessToken, refreshToken);
     }
 
     private static String createAccessToken(Long userId, String username, Role role) {
@@ -60,7 +60,21 @@ public class TokenProvider {
                 .compact();
     }
 
-    private static String createRefreshToken() {
+    public static String createAccessToken(String email) {
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+
+        return Jwts.builder()
+                .setSubject("access-token")
+                .setClaims(claims)
+                .setIssuer("social")
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredMs * 1000))
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public static String createRefreshToken() {
         return Jwts.builder()
                 .setSubject("refresh-token")
                 .setIssuer("googongill")
@@ -74,8 +88,9 @@ public class TokenProvider {
     public static String resolveToken(String token) {
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
             return token.substring(7);
+        } else  {
+            throw new UserException(TOKEN_INVALID);
         }
-        return null;
     }
 
     public static Claims parseClaims(String accessToken) {
@@ -111,14 +126,9 @@ public class TokenProvider {
         );
     }
 
-    public void validateToken(String token) {
+    public static void validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            Claims claims = parseClaims(token);
-            log.info("userId: {}", claims.get("userId"));
-            log.info("username: {}", claims.get("username"));
-            log.info("role: {}", claims.get("role"));
-            log.info("expiration: {}", claims.getExpiration());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             throw new UserException(TOKEN_NOT_FOUND);
         } catch (ExpiredJwtException e) {

@@ -16,9 +16,7 @@ public class Category extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String categoryName;
-    @Column(nullable = false)
     private Integer viewCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
