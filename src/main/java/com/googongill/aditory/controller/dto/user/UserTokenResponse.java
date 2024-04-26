@@ -21,8 +21,8 @@ public class UserTokenResponse {
         return UserTokenResponse.builder()
                 .userId(userTokenResult.getUserId())
                 .nickname(userTokenResult.getNickname())
-                .accessToken("Bearer " + userTokenResult.getAccessToken())
-                .refreshToken("Bearer " + userTokenResult.getRefreshToken())
+                .accessToken(userTokenResult.getAccessToken())
+                .refreshToken(userTokenResult.getRefreshToken())
                 .build();
     }
 }

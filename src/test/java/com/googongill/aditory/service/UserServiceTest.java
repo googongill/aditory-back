@@ -4,9 +4,12 @@ import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
+import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
+import com.googongill.aditory.domain.enums.SocialType;
 import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
@@ -22,7 +25,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.googongill.aditory.TestDataRepository.*;
 import static com.googongill.aditory.common.code.UserErrorCode.*;
@@ -38,6 +43,8 @@ class UserServiceTest {
     private UserService userService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private CategoryRepository categoryRepository;
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Mock
@@ -57,23 +64,36 @@ class UserServiceTest {
         Long expectedUserId = 123L;
         TestUtils.setEntityId(expectedUserId, user);
 
-        doAnswer(invocation -> {
-            TestUtils.setEntityId(expectedUserId, user);
-            return user;
-        }).when(userRepository).save(any(User.class));
+        given(userRepository.findByUsername(signupRequest.getUsername())).willReturn(Optional.empty());
+        given(userRepository.save(any(User.class))).willReturn(user);
+
+        List<String> categoryNames = signupRequest.getUserCategories();
+        List<Category> createdCategories = categoryNames.stream()
+                .map(categoryName -> {
+                    Category category = new Category(categoryName, user);
+                    return category;
+                })
+                .collect(Collectors.toList());
+        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> {
+            Category category = invocation.getArgument(0);
+            return category;
+        });
 
         // when
         SignResult savedUser = userService.createUser(signupRequest);
 
         // then
-        Assertions.assertThat(savedUser.getUserId()).isEqualTo(expectedUserId);
+        Assertions.assertThat(savedUser.getNickname()).isEqualTo(signupRequest.getNickname());
     }
-
     @Test
     public void createUser_Failed_ExistingUsername() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
-        User existingUser = new User(signupRequest.getUsername(), "existingPw", Role.ROLE_USER, "existingNickname", "010-1234-5678");
+        User existingUser = new User(signupRequest.getUsername(),
+                "existingPw",
+                Role.ROLE_USER, SocialType.LOCAL,
+                "존재하는 유저",
+                "010-1234-5678");
 
         given(userRepository.findByUsername(signupRequest.getUsername())).willReturn(Optional.of(existingUser));
 
