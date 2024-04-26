@@ -3,8 +3,10 @@ package com.googongill.aditory.service;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
+import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
@@ -16,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.googongill.aditory.common.code.UserErrorCode.*;
 import static com.googongill.aditory.security.jwt.TokenProvider.*;
 
@@ -26,13 +31,27 @@ import static com.googongill.aditory.security.jwt.TokenProvider.*;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public SignResult createUser(SignupRequest signupRequest) {
         // 이미 존재하는 username 존재하는지 확인
         if (userRepository.findByUsername(signupRequest.getUsername()).isPresent())
             throw new UserException(ALREADY_EXISTING_USERNAME);
-        return SignResult.of(userRepository.save(signupRequest.toEntity()));
+        // 사용자 생성
+        User createduser = signupRequest.toEntity();
+        userRepository.save(createduser);
+        // 카테고리 생성
+        List<Category> createdCategories = signupRequest.getUserCategories().stream()
+                .map(categoryName -> {
+                    Category category = new Category(categoryName, createduser);
+                    return categoryRepository.save(category);
+                })
+                .collect(Collectors.toList());
+
+        // 카테고리 추가 (연관관계 메서드)
+        createduser.addCategories(createdCategories);
+        return SignResult.of(createduser, createdCategories);
     }
 
     public UserTokenResult loginUser(LoginRequest loginRequest) {

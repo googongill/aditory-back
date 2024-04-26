@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.List;
+
 @Data
 @Builder
 public class SignupRequest {
@@ -18,6 +20,7 @@ public class SignupRequest {
     @NotBlank
     private String nickname;
     private String contact;
+    private List<String> userCategories;
 
     public User toEntity() {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();

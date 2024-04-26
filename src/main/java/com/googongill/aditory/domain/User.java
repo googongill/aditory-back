@@ -4,7 +4,6 @@ import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.domain.enums.SocialType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -56,6 +55,19 @@ public class User extends BaseTimeEntity {
         this.username = username;
         this.nickname = nickname;
         this.role = role;
+    }
+
+    // 연관관계 메서드
+    public void addCategory(Category category) {
+        this.categories.add(category);
+        category.setUser(this);
+    }
+
+    public void addCategories(List<Category> categories) {
+        for (Category category : categories) {
+            this.categories.add(category);
+            category.setUser(this);
+        }
     }
 
     public void saveRefreshToken(String refreshToken) {

@@ -3,6 +3,7 @@ package com.googongill.aditory.controller;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
+import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
@@ -26,6 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.util.List;
 
 import static com.googongill.aditory.TestDataRepository.*;
 import static org.mockito.BDDMockito.given;
@@ -63,11 +66,13 @@ class UserControllerTest {
     public void signup_Success() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
-        SignResult signResult = SignResult.of(signupRequest.toEntity());
+        List<Category> createdCategories = createCategories();
+        SignResult signResult = SignResult.of(signupRequest.toEntity(), createdCategories);
 
         given(userService.createUser(signupRequest)).willReturn(signResult);
 
         // when
+        String userCategoriesParam = String.join(",", signupRequest.getUserCategories());
         ResultActions actions = mockMvc.perform(
                 post("/users/signup")
                         .with(csrf())
@@ -75,6 +80,7 @@ class UserControllerTest {
                         .queryParam("password", signupRequest.getPassword())
                         .queryParam("nickname", signupRequest.getNickname())
                         .queryParam("contact", signupRequest.getContact())
+                        .queryParam("userCategories", userCategoriesParam)
         );
 
         // then
@@ -86,7 +92,8 @@ class UserControllerTest {
     public void signup_Failed_Without_RequiredField() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
-        SignResult signResult = SignResult.of(signupRequest.toEntity());
+        List<Category> categories = createCategories();
+        SignResult signResult = SignResult.of(signupRequest.toEntity(), categories);
 
         given(userService.createUser(signupRequest)).willReturn(signResult);
 

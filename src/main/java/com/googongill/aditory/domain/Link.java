@@ -21,4 +21,12 @@ public class Link extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    public Link(String title, String summary, String url, Category category) {
+        this.title = title;
+        this.summary = summary;
+        this.url = url;
+        this.status = false;
+        this.category = category;
+    }
 }

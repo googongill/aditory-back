@@ -17,7 +17,7 @@ public class Category extends BaseEntity {
     private Long id;
 
     private String categoryName;
-    private Integer viewCount = 0;
+    private Integer viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -28,4 +28,18 @@ public class Category extends BaseEntity {
 
     @OneToMany(mappedBy = "category", orphanRemoval = true)
     private List<CategoryLike> categoryLikes = new ArrayList<>();
+
+    public Category(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public Category(String categoryName, User user) {
+        this.categoryName = categoryName;
+        this.viewCount = 0;
+        this.user = user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

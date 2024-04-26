@@ -56,7 +56,7 @@ public class UserController {
     // ======= Update =======
 
     @PatchMapping("/users")
-    public ResponseEntity<ApiResponse> updateUser() {
+    public ResponseEntity<ApiResponse> update() {
         return null;
     }
 
