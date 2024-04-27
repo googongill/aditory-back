@@ -22,6 +22,10 @@ public class PrincipalDetails implements UserDetails {
         return collect;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public Long getUserId() {
         return user.getId();
     }

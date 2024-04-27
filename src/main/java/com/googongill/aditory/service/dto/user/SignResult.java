@@ -2,7 +2,7 @@ package com.googongill.aditory.service.dto.user;
 
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
-import com.googongill.aditory.service.dto.category.UserCategories;
+import com.googongill.aditory.service.dto.category.UserCategoryList;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 public class SignResult {
     private Long userId;
     private String nickname;
-    private List<UserCategories> userCategories = new ArrayList<>();
+    private List<UserCategoryList> userCategories = new ArrayList<>();
 
     public static SignResult of(User user, List<Category> categories) {
-        List<UserCategories> userCategories = categories.stream()
-                .map(category -> UserCategories.builder()
+        List<UserCategoryList> userCategories = categories.stream()
+                .map(category -> UserCategoryList.builder()
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
                         .build())
