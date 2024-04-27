@@ -2,6 +2,7 @@ package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
 import com.googongill.aditory.controller.dto.user.*;
+import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,8 @@ public class UserController {
     }
 
     @PostMapping("/users/logout")
-    public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken, @AuthenticationPrincipal UserDetails userDetails) {
-        userService.logoutUser(userDetails.getUsername(), accessToken);
+    public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        userService.logoutUser(principalDetails.getUsername(), accessToken);
         return ApiResponse.success(LOGOUT_SUCCESS);
     }
 
