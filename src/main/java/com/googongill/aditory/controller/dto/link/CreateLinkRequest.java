@@ -2,6 +2,7 @@ package com.googongill.aditory.controller.dto.link;
 
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
+import com.googongill.aditory.external.chatgpt.dto.AutoCategorizeResult;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -20,5 +21,9 @@ public class CreateLinkRequest {
 
     public Link toEntity(Category category) {
         return new Link(title, summary, url, category);
+    }
+
+    public Link toEntity(AutoCategorizeResult autoCategorizeResult, Category category) {
+        return new Link(autoCategorizeResult.getTitle(), autoCategorizeResult.getSummary(), url, category);
     }
 }
