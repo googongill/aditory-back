@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
@@ -36,7 +35,8 @@ public class UserController {
     }
 
     @PostMapping("/users/logout")
-    public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken,
+                                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
         userService.logoutUser(principalDetails.getUsername(), accessToken);
         return ApiResponse.success(LOGOUT_SUCCESS);
     }
