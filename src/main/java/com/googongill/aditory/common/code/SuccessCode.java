@@ -31,8 +31,6 @@ public enum SuccessCode {
     SAVE_CATEGORYLIKE_SUCCESS(HttpStatus.OK, "카테고리 좋아요에 성공했습니다."),
     DELETE_CATEGORYLIKE_SUCCESS(HttpStatus.OK, "카테고리 좋아요 삭제에 성공했습니다."),
 
-
-
     /**
      * 201 Created
      */
