@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserCategoryList {
+public class CategoryIdAndName {
     private Long categoryId;
     private String categoryName;
 }
