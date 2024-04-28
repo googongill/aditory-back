@@ -5,6 +5,7 @@ import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
 import com.googongill.aditory.controller.dto.link.CreateLinkResponse;
 import com.googongill.aditory.controller.dto.link.LinkResponse;
 import com.googongill.aditory.domain.Link;
+import com.googongill.aditory.domain.enums.CategoryState;
 import com.googongill.aditory.exception.LinkException;
 import com.googongill.aditory.repository.LinkRepository;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
@@ -43,7 +44,7 @@ public class LinkController {
     public ResponseEntity<ApiResponse<LinkResponse>> getLink(@PathVariable Long linkId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
-        if (!link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
+        if (link.getCategory().getState().equals(CategoryState.PRIVATE) && !link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(FORBIDDEN_LINK);
         }
         return ApiResponse.success(GET_LINK_SUCCESS,
