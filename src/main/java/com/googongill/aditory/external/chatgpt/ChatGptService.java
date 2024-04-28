@@ -7,7 +7,6 @@ import com.googongill.aditory.external.chatgpt.dto.Message;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,32 +25,20 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class ChatGptService {
 
-    private static RestTemplate restTemplate = new RestTemplate();
-
-    @Value("${chat-gpt.url}")
-    private String url;
-    @Value("${chat-gpt.key}")
-    private String apiKey;
-    @Value("${chat-gpt.model}")
-    private String model;
-    @Value("${chat-gpt.max_token}")
-    private Integer maxToken;
-    @Value("${chat-gpt.temperature}")
-    private Double temperature;
-    @Value("${chat-gpt.topP}")
-    private Double topP;
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final ChatGptConfig chatGptConfig;
 
     public HttpEntity<ChatGptRequest> buildHttpEntity(ChatGptRequest chatGptRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("charset", "UTF-8");
-        headers.add(AUTHORIZATION, "Bearer " + apiKey);
+        headers.add(AUTHORIZATION, "Bearer " + chatGptConfig.getApiKey());
         return new HttpEntity<>(chatGptRequest, headers);
     }
 
     public ChatGptResponse getResponse(HttpEntity<ChatGptRequest> chatGptRequestHttpEntity) {
         ResponseEntity<ChatGptResponse> responseEntity = restTemplate.postForEntity(
-                url,
+                chatGptConfig.getUrl(),
                 chatGptRequestHttpEntity,
                 ChatGptResponse.class);
         return responseEntity.getBody();
@@ -68,11 +55,11 @@ public class ChatGptService {
         ChatGptResponse chatGptResponse = getResponse(
                 buildHttpEntity(
                         ChatGptRequest.builder()
-                                .model(model)
+                                .model(chatGptConfig.getModel())
                                 .messages(messages)
-                                .maxTokens(maxToken)
-                                .temperature(temperature)
-                                .topP(topP)
+                                .maxTokens(chatGptConfig.getMaxToken())
+                                .temperature(chatGptConfig.getTemperature())
+                                .topP(chatGptConfig.getTopP())
                                 .build()
                 )
         );
