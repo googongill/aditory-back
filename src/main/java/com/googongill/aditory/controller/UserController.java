@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/users/refresh")
-    public ResponseEntity<ApiResponse<UserTokenResponse>> refresh(@Valid @ModelAttribute RefreshRequest refreshRequest) {
+    public ResponseEntity<ApiResponse<UserTokenResponse>> refresh(@Valid @RequestBody RefreshRequest refreshRequest) {
         return ApiResponse.success(REFRESH_SUCCESS,
                 UserTokenResponse.of(userService.refreshUser(refreshRequest)));
     }

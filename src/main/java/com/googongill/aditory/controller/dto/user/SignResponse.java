@@ -1,8 +1,8 @@
 package com.googongill.aditory.controller.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.googongill.aditory.service.dto.category.UserCategoryList;
+import com.googongill.aditory.service.dto.category.CategoryIdAndName;
 import com.googongill.aditory.service.dto.user.SignResult;
 import lombok.Builder;
 
@@ -10,13 +10,11 @@ import java.util.List;
 
 @Builder
 @JsonSerialize
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class SignResponse {
-    @JsonProperty("userId")
     private Long userId;
-    @JsonProperty("nickname")
     private String nickname;
-    @JsonProperty("userCategories")
-    private List<UserCategoryList> userCategories;
+    private List<CategoryIdAndName> userCategories;
 
     public static SignResponse of(SignResult signResult) {
         return SignResponse.builder()

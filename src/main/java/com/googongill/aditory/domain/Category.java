@@ -1,5 +1,6 @@
 package com.googongill.aditory.domain;
 
+import com.googongill.aditory.domain.enums.CategoryState;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class Category extends BaseEntity {
     private Long id;
 
     private String categoryName;
+    private CategoryState state;
     private Integer viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,6 +38,7 @@ public class Category extends BaseEntity {
     public Category(String categoryName, User user) {
         this.categoryName = categoryName;
         this.viewCount = 0;
+        this.state = CategoryState.PRIVATE;
         this.user = user;
     }
 
