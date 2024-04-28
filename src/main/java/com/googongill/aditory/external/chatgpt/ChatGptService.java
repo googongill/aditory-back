@@ -44,32 +44,40 @@ public class ChatGptService {
         return responseEntity.getBody();
     }
 
-    public AutoCategorizeResult autoCategorizeLink(String url, List<String> userCategoryNameList) {
-        String messageContent = createMessageCotent(url, userCategoryNameList);
+    private static ArrayList<Message> createMessages(String messageContent) {
         ArrayList<Message> messages = new ArrayList<>();
         messages.add(Message.builder()
                 .role("user")
                 .content(messageContent)
                 .build()
         );
-        ChatGptResponse chatGptResponse = getResponse(
-                buildHttpEntity(
-                        ChatGptRequest.builder()
-                                .model(chatGptConfig.getModel())
-                                .messages(messages)
-                                .maxTokens(chatGptConfig.getMaxToken())
-                                .temperature(chatGptConfig.getTemperature())
-                                .topP(chatGptConfig.getTopP())
-                                .build()
-                )
-        );
-
-        return AutoCategorizeResult.of(chatGptResponse);
+        return messages;
     }
 
-    private static String createMessageCotent(String url, List<String> userCategoryNameList) {
+    private static String createMessageContent(String url, List<String> userCategoryNameList) {
         String categories = String.join(", ", userCategoryNameList);
-        String messageContent = url + " 를 한 줄로 요약한 summary 와 어울리는 제목인 title, " + categories + " 중에서 가장 어울리는 카테고리를 category 라는 이름의 json 으로 반환해줘";
+        String messageContent = url + " 를 한 줄로 요약한 summary 와 어울리는 제목인 title, " +
+                                categories + " 중에서 가장 어울리는 카테고리를 category 라는 이름의 json 으로 반환해줘";
         return messageContent;
+    }
+
+    public AutoCategorizeResult autoCategorizeLink(String url, List<String> userCategoryNameList) {
+        // message-content 생성
+        String messageContent = createMessageContent(url, userCategoryNameList);
+        // messages 생성
+        ArrayList<Message> messages = createMessages(messageContent);
+        // http entity 생성
+        HttpEntity<ChatGptRequest> chatGptRequestHttpEntity = buildHttpEntity(ChatGptRequest.builder()
+                .model(chatGptConfig.getModel())
+                .messages(messages)
+                .maxTokens(chatGptConfig.getMaxToken())
+                .temperature(chatGptConfig.getTemperature())
+                .topP(chatGptConfig.getTopP())
+                .build());
+        // response 수신
+        ChatGptResponse chatGptResponse = getResponse(chatGptRequestHttpEntity);
+
+        // 자동 분류 결과 반환
+        return AutoCategorizeResult.of(chatGptResponse);
     }
 }
