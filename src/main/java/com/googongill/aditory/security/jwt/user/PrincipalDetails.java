@@ -30,6 +30,10 @@ public class PrincipalDetails implements UserDetails {
         return user.getId();
     }
 
+    public String getNickname() {
+        return user.getNickname();
+    }
+
     @Override
     public String getUsername() {
         return user.getUsername();

@@ -39,7 +39,13 @@ public class Category extends BaseEntity {
         this.user = user;
     }
 
+    // 연관관계 메서드
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void addLink(Link link) {
+        this.links.add(link);
+        link.setCategory(this);
     }
 }

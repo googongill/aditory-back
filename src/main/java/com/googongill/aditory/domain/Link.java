@@ -29,4 +29,8 @@ public class Link extends BaseEntity {
         this.status = false;
         this.category = category;
     }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

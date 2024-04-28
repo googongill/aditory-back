@@ -2,6 +2,7 @@ package com.googongill.aditory.service;
 
 import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
 import com.googongill.aditory.domain.Category;
+import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.CategoryException;
 import com.googongill.aditory.exception.UserException;
@@ -55,8 +56,12 @@ public class LinkService {
         // 해당 카테고리 조회
         Category category = categoryRepository.findByCategoryName(autoCategorizeResult.getCategoryName())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
+        // 링크 생성
+        Link createdLink = linkRepository.save(createLinkRequest.toEntity(autoCategorizeResult, category));
+        // 링크 추가 (연관관계 메서드)
+        category.addLink(createdLink);
         // 링크 생성 결과
-        return CreateLinkResult.of(linkRepository.save(createLinkRequest.toEntity(autoCategorizeResult, category)), category);
+        return CreateLinkResult.of(createdLink, category);
     }
 
     private CreateLinkResult getCreateLinkResult(CreateLinkRequest createLinkRequest, Long userId) {
@@ -66,7 +71,11 @@ public class LinkService {
         if (!category.getUser().getId().equals(userId)) {
             throw new CategoryException(FORBIDDEN_CATEGORY);
         }
+        // 링크 생성
+        Link createdLink = linkRepository.save(createLinkRequest.toEntity(category));
+        // 링크 추가 (연관관계 메서드)
+        category.addLink(createdLink);
         // 링크 생성 결과
-        return CreateLinkResult.of(linkRepository.save(createLinkRequest.toEntity(category)), category);
+        return CreateLinkResult.of(createdLink, category);
     }
 }
