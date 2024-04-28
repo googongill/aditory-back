@@ -12,7 +12,7 @@ public enum CategoryErrorCode implements BusinessErrorCode {
     /**
      * 401 Forbidden
      */
-    FORBIDDEN_CATEGORY(HttpStatus.FORBIDDEN, "추가할 수 없는 카테고리입니다."),
+    FORBIDDEN_CATEGORY(HttpStatus.FORBIDDEN, "접근할 수 없는 카테고리입니다."),
 
     /**
      * 404 Not Found
