@@ -3,6 +3,7 @@ package com.googongill.aditory.service;
 
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
+import com.googongill.aditory.domain.enums.CategoryState;
 import com.googongill.aditory.exception.CategoryException;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.CategoryRepository;
@@ -54,8 +55,8 @@ public class CategoryService {
         // 카테고리 조회
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        // 헤당 user 의 카테고리인지 확인
-        if (!category.getUser().getId().equals(userId)) {
+        // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
+        if (category.getState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
             throw new CategoryException(FORBIDDEN_CATEGORY);
         }
         // 조회한 category 의 링크 목록 조회하며 각 링크별 정보 입력
