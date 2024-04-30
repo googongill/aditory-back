@@ -1,9 +1,7 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
-import com.googongill.aditory.controller.dto.link.CreateLinkResponse;
-import com.googongill.aditory.controller.dto.link.LinkResponse;
+import com.googongill.aditory.controller.dto.link.*;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.enums.CategoryState;
 import com.googongill.aditory.exception.LinkException;
@@ -19,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.googongill.aditory.common.code.LinkErrorCode.FORBIDDEN_LINK;
 import static com.googongill.aditory.common.code.LinkErrorCode.LINK_NOT_FOUND;
-import static com.googongill.aditory.common.code.SuccessCode.GET_LINK_SUCCESS;
-import static com.googongill.aditory.common.code.SuccessCode.SAVE_LINK_SUCCESS;
+import static com.googongill.aditory.common.code.SuccessCode.*;
 
 @Slf4j
 @RestController
@@ -33,15 +30,17 @@ public class LinkController {
     // ======= Create =======
 
     @PostMapping("/links")
-    public ResponseEntity<ApiResponse<CreateLinkResponse>> createLink(@Valid @ModelAttribute CreateLinkRequest createLinkRequest, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<LinkResponse>> createLink(@Valid @RequestBody CreateLinkRequest createLinkRequest,
+                                                                @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(SAVE_LINK_SUCCESS,
-                CreateLinkResponse.of(linkService.createLink(createLinkRequest, principalDetails.getUserId())));
+                LinkResponse.of(linkService.createLink(createLinkRequest, principalDetails.getUserId())));
     }
 
     // ======== Read ========
 
     @GetMapping("/links/{linkId}")
-    public ResponseEntity<ApiResponse<LinkResponse>> getLink(@PathVariable Long linkId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<LinkDetailResponse>> getLink(@PathVariable Long linkId,
+                                                                   @AuthenticationPrincipal PrincipalDetails principalDetails) {
         // link 조회
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
@@ -52,13 +51,32 @@ public class LinkController {
         }
         // link 반환
         return ApiResponse.success(GET_LINK_SUCCESS,
-                LinkResponse.of(link));
+                LinkDetailResponse.of(link));
     }
 
     // ======= Update =======
 
+    @PatchMapping("/links/{linkId}")
+    public ResponseEntity<ApiResponse<LinkResponse>> updateLink(@PathVariable Long linkId, @RequestBody UpdateLinkRequest updateLinkRequest,
+                                                                @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(UPDATE_LINK_SUCCESS,
+                LinkResponse.of(linkService.updateLink(linkId, updateLinkRequest, principalDetails.getUserId())));
+    }
+
 
     // ======= Delete =======
 
-
+    @DeleteMapping("/links/{linkId}")
+    public ResponseEntity<ApiResponse<DeleteLinkResponse>> deleteLink(@PathVariable Long linkId,
+                                                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Link link = linkRepository.findById(linkId)
+                .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
+        if(!link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
+            throw new LinkException(FORBIDDEN_LINK);
+        }
+        Long deletedLinkId = linkId;
+        linkRepository.delete(link);
+        return ApiResponse.success(DELETE_LINK_SUCCESS,
+                DeleteLinkResponse.of(deletedLinkId));
+    }
 }

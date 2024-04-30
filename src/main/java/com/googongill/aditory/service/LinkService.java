@@ -1,17 +1,19 @@
 package com.googongill.aditory.service;
 
 import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.CategoryException;
+import com.googongill.aditory.exception.LinkException;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.external.chatgpt.ChatGptService;
 import com.googongill.aditory.external.chatgpt.dto.AutoCategorizeResult;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.LinkRepository;
 import com.googongill.aditory.repository.UserRepository;
-import com.googongill.aditory.service.dto.link.CreateLinkResult;
+import com.googongill.aditory.service.dto.link.LinkResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
 import static com.googongill.aditory.common.code.CategoryErrorCode.FORBIDDEN_CATEGORY;
+import static com.googongill.aditory.common.code.LinkErrorCode.FORBIDDEN_LINK;
+import static com.googongill.aditory.common.code.LinkErrorCode.LINK_NOT_FOUND;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 
 @Slf4j
@@ -35,7 +39,7 @@ public class LinkService {
     private final CategoryRepository categoryRepository;
     private final ChatGptService chatGptService;
 
-    public CreateLinkResult createLink(CreateLinkRequest createLinkRequest, Long userId) {
+    public LinkResult createLink(CreateLinkRequest createLinkRequest, Long userId) {
         if (createLinkRequest.isAutoComplete()) {
             return getAutoCreateLinkResult(createLinkRequest, userId);
         } else {
@@ -43,7 +47,7 @@ public class LinkService {
         }
     }
 
-    private CreateLinkResult getAutoCreateLinkResult(CreateLinkRequest createLinkRequest, Long userId) {
+    private LinkResult getAutoCreateLinkResult(CreateLinkRequest createLinkRequest, Long userId) {
         // 사용자 카테고리 이름 목록 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
@@ -61,10 +65,10 @@ public class LinkService {
         // 링크 추가 (연관관계 메서드)
         category.addLink(createdLink);
         // 링크 생성 결과
-        return CreateLinkResult.of(createdLink, category);
+        return LinkResult.of(createdLink, category);
     }
 
-    private CreateLinkResult getCreateLinkResult(CreateLinkRequest createLinkRequest, Long userId) {
+    private LinkResult getCreateLinkResult(CreateLinkRequest createLinkRequest, Long userId) {
         // 카테고리 조회
         Category category = categoryRepository.findById(createLinkRequest.getCategoryId())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
@@ -76,6 +80,22 @@ public class LinkService {
         // 링크 추가 (연관관계 메서드)
         category.addLink(createdLink);
         // 링크 생성 결과
-        return CreateLinkResult.of(createdLink, category);
+        return LinkResult.of(createdLink, category);
+    }
+
+    public LinkResult updateLink(Long linkId, UpdateLinkRequest updateLinkRequest, Long userId) {
+        // 링크 조회
+        Link link = linkRepository.findById(linkId)
+                .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
+        if (!link.getCategory().getUser().getId().equals(userId)) {
+            throw new LinkException(FORBIDDEN_LINK);
+        }
+        // 카테고리 조회
+        Category category = categoryRepository.findById(updateLinkRequest.getCategoryId())
+                .orElseThrow(() -> new CategoryException(FORBIDDEN_CATEGORY));
+        // 링크 정보 수정 (연관관계 메서드)
+        link.updateLinkInfo(updateLinkRequest.getTitle(), updateLinkRequest.getSummary(), updateLinkRequest.getUrl(), category);
+        linkRepository.save(link);
+        return LinkResult.of(link, category);
     }
 }
