@@ -30,7 +30,15 @@ public class Link extends BaseEntity {
         this.category = category;
     }
 
+    // 연관관계 메서드
     public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void updateLinkInfo(String title, String summary, String url, Category category) {
+        this.title = title;
+        this.summary = summary;
+        this.url = url;
         this.category = category;
     }
 }
