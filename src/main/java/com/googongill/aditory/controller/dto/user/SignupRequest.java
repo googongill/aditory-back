@@ -24,7 +24,7 @@ public class SignupRequest {
 
     public User toEntity() {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = bCryptPasswordEncoder.encode(password);
-        return new User(username, encodedPassword, Role.ROLE_USER, SocialType.LOCAL, nickname, contact);
+        String encodedPassword = bCryptPasswordEncoder.encode(this.password);
+        return new User(this.username, encodedPassword, Role.ROLE_USER, SocialType.LOCAL, this.nickname, this.contact);
     }
 }
