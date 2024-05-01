@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<ApiResponse<UserTokenResponse>> login(@Valid @ModelAttribute LoginRequest loginRequest) {
+        public ResponseEntity<ApiResponse<UserTokenResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
         return ApiResponse.success(LOGIN_SUCCESS,
                 UserTokenResponse.of(userService.loginUser(loginRequest)));
     }
@@ -62,7 +62,8 @@ public class UserController {
     // ======= Update =======
 
     @PatchMapping("/users")
-    public ResponseEntity<ApiResponse<UpdateUserResponse>> update(@Valid @RequestBody UpdateUserRequest updateUserRequest, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<UpdateUserResponse>> updateUserInfo(@Valid @RequestBody UpdateUserRequest updateUserRequest,
+                                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(UPDATE_USER_SUCCESS,
                 UpdateUserResponse.of(userService.updateUserInfo(updateUserRequest, principalDetails.getUserId())));
     }
