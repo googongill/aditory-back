@@ -23,7 +23,7 @@ public class UserController {
     // ======= Create =======
 
     @PostMapping("/users/signup")
-    public ResponseEntity<ApiResponse<SignResponse>> signup(@Valid @ModelAttribute SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<SignResponse>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         return ApiResponse.success(SIGNUP_SUCCESS,
                 SignResponse.of(userService.createUser(signupRequest)));
     }

@@ -20,10 +20,10 @@ public class CreateLinkRequest {
     private Long categoryId;
 
     public Link toEntity(Category category) {
-        return new Link(title, summary, url, category);
+        return new Link(this.title, this.summary, this.url, category);
     }
 
     public Link toEntity(AutoCategorizeResult autoCategorizeResult, Category category) {
-        return new Link(autoCategorizeResult.getTitle(), autoCategorizeResult.getSummary(), url, category);
+        return new Link(autoCategorizeResult.getTitle(), autoCategorizeResult.getSummary(), this.url, category);
     }
 }

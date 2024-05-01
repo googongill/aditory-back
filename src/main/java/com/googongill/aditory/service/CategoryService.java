@@ -1,6 +1,6 @@
 package com.googongill.aditory.service;
 
-
+import com.googongill.aditory.controller.dto.category.UpdateCategoryRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.CategoryState;
@@ -8,10 +8,10 @@ import com.googongill.aditory.exception.CategoryException;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
-import com.googongill.aditory.service.dto.category.CategoryInfo;
-import com.googongill.aditory.service.dto.category.CategoryListResult;
-import com.googongill.aditory.service.dto.category.CategoryResult;
+import com.googongill.aditory.service.dto.category.*;
 import com.googongill.aditory.service.dto.link.LinkInfo;
+
+import com.googongill.aditory.controller.dto.category.CreateCategoryRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +32,20 @@ public class CategoryService {
 
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+
+    public CreateCategoryResult createCategory(CreateCategoryRequest createCategoryRequest, Long userId) {
+        return getCreateCategoryResult(createCategoryRequest, userId);
+    }
+
+    private CreateCategoryResult getCreateCategoryResult(CreateCategoryRequest createCategoryRequest, Long userId) {
+        //user 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        System.out.printf(createCategoryRequest.toEntity().getCategoryName());
+        Category createdCategory = categoryRepository.save(createCategoryRequest.toEntity());
+        user.addCategory(createdCategory);
+        return CreateCategoryResult.of(createdCategory);
+    }
 
     public CategoryListResult getCategoryList(Long userId) {
         // user 조회
@@ -72,4 +86,19 @@ public class CategoryService {
                 ).collect(Collectors.toList());
         return CategoryResult.of(category, linkInfoList);
     }
+    public UpdateCategoryResult updateCategory(Long categoryId, UpdateCategoryRequest updateCategoryRequest, Long userId) {
+        // 카테고리 조회
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
+        // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
+        if (category.getState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
+            throw new CategoryException(FORBIDDEN_CATEGORY);
+        }
+        category.updateCategoryInfo(updateCategoryRequest.getCategoryName(),updateCategoryRequest.getState());
+        categoryRepository.save(category);
+        return UpdateCategoryResult.of(category);
+
+    }
+
+
 }
