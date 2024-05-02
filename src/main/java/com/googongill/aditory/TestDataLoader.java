@@ -39,13 +39,13 @@ public class TestDataLoader implements CommandLineRunner {
                 "010-1234-5678");
         userRepository.saveAll(Arrays.asList(testUser, testAdmin));
 
-        Category category1 = new Category("뉴스 및 정보", testUser);
-        Category category2 = new Category("엔터테인먼트", testUser);
+        Category category1 = new Category("development", testUser);
+        Category category2 = new Category("information", testUser);
         categoryRepository.saveAll(Arrays.asList(category1, category2));
 
-        Link link1 = new Link("뉴스 1", "뉴스 1에 대한 요약입니다.", "https://www.news1.com", category1);
-        Link link2 = new Link("뉴스 2", "뉴스 2에 대한 요약입니다.", "https://www.news1.com", category1);
-        Link link3 = new Link("엔터테인먼트 2", "엔터테인먼트 2에 대한 요약입니다.", "https://www.entertainment.com", category2);
+        Link link1 = new Link("C++ library", "How to use C++ library's function", "https://www.entertainment.com", category1);
+        Link link2 = new Link("test", "strategy for test", "https://www.test.com", category1);
+        Link link3 = new Link("news", "summary for news", "https://www.news.com", category2);
         linkRepository.saveAll(Arrays.asList(link1, link2, link3));
     }
 }

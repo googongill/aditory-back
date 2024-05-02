@@ -56,8 +56,10 @@ public class ChatGptService {
 
     private static String createMessageContent(String url, List<String> userCategoryNameList) {
         String categories = String.join(", ", userCategoryNameList);
-        String messageContent = url + " 를 한 줄로 요약한 summary 와 어울리는 제목인 title, " +
-                                categories + " 중에서 가장 어울리는 카테고리를 category 라는 이름의 json 으로 반환해줘";
+        String messageContent = url + " summarizing it in one line with a 'summary', a fitting 'title', " +
+                                        "and selecting the most appropriate category among " +
+                                categories + ", returning it as a JSON object named 'category'.";
+        log.info("message= {}", messageContent);
         return messageContent;
     }
 
