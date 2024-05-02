@@ -1,8 +1,6 @@
 package com.googongill.aditory.service;
 
-import com.googongill.aditory.controller.dto.user.LoginRequest;
-import com.googongill.aditory.controller.dto.user.RefreshRequest;
-import com.googongill.aditory.controller.dto.user.SignupRequest;
+import com.googongill.aditory.controller.dto.user.*;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
@@ -10,6 +8,7 @@ import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
+import com.googongill.aditory.service.dto.user.UpdateUserResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import com.googongill.aditory.service.dto.user.SignResult;
 import jakarta.transaction.Transactional;
@@ -109,5 +108,13 @@ public class UserService {
             throw new UserException(TOKEN_NOT_FOUND);
         }
         return dbRefreshToken;
+    }
+
+    public UpdateUserResult updateUserInfo(UpdateUserRequest updateUserRequest, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getContact());
+        userRepository.save(user);
+        return UpdateUserResult.of(user);
     }
 }

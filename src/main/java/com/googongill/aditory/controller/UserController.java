@@ -2,6 +2,9 @@ package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
 import com.googongill.aditory.controller.dto.user.*;
+import com.googongill.aditory.domain.User;
+import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.service.UserService;
 import jakarta.validation.Valid;
@@ -12,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
+import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 
 @Slf4j
 @RestController
@@ -19,6 +23,7 @@ import static com.googongill.aditory.common.code.SuccessCode.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     // ======= Create =======
 
@@ -29,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<ApiResponse<UserTokenResponse>> login(@Valid @ModelAttribute LoginRequest loginRequest) {
+        public ResponseEntity<ApiResponse<UserTokenResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
         return ApiResponse.success(LOGIN_SUCCESS,
                 UserTokenResponse.of(userService.loginUser(loginRequest)));
     }
@@ -54,17 +59,31 @@ public class UserController {
         return "test success!";
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<ApiResponse<UserInfoResponse>> getUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User user = userRepository.findById(principalDetails.getUserId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        return ApiResponse.success(GET_USERINFO_SUCCESS,
+                UserInfoResponse.of(user));
+    }
+
     // ======= Update =======
 
     @PatchMapping("/users")
-    public ResponseEntity<ApiResponse> update() {
-        return null;
+    public ResponseEntity<ApiResponse<UpdateUserResponse>> updateUserInfo(@Valid @RequestBody UpdateUserRequest updateUserRequest,
+                                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(UPDATE_USER_SUCCESS,
+                UpdateUserResponse.of(userService.updateUserInfo(updateUserRequest, principalDetails.getUserId())));
     }
 
     // ======= Delete =======
 
     @DeleteMapping("/users/signout")
-    public ResponseEntity<ApiResponse> signout() {
-        return null;
+    public ResponseEntity<ApiResponse<SignoutResponse>> signout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User user = userRepository.findById(principalDetails.getUserId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        SignoutResponse signoutResponse = SignoutResponse.of(user.getId(), user.getUsername());
+        userRepository.delete(user);
+        return ApiResponse.success(SIGNOUT_SUCCESS, signoutResponse);
     }
 }

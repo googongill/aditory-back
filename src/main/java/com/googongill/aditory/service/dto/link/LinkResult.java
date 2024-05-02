@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class CreateLinkResult {
+public class LinkResult {
     private Long linkId;
     private Long categoryId;
     private LocalDateTime createdAt;
 
-    public static CreateLinkResult of(Link link, Category category) {
-        return CreateLinkResult.builder()
+    public static LinkResult of(Link link, Category category) {
+        return LinkResult.builder()
                 .linkId(link.getId())
                 .categoryId(category.getId())
                 .createdAt(link.getCreatedAt())

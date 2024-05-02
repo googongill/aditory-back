@@ -9,6 +9,7 @@ import lombok.Getter;
 @Builder
 public class UserTokenResult {
     private Long userId;
+    private String username;
     private String nickname;
     private String accessToken;
     private String refreshToken;
@@ -16,6 +17,7 @@ public class UserTokenResult {
     public static UserTokenResult of(User user, JwtResult jwtResult) {
         return UserTokenResult.builder()
                 .userId(user.getId())
+                .username(user.getUsername())
                 .nickname(user.getNickname())
                 .accessToken(jwtResult.getAccessToken())
                 .refreshToken(jwtResult.getRefreshToken())

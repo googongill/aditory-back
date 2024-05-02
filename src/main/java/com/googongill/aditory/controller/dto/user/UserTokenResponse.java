@@ -10,6 +10,7 @@ import lombok.Builder;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class UserTokenResponse {
     private Long userId;
+    private String username;
     private String nickname;
     private String accessToken;
     private String refreshToken;
@@ -17,6 +18,7 @@ public class UserTokenResponse {
     public static UserTokenResponse of(UserTokenResult userTokenResult) {
         return UserTokenResponse.builder()
                 .userId(userTokenResult.getUserId())
+                .username(userTokenResult.getUsername())
                 .nickname(userTokenResult.getNickname())
                 .accessToken(userTokenResult.getAccessToken())
                 .refreshToken(userTokenResult.getRefreshToken())
