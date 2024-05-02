@@ -12,5 +12,4 @@ public class UpdateCategoryRequest {
     private String categoryName;
     private CategoryState state;
     private String asCategoryName;
-
 }

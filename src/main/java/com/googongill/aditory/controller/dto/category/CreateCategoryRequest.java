@@ -1,4 +1,5 @@
 package com.googongill.aditory.controller.dto.category;
+
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,5 @@ public class CreateCategoryRequest {
 
     public Category toEntity(User user) {
         return new Category(this.categoryName, user);
-
     }
 }

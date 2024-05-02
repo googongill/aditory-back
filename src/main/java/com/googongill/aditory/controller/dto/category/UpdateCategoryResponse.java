@@ -2,7 +2,6 @@ package com.googongill.aditory.controller.dto.category;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.enums.CategoryState;
 import com.googongill.aditory.service.dto.category.UpdateCategoryResult;
 import lombok.Builder;
@@ -29,6 +28,5 @@ public class UpdateCategoryResponse {
                 .createdAt(updateCategoryResult.getCreatedAt())
                 .lastModifiedAt(updateCategoryResult.getLastModifiedAt())
                 .build();
-
     }
 }

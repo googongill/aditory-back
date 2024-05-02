@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +22,6 @@ public class Category extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CategoryState state;
     private Integer viewCount;
-
-    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -46,7 +42,6 @@ public class Category extends BaseEntity {
         this.viewCount = 0;
         this.state = CategoryState.PRIVATE;
         this.user = user;
-        this.createdAt = LocalDateTime.now();
     }
 
     // 연관관계 메서드

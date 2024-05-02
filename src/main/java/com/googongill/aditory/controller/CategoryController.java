@@ -49,31 +49,34 @@ public class CategoryController {
     }
 
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable Long categoryId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable Long categoryId,
+                                                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
                 CategoryResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
 
     // ======= Update =======
+
     @PatchMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<UpdateCategoryResponse>> updateCategory(@PathVariable Long categoryId, @RequestBody UpdateCategoryRequest updateCategoryRequest,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(UPDATE_CATEGORY_SUCCESS,
                 UpdateCategoryResponse.of(categoryService.updateCategory(categoryId, updateCategoryRequest, principalDetails.getUserId())));
     }
+
     // ======= Delete =======
+
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<DeleteCategoryResponse>> deleteCategory(@PathVariable Long categoryId,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        if(!category.getUser().getId().equals(principalDetails.getUserId())) {
+        if (!category.getUser().getId().equals(principalDetails.getUserId())) {
             throw new CategoryException(FORBIDDEN_CATEGORY);
         }
         categoryRepository.delete(category);
         return ApiResponse.success(DELETE_CATEGORY_SUCCESS,
                 DeleteCategoryResponse.of(categoryId));
     }
-
 
 }

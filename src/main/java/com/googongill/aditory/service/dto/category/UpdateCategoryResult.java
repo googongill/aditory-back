@@ -16,6 +16,7 @@ public class UpdateCategoryResult {
     private CategoryState state;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
+
     public static UpdateCategoryResult of(Category category) {
         return UpdateCategoryResult.builder()
                 .categoryId(category.getId())

@@ -63,7 +63,6 @@ public class LinkController {
                 LinkResponse.of(linkService.updateLink(linkId, updateLinkRequest, principalDetails.getUserId())));
     }
 
-
     // ======= Delete =======
 
     @DeleteMapping("/links/{linkId}")
@@ -71,7 +70,7 @@ public class LinkController {
                                                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
-        if(!link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
+        if (!link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(FORBIDDEN_LINK);
         }
         Long deletedLinkId = linkId;
@@ -79,4 +78,5 @@ public class LinkController {
         return ApiResponse.success(DELETE_LINK_SUCCESS,
                 DeleteLinkResponse.of(deletedLinkId));
     }
+
 }

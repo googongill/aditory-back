@@ -2,12 +2,9 @@ package com.googongill.aditory.controller.dto.category;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.enums.CategoryState;
-import com.googongill.aditory.service.dto.category.CategoryListResult;
 import com.googongill.aditory.service.dto.category.CreateCategoryResult;
 import lombok.Builder;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +17,7 @@ public class CreateCategoryResponse {
     private CategoryState state;
     private LocalDateTime createdAt;
 
-    public static CreateCategoryResponse of (CreateCategoryResult createCategoryResult) {
+    public static CreateCategoryResponse of(CreateCategoryResult createCategoryResult) {
         return CreateCategoryResponse.builder()
                 .categoryId(createCategoryResult.getCategoryId())
                 .categoryName(createCategoryResult.getCategoryName())

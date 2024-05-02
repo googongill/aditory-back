@@ -30,12 +30,12 @@ public class TestDataLoader implements CommandLineRunner {
         User testUser = new User("testuser",
                 bCryptPasswordEncoder.encode("testuserpw"),
                 Role.ROLE_USER, SocialType.LOCAL,
-                "테스트 유저",
+                "tester nickname",
                 "010-1234-5678");
         User testAdmin = new User("testAdmin",
                 bCryptPasswordEncoder.encode("testadminpw"),
                 Role.ROLE_ADMIN, SocialType.LOCAL,
-                "테스트 어드민",
+                "test admin nickname",
                 "010-1234-5678");
         userRepository.saveAll(Arrays.asList(testUser, testAdmin));
 
