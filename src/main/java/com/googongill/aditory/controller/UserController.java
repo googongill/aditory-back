@@ -59,6 +59,14 @@ public class UserController {
         return "test success!";
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<ApiResponse<UserInfoResponse>> getUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User user = userRepository.findById(principalDetails.getUserId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        return ApiResponse.success(GET_USERINFO_SUCCESS,
+                UserInfoResponse.of(user));
+    }
+
     // ======= Update =======
 
     @PatchMapping("/users")
