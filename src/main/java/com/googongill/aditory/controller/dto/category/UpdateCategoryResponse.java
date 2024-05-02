@@ -32,19 +32,3 @@ public class UpdateCategoryResponse {
 
     }
 }
-
-
-/*Response Body
-{
-		"httpStatus": 200,
-		"message": "카테고리 수정에 성공했습니다.",
-		"success": true,
-		"data": {
-				"categoryId": 1,
-				"categoryName": "새로운 개발",
-				"adCategoryName": "공유시 카테고리 이름",
-				"state": "PUBLIC",
-				"createdAt": "2024-04-15T10:00:00Z",
-				"lastModifiedAt": "2024-04-15T12:00:00Z"
-		}
-}*/

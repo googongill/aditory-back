@@ -19,8 +19,7 @@ public class CreateCategoryResult {
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
                 .state(category.getState())
+                .createdAt(category.getCreatedAt())
                 .build();
     }
-
-
 }

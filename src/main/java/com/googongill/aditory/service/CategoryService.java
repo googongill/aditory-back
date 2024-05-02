@@ -41,8 +41,8 @@ public class CategoryService {
         //user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        System.out.printf(createCategoryRequest.toEntity().getCategoryName());
-        Category createdCategory = categoryRepository.save(createCategoryRequest.toEntity());
+        //category 생성
+        Category createdCategory = categoryRepository.save(createCategoryRequest.toEntity(user));
         user.addCategory(createdCategory);
         return CreateCategoryResult.of(createdCategory);
     }
@@ -97,8 +97,5 @@ public class CategoryService {
         category.updateCategoryInfo(updateCategoryRequest.getCategoryName(),updateCategoryRequest.getAsCategoryName(),updateCategoryRequest.getState());
         categoryRepository.save(category);
         return UpdateCategoryResult.of(category);
-
     }
-
-
 }

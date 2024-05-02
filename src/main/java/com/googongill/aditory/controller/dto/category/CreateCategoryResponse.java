@@ -25,9 +25,7 @@ public class CreateCategoryResponse {
                 .categoryId(createCategoryResult.getCategoryId())
                 .categoryName(createCategoryResult.getCategoryName())
                 .state(createCategoryResult.getState())
+                .createdAt(createCategoryResult.getCreatedAt())
                 .build();
     }
 }
-
-
-

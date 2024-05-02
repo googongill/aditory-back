@@ -14,11 +14,3 @@ public class UpdateCategoryRequest {
     private String asCategoryName;
 
 }
-
-/*Request Body
-{
-		"categoryName": "새로운 개발",
-		"state": "PUBLIC",
-		"asCategoryName": "공유시 카테고리 이름"
-		공유시 카테고리 이름?
-}*/
