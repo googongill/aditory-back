@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class UpdateCategoryResult {
     private Long categoryId;
     private String categoryName;
-    //private String asCategoryName;
+    private String asCategoryName;
     private CategoryState state;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
@@ -20,6 +20,7 @@ public class UpdateCategoryResult {
         return UpdateCategoryResult.builder()
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
+                .asCategoryName(category.getAsCategoryName())
                 .state(category.getState())
                 .createdAt(category.getCreatedAt())
                 .lastModifiedAt(category.getLastModifiedAt())

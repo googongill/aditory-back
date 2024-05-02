@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class UpdateCategoryResponse {
     private Long categoryId;
     private String categoryName;
-    //private String asCategoryName;
+    private String asCategoryName;
     private CategoryState state;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
@@ -24,6 +24,7 @@ public class UpdateCategoryResponse {
         return UpdateCategoryResponse.builder()
                 .categoryId(updateCategoryResult.getCategoryId())
                 .categoryName(updateCategoryResult.getCategoryName())
+                .asCategoryName(updateCategoryResult.getAsCategoryName())
                 .state(updateCategoryResult.getState())
                 .createdAt(updateCategoryResult.getCreatedAt())
                 .lastModifiedAt(updateCategoryResult.getLastModifiedAt())

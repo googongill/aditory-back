@@ -18,6 +18,7 @@ public class Category extends BaseEntity {
     private Long id;
 
     private String categoryName;
+    private String asCategoryName;
     @Enumerated(EnumType.STRING)
     private CategoryState state;
     private Integer viewCount;
@@ -52,8 +53,9 @@ public class Category extends BaseEntity {
         this.links.add(link);
         link.setCategory(this);
     }
-    public void updateCategoryInfo(String categoryName, CategoryState state) {
+    public void updateCategoryInfo(String categoryName, String asCategoryName, CategoryState state) {
         this.categoryName = categoryName;
+        this.asCategoryName = asCategoryName;
         this.state = state;
     }
 }

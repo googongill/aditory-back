@@ -94,7 +94,7 @@ public class CategoryService {
         if (category.getState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
             throw new CategoryException(FORBIDDEN_CATEGORY);
         }
-        category.updateCategoryInfo(updateCategoryRequest.getCategoryName(),updateCategoryRequest.getState());
+        category.updateCategoryInfo(updateCategoryRequest.getCategoryName(),updateCategoryRequest.getAsCategoryName(),updateCategoryRequest.getState());
         categoryRepository.save(category);
         return UpdateCategoryResult.of(category);
 
