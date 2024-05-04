@@ -22,12 +22,17 @@ public class Link extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Link(String title, String summary, String url, Category category) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Link(String title, String summary, String url, Category category, User user) {
         this.title = title;
         this.summary = summary;
         this.url = url;
         this.linkState = false;
         this.category = category;
+        this.user = user;
     }
 
     // 연관관계 메서드
@@ -40,5 +45,13 @@ public class Link extends BaseEntity {
         this.summary = summary;
         this.url = url;
         this.category = category;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void updateLinkState() {
+        this.linkState = true;
     }
 }

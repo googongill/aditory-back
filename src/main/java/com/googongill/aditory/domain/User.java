@@ -36,6 +36,9 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Link> links = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profile_image_id")
     private ProfileImage profileImage;
@@ -68,6 +71,11 @@ public class User extends BaseTimeEntity {
             this.categories.add(category);
             category.setUser(this);
         }
+    }
+
+    public void addLink(Link link) {
+        this.links.add(link);
+        link.setUser(this);
     }
 
     public void saveRefreshToken(String refreshToken) {
