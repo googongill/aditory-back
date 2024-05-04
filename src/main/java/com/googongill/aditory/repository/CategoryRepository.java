@@ -1,9 +1,11 @@
 package com.googongill.aditory.repository;
 
 import com.googongill.aditory.domain.Category;
+import com.googongill.aditory.domain.enums.CategoryState;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
@@ -12,4 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findById(Long id);
 
     Optional<Category> findByCategoryName(String categoryName);
+
+    Collection<Object> findAllByCategoryState(CategoryState categoryState);
 }

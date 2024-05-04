@@ -28,6 +28,7 @@ public enum SuccessCode {
     // Category
     GET_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "카테고리 목록 조회에 성공했습니다."),
     GET_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 조회에 성공했습니다."),
+    GET_CATEGORY_PUBLIC_LIST_SUCCESS(HttpStatus.OK, "공개 카테고리 목록 조회에 성공했습니다."),
     UPDATE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 수정에 성공했습니다."),
     DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다."),
     // CategoryLike
@@ -42,9 +43,7 @@ public enum SuccessCode {
     // Link
     SAVE_LINK_SUCCESS(HttpStatus.CREATED, "링크 저장에 성공했습니다."),
     // Category
-    SAVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 저장에 성공했습니다."),
-
-    ;
+    SAVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 저장에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

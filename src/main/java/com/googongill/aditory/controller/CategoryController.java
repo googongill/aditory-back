@@ -54,6 +54,11 @@ public class CategoryController {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
                 CategoryResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
+    @GetMapping("/categories/public")
+    public ResponseEntity<ApiResponse<CategoryPublicListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(GET_CATEGORY_PUBLIC_LIST_SUCCESS,
+                CategoryPublicListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
+    }
 
     // ======= Update =======
 

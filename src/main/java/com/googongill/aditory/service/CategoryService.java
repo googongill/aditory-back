@@ -64,6 +64,26 @@ public class CategoryService {
                 .collect(Collectors.toList());
         return CategoryListResult.of(categoryInfoList);
     }
+    public CategoryPublicListResult getPublicCategoryList(Long userId) {
+        // user 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
+        List<CategoryInfo> categoryPublicInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
+                .map(object -> {
+                    Category category = (Category) object;
+                    return CategoryInfo.builder()
+                            .categoryId(category.getId())
+                            .categoryName(category.getCategoryName())
+                            .linkCount(category.getLinks().size())
+                            .categoryState(category.getCategoryState())
+                            .createdAt(category.getCreatedAt())
+                            .lastModifiedAt(category.getLastModifiedAt())
+                            .build();
+                })
+                .collect(Collectors.toList());
+        return CategoryPublicListResult.of(categoryPublicInfoList);
+    }
 
     public CategoryResult getCategory(Long categoryId, Long userId) {
         // 카테고리 조회
@@ -98,4 +118,6 @@ public class CategoryService {
         categoryRepository.save(category);
         return UpdateCategoryResult.of(category);
     }
+
+
 }
