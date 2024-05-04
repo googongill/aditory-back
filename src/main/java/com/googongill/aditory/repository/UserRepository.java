@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @EntityGraph(attributePaths = "categories")
+    @EntityGraph(attributePaths = {"categories", "links"})
     Optional<User> findById(Long id);
 
     Optional<User> findByUsername(String username);

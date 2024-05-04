@@ -13,7 +13,9 @@ import com.googongill.aditory.external.chatgpt.dto.AutoCategorizeResult;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.LinkRepository;
 import com.googongill.aditory.repository.UserRepository;
+import com.googongill.aditory.service.dto.link.LinkInfo;
 import com.googongill.aditory.service.dto.link.LinkResult;
+import com.googongill.aditory.service.dto.link.ReminderResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,14 +63,18 @@ public class LinkService {
         Category category = categoryRepository.findByCategoryName(autoCategorizeResult.getCategoryName())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         // 링크 생성
-        Link createdLink = linkRepository.save(createLinkRequest.toEntity(autoCategorizeResult, category));
+        Link createdLink = linkRepository.save(createLinkRequest.toEntity(autoCategorizeResult, category, user));
         // 링크 추가 (연관관계 메서드)
         category.addLink(createdLink);
+        user.addLink(createdLink);
         // 링크 생성 결과
         return LinkResult.of(createdLink, category);
     }
 
     private LinkResult getCreateLinkResult(CreateLinkRequest createLinkRequest, Long userId) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 카테고리 조회
         Category category = categoryRepository.findById(createLinkRequest.getCategoryId())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
@@ -76,9 +82,10 @@ public class LinkService {
             throw new CategoryException(FORBIDDEN_CATEGORY);
         }
         // 링크 생성
-        Link createdLink = linkRepository.save(createLinkRequest.toEntity(category));
+        Link createdLink = linkRepository.save(createLinkRequest.toEntity(category, user));
         // 링크 추가 (연관관계 메서드)
         category.addLink(createdLink);
+        user.addLink(createdLink);
         // 링크 생성 결과
         return LinkResult.of(createdLink, category);
     }
@@ -97,5 +104,24 @@ public class LinkService {
         link.updateLinkInfo(updateLinkRequest.getTitle(), updateLinkRequest.getSummary(), updateLinkRequest.getUrl(), category);
         linkRepository.save(link);
         return LinkResult.of(link, category);
+    }
+
+    public ReminderResult getReminder(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        List<Link> oldestLinks = linkRepository.findTop10ByUserAndLinkStateOrderByCreatedAtAsc(user, false);
+
+        List<LinkInfo> linkInfoList = oldestLinks.stream()
+                .map(link -> LinkInfo.builder()
+                        .linkId(link.getId())
+                        .title(link.getTitle())
+                        .summary(link.getSummary())
+                        .linkState(link.getLinkState())
+                        .createdAt(link.getCreatedAt())
+                        .lastModifiedAt(link.getLastModifiedAt())
+                        .build()
+                )
+                .collect(Collectors.toList());
+        return ReminderResult.of(linkInfoList);
     }
 }

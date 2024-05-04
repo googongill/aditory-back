@@ -49,9 +49,18 @@ public class LinkController {
             !link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(FORBIDDEN_LINK);
         }
+        // link 읽음 상태 true 로
+        link.updateLinkState();
+        linkRepository.save(link);
         // link 반환
         return ApiResponse.success(GET_LINK_SUCCESS,
                 LinkDetailResponse.of(link));
+    }
+
+    @GetMapping("/links/reminder")
+    public ResponseEntity<ApiResponse<ReminderResponse>> getReminder(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(GET_REMINDER_SUCCESS,
+                ReminderResponse.of(linkService.getReminder(principalDetails.getUserId())));
     }
 
     // ======= Update =======

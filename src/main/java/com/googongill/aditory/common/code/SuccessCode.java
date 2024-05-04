@@ -21,6 +21,7 @@ public enum SuccessCode {
     SIGNOUT_SUCCESS(HttpStatus.OK, "회원 탈퇴에 성공했습니다."),
     // Link
     GET_LINK_SUCCESS(HttpStatus.OK, "링크 조회에 성공했습니다."),
+    GET_REMINDER_SUCCESS(HttpStatus.OK, "링크 리마인더 조회에 성공했습니다."),
     UPDATE_LINK_SUCCESS(HttpStatus.OK, "링크 수정에 성공했습니다."),
     DELETE_LINK_SUCCESS(HttpStatus.OK, "링크 삭제에 성공했습니다."),
     UPDATE_LINK_STATUS_SUCCESS(HttpStatus.OK, "링크 읽음 처리에 성공했습니다"),
