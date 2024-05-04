@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 public class CreateCategoryResult {
     private Long categoryId;
     private String categoryName;
-    private CategoryState state;
+    private CategoryState categoryState;
     private LocalDateTime createdAt;
 
     public static CreateCategoryResult of(Category category) {
         return CreateCategoryResult.builder()
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
-                .state(category.getState())
+                .categoryState(category.getCategoryState())
                 .createdAt(category.getCreatedAt())
                 .build();
     }

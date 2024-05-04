@@ -57,7 +57,7 @@ public class CategoryService {
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
                         .linkCount(category.getLinks().size())
-                        .state(category.getState())
+                        .categoryState(category.getCategoryState())
                         .createdAt(category.getCreatedAt())
                         .lastModifiedAt(category.getLastModifiedAt())
                         .build())
@@ -70,7 +70,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
-        if (category.getState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
+        if (category.getCategoryState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
             throw new CategoryException(FORBIDDEN_CATEGORY);
         }
         // 조회한 category 의 링크 목록 조회하며 각 링크별 정보 입력
@@ -79,7 +79,7 @@ public class CategoryService {
                         .linkId(link.getId())
                         .title(link.getTitle())
                         .summary(link.getSummary())
-                        .status(link.getStatus())
+                        .linkState(link.getLinkState())
                         .createdAt(link.getCreatedAt())
                         .lastModifiedAt(link.getLastModifiedAt())
                         .build()
@@ -91,10 +91,10 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
-        if (category.getState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
+        if (category.getCategoryState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
             throw new CategoryException(FORBIDDEN_CATEGORY);
         }
-        category.updateCategoryInfo(updateCategoryRequest.getCategoryName(),updateCategoryRequest.getAsCategoryName(),updateCategoryRequest.getState());
+        category.updateCategoryInfo(updateCategoryRequest.getCategoryName(),updateCategoryRequest.getAsCategoryName(),updateCategoryRequest.getCategoryState());
         categoryRepository.save(category);
         return UpdateCategoryResult.of(category);
     }

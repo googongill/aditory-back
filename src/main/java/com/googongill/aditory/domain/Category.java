@@ -20,7 +20,7 @@ public class Category extends BaseEntity {
     private String categoryName;
     private String asCategoryName;
     @Enumerated(EnumType.STRING)
-    private CategoryState state;
+    private CategoryState categoryState;
     private Integer viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,7 +40,7 @@ public class Category extends BaseEntity {
     public Category(String categoryName, User user) {
         this.categoryName = categoryName;
         this.viewCount = 0;
-        this.state = CategoryState.PRIVATE;
+        this.categoryState = CategoryState.PRIVATE;
         this.user = user;
     }
 
@@ -54,9 +54,9 @@ public class Category extends BaseEntity {
         link.setCategory(this);
     }
 
-    public void updateCategoryInfo(String categoryName, String asCategoryName, CategoryState state) {
+    public void updateCategoryInfo(String categoryName, String asCategoryName, CategoryState categoryState) {
         this.categoryName = categoryName;
         this.asCategoryName = asCategoryName;
-        this.state = state;
+        this.categoryState = categoryState;
     }
 }

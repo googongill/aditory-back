@@ -12,7 +12,7 @@ public class CategoryInfo {
     private Long categoryId;
     private String categoryName;
     private Integer linkCount;
-    private CategoryState state;
+    private CategoryState categoryState;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 }

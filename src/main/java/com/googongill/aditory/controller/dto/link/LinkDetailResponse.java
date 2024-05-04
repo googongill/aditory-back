@@ -14,7 +14,7 @@ public class LinkDetailResponse {
     private Long linkId;
     private String title;
     private String summary;
-    private Boolean status;
+    private Boolean linkState;
     private String url;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
@@ -24,7 +24,7 @@ public class LinkDetailResponse {
                 .linkId(link.getId())
                 .title(link.getTitle())
                 .summary(link.getSummary())
-                .status(link.getStatus())
+                .linkState(link.getLinkState())
                 .url(link.getUrl())
                 .createdAt(link.getCreatedAt())
                 .lastModifiedAt(link.getLastModifiedAt())

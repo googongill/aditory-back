@@ -45,7 +45,7 @@ public class LinkController {
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
         // link 가 소속된 category 의 state 가 private 인데 category 의 소유주가 아닌 user 가 접근하는 경우
-        if (link.getCategory().getState().equals(CategoryState.PRIVATE) &&
+        if (link.getCategory().getCategoryState().equals(CategoryState.PRIVATE) &&
             !link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(FORBIDDEN_LINK);
         }

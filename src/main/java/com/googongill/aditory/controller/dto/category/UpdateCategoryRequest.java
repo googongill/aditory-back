@@ -10,6 +10,6 @@ import lombok.Data;
 public class UpdateCategoryRequest {
     @NotNull
     private String categoryName;
-    private CategoryState state;
+    private CategoryState categoryState;
     private String asCategoryName;
 }

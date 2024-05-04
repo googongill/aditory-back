@@ -16,7 +16,7 @@ public class Link extends BaseEntity {
     private String title;
     private String summary;
     private String url;
-    private Boolean status;
+    private Boolean linkState;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -26,7 +26,7 @@ public class Link extends BaseEntity {
         this.title = title;
         this.summary = summary;
         this.url = url;
-        this.status = false;
+        this.linkState = false;
         this.category = category;
     }
 

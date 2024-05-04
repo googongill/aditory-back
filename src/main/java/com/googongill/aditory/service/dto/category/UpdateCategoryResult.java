@@ -13,7 +13,7 @@ public class UpdateCategoryResult {
     private Long categoryId;
     private String categoryName;
     private String asCategoryName;
-    private CategoryState state;
+    private CategoryState categoryState;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 
@@ -22,7 +22,7 @@ public class UpdateCategoryResult {
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
                 .asCategoryName(category.getAsCategoryName())
-                .state(category.getState())
+                .categoryState(category.getCategoryState())
                 .createdAt(category.getCreatedAt())
                 .lastModifiedAt(category.getLastModifiedAt())
                 .build();

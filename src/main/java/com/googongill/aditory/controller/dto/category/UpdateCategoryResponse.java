@@ -15,7 +15,7 @@ public class UpdateCategoryResponse {
     private Long categoryId;
     private String categoryName;
     private String asCategoryName;
-    private CategoryState state;
+    private CategoryState categoryState;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 
@@ -24,7 +24,7 @@ public class UpdateCategoryResponse {
                 .categoryId(updateCategoryResult.getCategoryId())
                 .categoryName(updateCategoryResult.getCategoryName())
                 .asCategoryName(updateCategoryResult.getAsCategoryName())
-                .state(updateCategoryResult.getState())
+                .categoryState(updateCategoryResult.getCategoryState())
                 .createdAt(updateCategoryResult.getCreatedAt())
                 .lastModifiedAt(updateCategoryResult.getLastModifiedAt())
                 .build();

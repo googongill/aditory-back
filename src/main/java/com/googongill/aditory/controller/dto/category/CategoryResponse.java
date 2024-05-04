@@ -17,7 +17,7 @@ public class CategoryResponse {
     private Long categoryId;
     private String categoryName;
     private Integer linkCount;
-    private CategoryState state;
+    private CategoryState categoryState;
     private List<LinkInfo> linkList = new ArrayList<>();
 
     public static CategoryResponse of(CategoryResult categoryResult) {
@@ -25,7 +25,7 @@ public class CategoryResponse {
                 .categoryId(categoryResult.getCategoryId())
                 .categoryName(categoryResult.getCategoryName())
                 .linkCount(categoryResult.getLinkCount())
-                .state(categoryResult.getState())
+                .categoryState(categoryResult.getCategoryState())
                 .linkList(categoryResult.getLinkList())
                 .build();
     }

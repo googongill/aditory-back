@@ -16,7 +16,7 @@ public class CategoryResult {
     private Long categoryId;
     private String categoryName;
     private Integer linkCount;
-    private CategoryState state;
+    private CategoryState categoryState;
     private List<LinkInfo> linkList = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
@@ -26,7 +26,7 @@ public class CategoryResult {
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
                 .linkCount(category.getLinks().size())
-                .state(category.getState())
+                .categoryState(category.getCategoryState())
                 .linkList(linkList)
                 .createdAt(category.getCreatedAt())
                 .lastModifiedAt(category.getLastModifiedAt())
