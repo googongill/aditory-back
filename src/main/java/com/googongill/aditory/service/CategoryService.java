@@ -69,18 +69,16 @@ public class CategoryService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
-        List<CategoryInfo> categoryPublicInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
-                .map(object -> {
-                    Category category = (Category) object;
-                    return CategoryInfo.builder()
+        List<CategoryPublicInfo> categoryPublicInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
+                .map(category -> CategoryPublicInfo.builder()
                             .categoryId(category.getId())
                             .categoryName(category.getCategoryName())
+                            .asCategoryName(category.getAsCategoryName())
                             .linkCount(category.getLinks().size())
                             .categoryState(category.getCategoryState())
                             .createdAt(category.getCreatedAt())
                             .lastModifiedAt(category.getLastModifiedAt())
-                            .build();
-                })
+                            .build())
                 .collect(Collectors.toList());
         return CategoryPublicListResult.of(categoryPublicInfoList);
     }

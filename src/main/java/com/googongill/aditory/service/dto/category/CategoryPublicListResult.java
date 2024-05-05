@@ -8,9 +8,9 @@ import java.util.List;
 @Getter
 @Builder
 public class CategoryPublicListResult {
-    List<CategoryInfo> categoryPublicList = new ArrayList<>();
+    List<CategoryPublicInfo> categoryPublicList = new ArrayList<>();
 
-    public static CategoryPublicListResult of(List<CategoryInfo> categoryPublicList) {
+    public static CategoryPublicListResult of(List<CategoryPublicInfo> categoryPublicList) {
         return CategoryPublicListResult.builder()
                 .categoryPublicList(categoryPublicList)
                 .build();
