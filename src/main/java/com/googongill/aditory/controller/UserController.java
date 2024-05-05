@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
@@ -28,9 +29,9 @@ public class UserController {
     // ======= Create =======
 
     @PostMapping("/users/signup")
-    public ResponseEntity<ApiResponse<SignResponse>> signup(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<SignupResponse>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         return ApiResponse.success(SIGNUP_SUCCESS,
-                SignResponse.of(userService.createUser(signupRequest)));
+                SignupResponse.of(userService.createUser(signupRequest)));
     }
 
     @PostMapping("/users/login")
@@ -42,7 +43,7 @@ public class UserController {
     @PostMapping("/users/logout")
     public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken,
                                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        userService.logoutUser(principalDetails.getUsername(), accessToken);
+        userService.logoutUser(accessToken, principalDetails.getUsername());
         return ApiResponse.success(LOGOUT_SUCCESS);
     }
 
@@ -50,6 +51,13 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserTokenResponse>> refresh(@Valid @RequestBody RefreshRequest refreshRequest) {
         return ApiResponse.success(REFRESH_SUCCESS,
                 UserTokenResponse.of(userService.refreshUser(refreshRequest)));
+    }
+
+    @PostMapping("/users/profile-image")
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> editProfileImage(@RequestParam MultipartFile multipartFile,
+                                                                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(UPDATE_PROFILEIMAGE_SUCCESS,
+                ProfileImageResponse.of(userService.updateProfileImage(multipartFile, principalDetails.getUserId())));
     }
 
     // ======== Read ========

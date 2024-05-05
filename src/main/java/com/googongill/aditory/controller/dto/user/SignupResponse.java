@@ -11,13 +11,13 @@ import java.util.List;
 @Builder
 @JsonSerialize
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class SignResponse {
+public class SignupResponse {
     private Long userId;
     private String nickname;
     private List<CategoryIdAndName> userCategories;
 
-    public static SignResponse of(SignResult signResult) {
-        return SignResponse.builder()
+    public static SignupResponse of(SignResult signResult) {
+        return SignupResponse.builder()
                 .userId(signResult.getUserId())
                 .nickname(signResult.getNickname())
                 .userCategories(signResult.getUserCategories())

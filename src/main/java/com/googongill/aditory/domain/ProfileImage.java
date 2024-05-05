@@ -20,4 +20,9 @@ public class ProfileImage extends BaseTimeEntity {
         this.originalName = originalName;
         this.uploadedName = uploadedName;
     }
+
+    public void updateProfileImage(ProfileImage profileImage) {
+        this.originalName = profileImage.getOriginalName();
+        this.uploadedName = profileImage.getUploadedName();
+    }
 }
