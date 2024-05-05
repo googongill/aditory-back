@@ -4,6 +4,8 @@ import com.googongill.aditory.common.ApiResponse;
 import com.googongill.aditory.controller.dto.user.*;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.external.s3.AWSS3Service;
+import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.service.UserService;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
@@ -24,13 +27,14 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final AWSS3Service awss3Service;
 
     // ======= Create =======
 
     @PostMapping("/users/signup")
-    public ResponseEntity<ApiResponse<SignResponse>> signup(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<ApiResponse<SignupResponse>> signup(@Valid @RequestBody SignupRequest signupRequest) {
         return ApiResponse.success(SIGNUP_SUCCESS,
-                SignResponse.of(userService.createUser(signupRequest)));
+                SignupResponse.of(userService.createUser(signupRequest)));
     }
 
     @PostMapping("/users/login")
@@ -42,7 +46,7 @@ public class UserController {
     @PostMapping("/users/logout")
     public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken,
                                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        userService.logoutUser(principalDetails.getUsername(), accessToken);
+        userService.logoutUser(accessToken, principalDetails.getUsername());
         return ApiResponse.success(LOGOUT_SUCCESS);
     }
 
@@ -50,6 +54,13 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserTokenResponse>> refresh(@Valid @RequestBody RefreshRequest refreshRequest) {
         return ApiResponse.success(REFRESH_SUCCESS,
                 UserTokenResponse.of(userService.refreshUser(refreshRequest)));
+    }
+
+    @PostMapping("/users/profile-image")
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> editProfileImage(@RequestParam MultipartFile multipartFile,
+                                                                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(UPDATE_PROFILE_IMAGE_SUCCESS,
+                ProfileImageResponse.of(userService.updateProfileImage(multipartFile, principalDetails.getUserId())));
     }
 
     // ======== Read ========
@@ -65,6 +76,14 @@ public class UserController {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         return ApiResponse.success(GET_USERINFO_SUCCESS,
                 UserInfoResponse.of(user));
+    }
+
+    @GetMapping("/users/profile-image")
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> getProfileImage(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User user = userRepository.findById(principalDetails.getUserId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        return ApiResponse.success(GET_PROFILE_IMAGE_SUCCESS,
+                ProfileImageResponse.of(user, awss3Service.downloadOne(user.getProfileImage())));
     }
 
     // ======= Update =======

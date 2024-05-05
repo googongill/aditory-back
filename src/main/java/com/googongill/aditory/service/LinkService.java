@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
-import static com.googongill.aditory.common.code.CategoryErrorCode.FORBIDDEN_CATEGORY;
-import static com.googongill.aditory.common.code.LinkErrorCode.FORBIDDEN_LINK;
+import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
+import static com.googongill.aditory.common.code.LinkErrorCode.LINK_FORBIDDEN;
 import static com.googongill.aditory.common.code.LinkErrorCode.LINK_NOT_FOUND;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 
@@ -79,7 +79,7 @@ public class LinkService {
         Category category = categoryRepository.findById(createLinkRequest.getCategoryId())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         if (!category.getUser().getId().equals(userId)) {
-            throw new CategoryException(FORBIDDEN_CATEGORY);
+            throw new CategoryException(CATEGORY_FORBIDDEN);
         }
         // 링크 생성
         Link createdLink = linkRepository.save(createLinkRequest.toEntity(category, user));
@@ -95,11 +95,11 @@ public class LinkService {
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
         if (!link.getCategory().getUser().getId().equals(userId)) {
-            throw new LinkException(FORBIDDEN_LINK);
+            throw new LinkException(LINK_FORBIDDEN);
         }
         // 카테고리 조회
         Category category = categoryRepository.findById(updateLinkRequest.getCategoryId())
-                .orElseThrow(() -> new CategoryException(FORBIDDEN_CATEGORY));
+                .orElseThrow(() -> new CategoryException(CATEGORY_FORBIDDEN));
         // 링크 정보 수정 (연관관계 메서드)
         link.updateLinkInfo(updateLinkRequest.getTitle(), updateLinkRequest.getSummary(), updateLinkRequest.getUrl(), category);
         linkRepository.save(link);

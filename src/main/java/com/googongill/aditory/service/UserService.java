@@ -2,20 +2,22 @@ package com.googongill.aditory.service;
 
 import com.googongill.aditory.controller.dto.user.*;
 import com.googongill.aditory.domain.Category;
+import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.external.s3.AWSS3Service;
+import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
-import com.googongill.aditory.service.dto.user.UpdateUserResult;
-import com.googongill.aditory.service.dto.user.UserTokenResult;
-import com.googongill.aditory.service.dto.user.SignResult;
+import com.googongill.aditory.service.dto.user.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AWSS3Service awss3Service;
 
     public SignResult createUser(SignupRequest signupRequest) {
         // 이미 존재하는 username 존재하는지 확인
@@ -59,7 +62,7 @@ public class UserService {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 비밀번호 일치 확인
         if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new UserException(INVALID_PASSWORD);
+            throw new UserException(PASSWORD_INVALID);
         }
         // 토큰 발급
         JwtResult jwtResult = TokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
@@ -71,7 +74,7 @@ public class UserService {
         return UserTokenResult.of(user, jwtResult);
     }
 
-    public void logoutUser(String username, String accessToken) {
+    public void logoutUser(String accessToken, String username) {
         // username 확인
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
@@ -116,5 +119,22 @@ public class UserService {
         user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getContact());
         userRepository.save(user);
         return UpdateUserResult.of(user);
+    }
+
+    public ProfileImageResult updateProfileImage(MultipartFile multipartFile, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        if (user.getProfileImage() != null) {
+            awss3Service.deleteOne(user.getProfileImage().getUploadedName());
+        }
+
+        ProfileImage profileImage = awss3Service.uploadOne(multipartFile);
+        user.changeProfileImage(profileImage);
+        userRepository.save(user);
+
+        S3DownloadResult s3DownloadResult = awss3Service.downloadOne(profileImage);
+
+        return ProfileImageResult.of(user, s3DownloadResult);
     }
 }

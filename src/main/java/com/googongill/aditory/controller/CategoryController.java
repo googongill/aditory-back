@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
-import static com.googongill.aditory.common.code.CategoryErrorCode.FORBIDDEN_CATEGORY;
+import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
 
 @Slf4j
 @RestController
@@ -39,6 +39,7 @@ public class CategoryController {
     }
 
     // ======== Read ========
+  
     // 카테고리 조회
     @GetMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable Long categoryId,
@@ -46,16 +47,18 @@ public class CategoryController {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
                 CategoryResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
+  
     // 내 카테고리 목록 조회
     @GetMapping("/categories/my")
     public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ApiResponse.success(GET_CATEGORY_LIST_SUCCESS,
+        return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
                 CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
     }
+  
     //공개 카테고리 목록 조회
     @GetMapping("/categories/public")
     public ResponseEntity<ApiResponse<CategoryPublicListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ApiResponse.success(GET_CATEGORY_PUBLIC_LIST_SUCCESS,
+        return ApiResponse.success(GET_PUBLIC_CATEGORY_LIST_SUCCESS,
                 CategoryPublicListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
     }
 
@@ -76,7 +79,7 @@ public class CategoryController {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         if (!category.getUser().getId().equals(principalDetails.getUserId())) {
-            throw new CategoryException(FORBIDDEN_CATEGORY);
+            throw new CategoryException(CATEGORY_FORBIDDEN);
         }
         categoryRepository.delete(category);
         return ApiResponse.success(DELETE_CATEGORY_SUCCESS,

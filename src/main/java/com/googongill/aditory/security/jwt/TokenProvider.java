@@ -111,7 +111,7 @@ public class TokenProvider {
         try {
             return parseClaims(accessToken).get("username", String.class);
         } catch (IllegalArgumentException e) {
-            throw new UserException(TOKEN_NOT_CONTAINS_USERNAME);
+            throw new UserException(TOKEN_MISSING_USERNAME);
         }
     }
 

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
-import static com.googongill.aditory.common.code.CategoryErrorCode.FORBIDDEN_CATEGORY;
+import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 
 @Slf4j
@@ -89,7 +89,7 @@ public class CategoryService {
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (category.getCategoryState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
-            throw new CategoryException(FORBIDDEN_CATEGORY);
+            throw new CategoryException(CATEGORY_FORBIDDEN);
         }
         // 조회한 category 의 링크 목록 조회하며 각 링크별 정보 입력
         List<LinkInfo> linkInfoList = category.getLinks().stream()
@@ -110,7 +110,7 @@ public class CategoryService {
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (category.getCategoryState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
-            throw new CategoryException(FORBIDDEN_CATEGORY);
+            throw new CategoryException(CATEGORY_FORBIDDEN);
         }
         category.updateCategoryInfo(updateCategoryRequest.getCategoryName(),updateCategoryRequest.getAsCategoryName(),updateCategoryRequest.getCategoryState());
         categoryRepository.save(category);

@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import static com.googongill.aditory.common.code.LinkErrorCode.FORBIDDEN_LINK;
+import static com.googongill.aditory.common.code.LinkErrorCode.LINK_FORBIDDEN;
 import static com.googongill.aditory.common.code.LinkErrorCode.LINK_NOT_FOUND;
 import static com.googongill.aditory.common.code.SuccessCode.*;
 
@@ -47,7 +47,7 @@ public class LinkController {
         // link 가 소속된 category 의 state 가 private 인데 category 의 소유주가 아닌 user 가 접근하는 경우
         if (link.getCategory().getCategoryState().equals(CategoryState.PRIVATE) &&
             !link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
-            throw new LinkException(FORBIDDEN_LINK);
+            throw new LinkException(LINK_FORBIDDEN);
         }
         // link 읽음 상태 true 로
         link.updateLinkState();
@@ -80,7 +80,7 @@ public class LinkController {
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
         if (!link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
-            throw new LinkException(FORBIDDEN_LINK);
+            throw new LinkException(LINK_FORBIDDEN);
         }
         Long deletedLinkId = linkId;
         linkRepository.delete(link);

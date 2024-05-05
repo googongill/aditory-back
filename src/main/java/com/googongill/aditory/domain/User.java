@@ -78,6 +78,10 @@ public class User extends BaseTimeEntity {
         link.setUser(this);
     }
 
+    public void changeProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public void saveRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
