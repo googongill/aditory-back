@@ -6,6 +6,7 @@ import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.external.s3.AWSS3Service;
+import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
@@ -129,16 +130,11 @@ public class UserService {
         }
 
         ProfileImage profileImage = awss3Service.uploadOne(multipartFile);
-
         user.changeProfileImage(profileImage);
         userRepository.save(user);
 
-        return ProfileImageResult.of(user,
-                ProfileImageInfo.builder()
-                    .profileImageId(profileImage.getId())
-                    .originalName(profileImage.getOriginalName())
-                    .url(awss3Service.downloadOne(profileImage).getUrl())
-                    .build()
-        );
+        S3DownloadResult s3DownloadResult = awss3Service.downloadOne(profileImage);
+
+        return ProfileImageResult.of(user, s3DownloadResult);
     }
 }

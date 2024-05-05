@@ -4,6 +4,8 @@ import com.googongill.aditory.common.ApiResponse;
 import com.googongill.aditory.controller.dto.user.*;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.external.s3.AWSS3Service;
+import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.service.UserService;
@@ -25,6 +27,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final AWSS3Service awss3Service;
 
     // ======= Create =======
 
@@ -73,6 +76,14 @@ public class UserController {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         return ApiResponse.success(GET_USERINFO_SUCCESS,
                 UserInfoResponse.of(user));
+    }
+
+    @GetMapping("/users/profile-image")
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> getProfileImage(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User user = userRepository.findById(principalDetails.getUserId())
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        return ApiResponse.success(GET_PROFILE_IMAGE_SUCCESS,
+                ProfileImageResponse.of(user, awss3Service.downloadOne(user.getProfileImage())));
     }
 
     // ======= Update =======
