@@ -15,14 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.web.bind.annotation.*;
-
-
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
 import static com.googongill.aditory.common.code.CategoryErrorCode.FORBIDDEN_CATEGORY;
-
 
 @Slf4j
 @RestController
@@ -70,9 +67,9 @@ public class CategoryController {
         return ApiResponse.success(UPDATE_CATEGORY_SUCCESS,
                 UpdateCategoryResponse.of(categoryService.updateCategory(categoryId, updateCategoryRequest, principalDetails.getUserId())));
     }
-    //카테고리 삭제
-    // ======= Delete =======
 
+    // ======= Delete =======
+    //카테고리 삭제
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<DeleteCategoryResponse>> deleteCategory(@PathVariable Long categoryId,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -85,5 +82,4 @@ public class CategoryController {
         return ApiResponse.success(DELETE_CATEGORY_SUCCESS,
                 DeleteCategoryResponse.of(categoryId));
     }
-
 }

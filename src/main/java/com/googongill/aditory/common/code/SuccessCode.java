@@ -43,7 +43,9 @@ public enum SuccessCode {
     // Link
     SAVE_LINK_SUCCESS(HttpStatus.CREATED, "링크 저장에 성공했습니다."),
     // Category
-    SAVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 저장에 성공했습니다.");
+    SAVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 저장에 성공했습니다."),
+
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
