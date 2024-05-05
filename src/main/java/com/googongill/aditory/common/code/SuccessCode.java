@@ -28,6 +28,7 @@ public enum SuccessCode {
     DELETE_LINK_SUCCESS(HttpStatus.OK, "링크 삭제에 성공했습니다."),
     // Category
     GET_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 조회에 성공했습니다."),
+    GET_CATEGORY_PUBLIC_LIST_SUCCESS(HttpStatus.OK, "공개 카테고리 목록 조회에 성공했습니다."),
     UPDATE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 수정에 성공했습니다."),
     DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다."),
 

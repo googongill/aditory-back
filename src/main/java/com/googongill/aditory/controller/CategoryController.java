@@ -15,14 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.web.bind.annotation.*;
-
-
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
-
 
 @Slf4j
 @RestController
@@ -33,6 +30,7 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
 
     // ======= Create =======
+    //카테고리 저장
     @PostMapping("/categories")
     public ResponseEntity<ApiResponse<CreateCategoryResponse>> createCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -41,22 +39,31 @@ public class CategoryController {
     }
 
     // ======== Read ========
-
-    @GetMapping("/categories")
-    public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
-                CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
-    }
-
+  
+    // 카테고리 조회
     @GetMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable Long categoryId,
                                                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
                 CategoryResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
+  
+    // 내 카테고리 목록 조회
+    @GetMapping("/categories/my")
+    public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
+                CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
+    }
+  
+    //공개 카테고리 목록 조회
+    @GetMapping("/categories/public")
+    public ResponseEntity<ApiResponse<CategoryPublicListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(GET_PUBLIC_CATEGORY_LIST_SUCCESS,
+                CategoryPublicListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
+    }
 
     // ======= Update =======
-
+    //카테고리 수정
     @PatchMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<UpdateCategoryResponse>> updateCategory(@PathVariable Long categoryId, @RequestBody UpdateCategoryRequest updateCategoryRequest,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -65,7 +72,7 @@ public class CategoryController {
     }
 
     // ======= Delete =======
-
+    //카테고리 삭제
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<DeleteCategoryResponse>> deleteCategory(@PathVariable Long categoryId,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -78,5 +85,4 @@ public class CategoryController {
         return ApiResponse.success(DELETE_CATEGORY_SUCCESS,
                 DeleteCategoryResponse.of(categoryId));
     }
-
 }
