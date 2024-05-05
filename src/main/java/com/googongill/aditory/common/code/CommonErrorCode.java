@@ -17,7 +17,6 @@ public enum CommonErrorCode implements BusinessErrorCode {
     HTTP_REQUEST_INVALID(HttpStatus.BAD_REQUEST, "허용되지 않는 문자열이 입력되었습니다."),
     IMAGE_EXTENSION_UNSUPPORTED(HttpStatus.BAD_REQUEST, "이미지 확장자는 jpg, png, webp만 가능합니다."),
     IMAGE_SIZE_UNSUPPORTED(HttpStatus.BAD_REQUEST, "이미지 사이즈는 5MB를 넘을 수 없습니다."),
-    BIND_EXCEPTION(HttpStatus.BAD_REQUEST, "Spring Bean Validation 에러입니다."),
 
     /**
      * 401 Unauthorized
