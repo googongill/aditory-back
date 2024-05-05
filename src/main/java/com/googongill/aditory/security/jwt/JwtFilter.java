@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.googongill.aditory.common.code.CommonErrorCode.FAIL_TO_AUTHENTICATE_JWT;
+import static com.googongill.aditory.common.code.CommonErrorCode.AUTHENTICATE_JWT_FAIL;
 
 @Slf4j
 @Component
@@ -49,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.error("Spring Security doFilter 중에 발생한 에러: {}", e);
-            throw new BusinessException(FAIL_TO_AUTHENTICATE_JWT);
+            throw new BusinessException(AUTHENTICATE_JWT_FAIL);
         }
 
         // 다음 필터로 요청 전달

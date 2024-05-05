@@ -61,7 +61,7 @@ public class UserService {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 비밀번호 일치 확인
         if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new UserException(INVALID_PASSWORD);
+            throw new UserException(PASSWORD_INVALID);
         }
         // 토큰 발급
         JwtResult jwtResult = TokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());

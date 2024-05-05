@@ -12,7 +12,7 @@ public enum LinkErrorCode implements BusinessErrorCode {
     /**
      * 401 Forbidden
      */
-    FORBIDDEN_LINK(HttpStatus.FORBIDDEN, "접근할 수 없는 링크입니다."),
+    LINK_FORBIDDEN(HttpStatus.FORBIDDEN, "접근할 수 없는 링크입니다."),
 
     /**
      * 404 Not Found

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
-import static com.googongill.aditory.common.code.CategoryErrorCode.FORBIDDEN_CATEGORY;
+import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
 
 
 @Slf4j
@@ -44,7 +44,7 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ApiResponse.success(GET_CATEGORY_LIST_SUCCESS,
+        return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
                 CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
     }
 
@@ -72,7 +72,7 @@ public class CategoryController {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         if (!category.getUser().getId().equals(principalDetails.getUserId())) {
-            throw new CategoryException(FORBIDDEN_CATEGORY);
+            throw new CategoryException(CATEGORY_FORBIDDEN);
         }
         categoryRepository.delete(category);
         return ApiResponse.success(DELETE_CATEGORY_SUCCESS,

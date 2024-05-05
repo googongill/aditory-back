@@ -12,7 +12,7 @@ public enum AWSS3ErrorCode implements BusinessErrorCode {
     /**
      * 400 Bad Request
      */
-    INVALID_BUCKET_PREFIX(HttpStatus.BAD_REQUEST, "유효하지 않는 S3 버킷 디렉터리 이름입니다."),
+    BUCKET_PREFIX_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않는 S3 버킷 디렉터리 이름입니다."),
 
     /**
      * 404 Not Found
@@ -22,8 +22,8 @@ public enum AWSS3ErrorCode implements BusinessErrorCode {
     /**
      * 500 Internal Server Error
      */
-    FAIL_TO_UPLOAD_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "S3 버킷에 이미지를 업로드하는 데 실패했습니다."),
-    FAIL_TO_DELETE_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "S3 버킷으로부터 이미지를 삭제하는 데 실패했습니다.")
+    UPLOAD_IMAGE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3 버킷에 이미지를 업로드하는 데 실패했습니다."),
+    DELETE_IMAGE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3 버킷으로부터 이미지를 삭제하는 데 실패했습니다.")
 
     ;
 

@@ -150,7 +150,7 @@ class UserServiceTest {
         UserException exception = org.junit.jupiter.api.Assertions.assertThrows(UserException.class, () -> userService.loginUser(loginRequest));
 
         // then
-        org.junit.jupiter.api.Assertions.assertEquals(INVALID_PASSWORD, exception.getErrorCode());
+        org.junit.jupiter.api.Assertions.assertEquals(PASSWORD_INVALID, exception.getErrorCode());
     }
 
     @Test

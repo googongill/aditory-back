@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.exception.AWSS3Exception;
-import com.googongill.aditory.exception.BusinessException;
 import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.UUID;
 
-import static com.googongill.aditory.common.code.AWSS3ErrorCode.FAIL_TO_UPLOAD_IMAGE;
-import static com.googongill.aditory.common.code.AWSS3ErrorCode.IMAGE_NOT_FOUND;
+import static com.googongill.aditory.common.code.AWSS3ErrorCode.*;
 
 @Slf4j
 @Service
@@ -44,7 +42,7 @@ public class AWSS3Service {
         try {
             amazonS3.putObject(bucket, uploadedName, multipartFile.getInputStream(), metadata);
         } catch (IOException e) {
-            throw new AWSS3Exception(FAIL_TO_UPLOAD_IMAGE);
+            throw new AWSS3Exception(UPLOAD_IMAGE_FAIL);
         }
         return new ProfileImage(originalName, uploadedName);
     }
@@ -58,6 +56,10 @@ public class AWSS3Service {
     }
 
     public void deleteOne(String uploadedName) {
-        amazonS3.deleteObject(bucket, uploadedName);
+        try {
+            amazonS3.deleteObject(bucket, uploadedName);
+        } catch (Exception e) {
+            throw new AWSS3Exception(DELETE_IMAGE_FAIL);
+        }
     }
 }

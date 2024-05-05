@@ -56,7 +56,7 @@ public class UserController {
     @PostMapping("/users/profile-image")
     public ResponseEntity<ApiResponse<ProfileImageResponse>> editProfileImage(@RequestParam MultipartFile multipartFile,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ApiResponse.success(UPDATE_PROFILEIMAGE_SUCCESS,
+        return ApiResponse.success(UPDATE_PROFILE_IMAGE_SUCCESS,
                 ProfileImageResponse.of(userService.updateProfileImage(multipartFile, principalDetails.getUserId())));
     }
 
