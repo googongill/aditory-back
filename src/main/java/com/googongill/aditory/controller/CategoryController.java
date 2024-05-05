@@ -33,6 +33,7 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
 
     // ======= Create =======
+    //카테고리 저장
     @PostMapping("/categories")
     public ResponseEntity<ApiResponse<CreateCategoryResponse>> createCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -41,19 +42,20 @@ public class CategoryController {
     }
 
     // ======== Read ========
-
-    @GetMapping("/categories")
-    public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return ApiResponse.success(GET_CATEGORY_LIST_SUCCESS,
-                CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
-    }
-
+    // 카테고리 조회
     @GetMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable Long categoryId,
                                                                      @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
                 CategoryResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
+    // 내 카테고리 목록 조회
+    @GetMapping("/categories/my")
+    public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(GET_CATEGORY_LIST_SUCCESS,
+                CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
+    }
+    //공개 카테고리 목록 조회
     @GetMapping("/categories/public")
     public ResponseEntity<ApiResponse<CategoryPublicListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_CATEGORY_PUBLIC_LIST_SUCCESS,
@@ -61,14 +63,14 @@ public class CategoryController {
     }
 
     // ======= Update =======
-
+    //카테고리 수정
     @PatchMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<UpdateCategoryResponse>> updateCategory(@PathVariable Long categoryId, @RequestBody UpdateCategoryRequest updateCategoryRequest,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(UPDATE_CATEGORY_SUCCESS,
                 UpdateCategoryResponse.of(categoryService.updateCategory(categoryId, updateCategoryRequest, principalDetails.getUserId())));
     }
-
+    //카테고리 삭제
     // ======= Delete =======
 
     @DeleteMapping("/categories/{categoryId}")
