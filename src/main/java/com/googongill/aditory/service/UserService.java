@@ -36,7 +36,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AWSS3Service awss3Service;
 
-    public SignResult createUser(SignupRequest signupRequest) {
+    public SignupResult createUser(SignupRequest signupRequest) {
         // 이미 존재하는 username 존재하는지 확인
         if (userRepository.findByUsername(signupRequest.getUsername()).isPresent())
             throw new UserException(ALREADY_EXISTING_USERNAME);
@@ -53,7 +53,7 @@ public class UserService {
 
         // 카테고리 추가 (연관관계 메서드)
         createduser.addCategories(createdCategories);
-        return SignResult.of(createduser, createdCategories);
+        return SignupResult.of(createduser, createdCategories);
     }
 
     public UserTokenResult loginUser(LoginRequest loginRequest) {

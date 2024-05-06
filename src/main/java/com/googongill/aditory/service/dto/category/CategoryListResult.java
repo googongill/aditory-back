@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Builder
 public class CategoryListResult {
+    @Builder.Default
     List<CategoryInfo> categoryList = new ArrayList<>();
 
     public static CategoryListResult of(List<CategoryInfo> categoryList) {

@@ -12,12 +12,13 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class SignResult {
+public class SignupResult {
     private Long userId;
     private String nickname;
+    @Builder.Default
     private List<CategoryIdAndName> userCategories = new ArrayList<>();
 
-    public static SignResult of(User user, List<Category> categories) {
+    public static SignupResult of(User user, List<Category> categories) {
         List<CategoryIdAndName> userCategories = categories.stream()
                 .map(category -> CategoryIdAndName.builder()
                         .categoryId(category.getId())
@@ -25,7 +26,7 @@ public class SignResult {
                         .build())
                 .collect(Collectors.toList());
 
-        return SignResult.builder()
+        return SignupResult.builder()
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .userCategories(userCategories)

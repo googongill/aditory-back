@@ -13,6 +13,7 @@ import java.util.List;
 @JsonSerialize
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ReminderResponse {
+    @Builder.Default
     private List<LinkInfo> linkList = new ArrayList<>();
 
     public static ReminderResponse of(ReminderResult reminderResult) {

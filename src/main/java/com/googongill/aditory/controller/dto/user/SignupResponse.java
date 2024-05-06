@@ -3,7 +3,7 @@ package com.googongill.aditory.controller.dto.user;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.googongill.aditory.service.dto.category.CategoryIdAndName;
-import com.googongill.aditory.service.dto.user.SignResult;
+import com.googongill.aditory.service.dto.user.SignupResult;
 import lombok.Builder;
 
 import java.util.List;
@@ -16,11 +16,11 @@ public class SignupResponse {
     private String nickname;
     private List<CategoryIdAndName> userCategories;
 
-    public static SignupResponse of(SignResult signResult) {
+    public static SignupResponse of(SignupResult signupResult) {
         return SignupResponse.builder()
-                .userId(signResult.getUserId())
-                .nickname(signResult.getNickname())
-                .userCategories(signResult.getUserCategories())
+                .userId(signupResult.getUserId())
+                .nickname(signupResult.getNickname())
+                .userCategories(signupResult.getUserCategories())
                 .build();
     }
 }

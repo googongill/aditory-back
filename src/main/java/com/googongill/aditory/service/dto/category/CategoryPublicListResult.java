@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Builder
 public class CategoryPublicListResult {
+    @Builder.Default
     List<CategoryPublicInfo> categoryPublicList = new ArrayList<>();
 
     public static CategoryPublicListResult of(List<CategoryPublicInfo> categoryPublicList) {
