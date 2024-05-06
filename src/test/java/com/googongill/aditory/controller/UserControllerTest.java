@@ -11,7 +11,7 @@ import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.security.jwt.user.PrincipalDetailsService;
 import com.googongill.aditory.service.UserService;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
-import com.googongill.aditory.service.dto.user.SignResult;
+import com.googongill.aditory.service.dto.user.SignupResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,9 +67,9 @@ class UserControllerTest {
         // given
         SignupRequest signupRequest = createSignupRequest();
         List<Category> createdCategories = createCategories();
-        SignResult signResult = SignResult.of(signupRequest.toEntity(), createdCategories);
+        SignupResult signupResult = SignupResult.of(signupRequest.toEntity(), createdCategories);
 
-        given(userService.createUser(signupRequest)).willReturn(signResult);
+        given(userService.createUser(signupRequest)).willReturn(signupResult);
 
         // when
         String userCategoriesParam = String.join(",", signupRequest.getUserCategories());
@@ -93,9 +93,9 @@ class UserControllerTest {
         // given
         SignupRequest signupRequest = createSignupRequest();
         List<Category> categories = createCategories();
-        SignResult signResult = SignResult.of(signupRequest.toEntity(), categories);
+        SignupResult signupResult = SignupResult.of(signupRequest.toEntity(), categories);
 
-        given(userService.createUser(signupRequest)).willReturn(signResult);
+        given(userService.createUser(signupRequest)).willReturn(signupResult);
 
         // when
         ResultActions actions = mockMvc.perform(

@@ -17,6 +17,7 @@ public class CategoryResult {
     private String categoryName;
     private Integer linkCount;
     private CategoryState categoryState;
+    @Builder.Default
     private List<LinkInfo> linkList = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;

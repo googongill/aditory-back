@@ -13,7 +13,7 @@ import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
-import com.googongill.aditory.service.dto.user.SignResult;
+import com.googongill.aditory.service.dto.user.SignupResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -80,7 +80,7 @@ class UserServiceTest {
         });
 
         // when
-        SignResult savedUser = userService.createUser(signupRequest);
+        SignupResult savedUser = userService.createUser(signupRequest);
 
         // then
         Assertions.assertThat(savedUser.getNickname()).isEqualTo(signupRequest.getNickname());

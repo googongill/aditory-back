@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Builder
 public class ReminderResult {
+    @Builder.Default
     private List<LinkInfo> linkList = new ArrayList<>();
 
     public static ReminderResult of(List<LinkInfo> linkInfoList) {

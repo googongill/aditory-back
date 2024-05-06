@@ -13,6 +13,7 @@ import java.util.List;
 @JsonSerialize
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class CategoryPublicListResponse {
+    @Builder.Default
     List<CategoryPublicInfo> categoryPublicList = new ArrayList<>();
 
     public static CategoryPublicListResponse of(CategoryPublicListResult categoryPublicListResult) {

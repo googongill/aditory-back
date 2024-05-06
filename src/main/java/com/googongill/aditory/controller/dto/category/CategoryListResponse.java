@@ -14,6 +14,7 @@ import java.util.List;
 @JsonSerialize
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class CategoryListResponse {
+    @Builder.Default
     List<CategoryInfo> categoryList = new ArrayList<>();
 
     public static CategoryListResponse of(CategoryListResult categoryListResult) {
