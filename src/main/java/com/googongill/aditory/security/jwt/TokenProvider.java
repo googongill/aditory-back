@@ -1,22 +1,22 @@
 package com.googongill.aditory.security.jwt;
 
-import com.googongill.aditory.security.jwt.auth.PrincipalDetails;
-import com.googongill.aditory.security.jwt.dto.JwtDto;
+import com.googongill.aditory.domain.enums.Role;
+import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.security.jwt.dto.JwtResult;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.stream.Collectors;
+
+import static com.googongill.aditory.common.code.UserErrorCode.*;
 
 @Slf4j
 @Component
@@ -35,27 +35,20 @@ public class TokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public static JwtDto createTokens(Authentication authentication) {
+    public static JwtResult createTokens(Long userId, String username, Role role) {
         // access-token 발급
-        String accessToken = createAccessToken(authentication);
+        String accessToken = createAccessToken(userId, username, role);
         // refresh-token 발급
         String refreshToken = createRefreshToken();
 
-        return new JwtDto(accessToken, refreshToken);
+        return new JwtResult(accessToken, refreshToken);
     }
 
-    private static String createAccessToken(Authentication authentication) {
-        // UserDetails 가져오기
-        PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
-        // 권한 목록만 가져오기
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    private static String createAccessToken(Long userId, String username, Role role) {
         Claims claims = Jwts.claims();
-        claims.put("userId", userDetails.getUserId());
-        claims.put("username", userDetails.getUsername());
-        claims.put("role", authorities);
+        claims.put("userId", userId);
+        claims.put("username", username);
+        claims.put("role", role);
 
         return Jwts.builder()
                 .setSubject("access-token")
@@ -67,7 +60,21 @@ public class TokenProvider {
                 .compact();
     }
 
-    private static String createRefreshToken() {
+    public static String createAccessToken(String email) {
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
+
+        return Jwts.builder()
+                .setSubject("access-token")
+                .setClaims(claims)
+                .setIssuer("social")
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredMs * 1000))
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public static String createRefreshToken() {
         return Jwts.builder()
                 .setSubject("refresh-token")
                 .setIssuer("googongill")
@@ -81,8 +88,9 @@ public class TokenProvider {
     public static String resolveToken(String token) {
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
             return token.substring(7);
+        } else  {
+            throw new UserException(TOKEN_INVALID);
         }
-        return null;
     }
 
     public static Claims parseClaims(String accessToken) {
@@ -93,17 +101,24 @@ public class TokenProvider {
                     .parseClaimsJws(accessToken)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            log.info("토큰이 만료되었습니다.");
-            // 추후에 Exception Refactoring
-            return e.getClaims();
+            throw new UserException(TOKEN_EXPIRED);
+        } catch (JwtException e) {
+            throw new UserException(TOKEN_INVALID);
         }
     }
 
     public static String getUsername(String accessToken) {
-        return parseClaims(accessToken).get("username", String.class);
+        try {
+            return parseClaims(accessToken).get("username", String.class);
+        } catch (IllegalArgumentException e) {
+            throw new UserException(TOKEN_MISSING_USERNAME);
+        }
     }
 
     public static UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails) {
+        if (userDetails == null) {
+            log.error("userDetails == null");
+        }
         return new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
@@ -111,25 +126,17 @@ public class TokenProvider {
         );
     }
 
-    // 사용할지는 추후에
-    public boolean validateToken(String token) {
+    public static void validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            Claims claims = parseClaims(token);
-            log.info("userId: {}", claims.get("userId"));
-            log.info("username: {}", claims.get("username"));
-            log.info("role: {}", claims.get("role"));
-            log.info("expiration: {}", claims.getExpiration());
-            return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+            throw new UserException(TOKEN_NOT_FOUND);
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            throw new UserException(TOKEN_EXPIRED);
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            throw new UserException(TOKEN_UNSUPPORTED);
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            throw new UserException(TOKEN_NOT_FOUND);
         }
-        return false;
     }
 }
