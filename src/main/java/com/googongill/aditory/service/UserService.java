@@ -130,7 +130,7 @@ public class UserService {
         }
 
         ProfileImage profileImage = awss3Service.uploadOne(multipartFile);
-        user.changeProfileImage(profileImage);
+        user.updateProfileImage(profileImage);
         userRepository.save(user);
 
         S3DownloadResult s3DownloadResult = awss3Service.downloadOne(profileImage);

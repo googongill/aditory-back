@@ -5,7 +5,6 @@ import com.googongill.aditory.controller.dto.user.*;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.external.s3.AWSS3Service;
-import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.service.UserService;
@@ -57,8 +56,8 @@ public class UserController {
     }
 
     @PostMapping("/users/profile-image")
-    public ResponseEntity<ApiResponse<ProfileImageResponse>> editProfileImage(@RequestParam MultipartFile multipartFile,
-                                                                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> updateProfileImage(@RequestParam MultipartFile multipartFile,
+                                                                                @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(UPDATE_PROFILE_IMAGE_SUCCESS,
                 ProfileImageResponse.of(userService.updateProfileImage(multipartFile, principalDetails.getUserId())));
     }
