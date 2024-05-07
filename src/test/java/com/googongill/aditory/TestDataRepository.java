@@ -19,42 +19,42 @@ import java.util.List;
 public class TestDataRepository {
 
     public static User createUser() {
-        User user = new User("testUser",
-                "testPw",
+        User user = new User("testuser",
+                "testuserpw",
                 Role.ROLE_USER, SocialType.LOCAL,
-                "testNickname",
+                "tester nickname",
                 "010-1234-5678");
         return user;
     }
 
     public static List<Category> createCategories() {
-        Category category1 = new Category("학술");
-        Category category2 = new Category("정보");
+        Category category1 = new Category("development");
+        Category category2 = new Category("information");
         List<Category> createdCategories = Arrays.asList(category1, category2);
         return createdCategories;
     }
 
     public static SignupRequest createSignupRequest() {
         return SignupRequest.builder()
-                .username("testUser")
-                .password("testPw")
-                .nickname("testNickname")
+                .username("testuser")
+                .password("testuserpw")
+                .nickname("tester nickname")
                 .contact("010-1234-5678")
-                .userCategories(Arrays.asList("학술", "정보"))
+                .userCategories(Arrays.asList("development", "information"))
                 .build();
     }
 
     public static LoginRequest createLoginRequest() {
         return LoginRequest.builder()
-                .username("testUser")
-                .password("testPw")
+                .username("testuser")
+                .password("testuserpw")
                 .build();
     }
 
     public static UserTokenResult createUserTokenResult() {
         return UserTokenResult.builder()
                 .userId(0L)
-                .nickname("testNickname")
+                .nickname("tester nickname")
                 .accessToken("accessToken")
                 .refreshToken("refreshToken")
                 .build();
@@ -63,7 +63,7 @@ public class TestDataRepository {
     public static UserTokenResult createUserTokenResult(String accessToken, String refreshToken) {
         return UserTokenResult.builder()
                 .userId(0L)
-                .nickname("testNickname")
+                .nickname("tester nickname")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

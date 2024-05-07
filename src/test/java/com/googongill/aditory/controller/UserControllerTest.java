@@ -1,10 +1,12 @@
 package com.googongill.aditory.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
+import com.googongill.aditory.external.s3.AWSS3Service;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
@@ -22,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -51,11 +54,14 @@ class UserControllerTest {
     @MockBean
     private UserRepository userRepository;
     @MockBean
+    private AWSS3Service awss3Service;
+    @MockBean
     private PrincipalDetails principalDetails;
     @MockBean
     private PrincipalDetailsService principalDetailsService;
     @MockBean
     private TokenProvider tokenProvider;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void init(@Value("${jwt.test-secret}") String TEST_SECRET) {
@@ -69,31 +75,33 @@ class UserControllerTest {
         List<Category> createdCategories = createCategories();
         SignupResult signupResult = SignupResult.of(signupRequest.toEntity(), createdCategories);
 
+        String successSignupRequestJson = objectMapper.writeValueAsString(signupRequest);
+
         given(userService.createUser(signupRequest)).willReturn(signupResult);
 
         // when
-        String userCategoriesParam = String.join(",", signupRequest.getUserCategories());
         ResultActions actions = mockMvc.perform(
                 post("/users/signup")
                         .with(csrf())
-                        .queryParam("username", signupRequest.getUsername())
-                        .queryParam("password", signupRequest.getPassword())
-                        .queryParam("nickname", signupRequest.getNickname())
-                        .queryParam("contact", signupRequest.getContact())
-                        .queryParam("userCategories", userCategoriesParam)
+                        .content(successSignupRequestJson)
+                        .contentType(MediaType.APPLICATION_JSON)
         );
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.nickname").value(signupRequest.getNickname()));
+                .andExpect(jsonPath("$.data.nickname").value(signupRequest.getNickname()))
+                .andExpect(jsonPath("$.data.userCategories[0].categoryName").value(createdCategories.get(0).getCategoryName()));
     }
 
     @Test
     public void signup_Failed_Without_RequiredField() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
-        List<Category> categories = createCategories();
-        SignupResult signupResult = SignupResult.of(signupRequest.toEntity(), categories);
+        List<Category> createdCategories = createCategories();
+        SignupResult signupResult = SignupResult.of(signupRequest.toEntity(), createdCategories);
+
+        signupRequest.setPassword("");
+        String failSignupRequestJson = objectMapper.writeValueAsString(signupRequest);
 
         given(userService.createUser(signupRequest)).willReturn(signupResult);
 
@@ -101,10 +109,8 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 post("/users/signup")
                         .with(csrf())
-                        .queryParam("username", signupRequest.getUsername())
-                        .queryParam("password", "")
-                        .queryParam("nickname", signupRequest.getNickname())
-                        .queryParam("contact", signupRequest.getContact())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(failSignupRequestJson)
         );
 
         // then
@@ -119,20 +125,22 @@ class UserControllerTest {
         LoginRequest loginRequest = createLoginRequest();
         UserTokenResult userTokenResult = createUserTokenResult();
 
+        String successLoginRequestJson = objectMapper.writeValueAsString(loginRequest);
+
         given(userService.loginUser(loginRequest)).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(
                 post("/users/login")
                         .with(csrf())
-                        .queryParam("username", "testUser")
-                        .queryParam("password", "testPw")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(successLoginRequestJson)
         );
 
         // then
         actions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.userId").value(0L))
-                .andExpect(jsonPath("$.data.nickname").value("testNickname"));
+                .andExpect(jsonPath("$.data.nickname").value("tester nickname"));
     }
 
     @Test
@@ -141,14 +149,17 @@ class UserControllerTest {
         LoginRequest loginRequest = createLoginRequest();
         UserTokenResult userTokenResult = createUserTokenResult();
 
+        loginRequest.setPassword("");
+        String failLoginRequestJson = objectMapper.writeValueAsString(loginRequest);
+
         given(userService.loginUser(loginRequest)).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(
                 post("/users/login")
                         .with(csrf())
-                        .queryParam("username", "testUser")
-                        .queryParam("password", "")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(failLoginRequestJson)
         );
 
         // then
@@ -184,19 +195,21 @@ class UserControllerTest {
         RefreshRequest refreshRequest = createRefreshRequest();
         UserTokenResult userTokenResult = createUserTokenResult();
 
+        String successSignupRequestJson = objectMapper.writeValueAsString(refreshRequest);
+
         given(userService.refreshUser(refreshRequest)).willReturn(userTokenResult);
 
         // when
         ResultActions actions = mockMvc.perform(
                 post("/users/refresh")
                         .with(csrf())
-                        .queryParam("userId", refreshRequest.getUserId().toString())
-                        .queryParam("refreshToken", refreshRequest.getRefreshToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(successSignupRequestJson)
         );
 
         // then
         actions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.userId").value(0L))
-                .andExpect(jsonPath("$.data.nickname").value("testNickname"));
+                .andExpect(jsonPath("$.data.nickname").value("tester nickname"));
     }
 }
