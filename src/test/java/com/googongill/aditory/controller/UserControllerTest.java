@@ -76,7 +76,6 @@ class UserControllerTest {
     @BeforeEach
     public void init(@Value("${jwt.test-secret}") String TEST_SECRET) {
         tokenProvider = new TokenProvider(TEST_SECRET);
-
     }
 
     @Test
@@ -202,7 +201,7 @@ class UserControllerTest {
     @Test
     public void refresh_Success() throws Exception {
         // given
-        RefreshRequest refreshRequest = createRefreshRequest();
+        RefreshRequest refreshRequest = createRefreshRequest("refreshToken");
         UserTokenResult userTokenResult = createUserTokenResult();
 
         String successSignupRequestJson = objectMapper.writeValueAsString(refreshRequest);

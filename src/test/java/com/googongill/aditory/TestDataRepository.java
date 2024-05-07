@@ -75,13 +75,6 @@ public class TestDataRepository {
                 .build();
     }
 
-    public static RefreshRequest createRefreshRequest() {
-        return RefreshRequest.builder()
-                .userId(0L)
-                .refreshToken("refreshToken")
-                .build();
-    }
-
     public static RefreshRequest createRefreshRequest(String refreshToken) {
         return RefreshRequest.builder()
                 .userId(0L)
