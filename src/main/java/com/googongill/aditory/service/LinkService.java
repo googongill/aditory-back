@@ -94,12 +94,12 @@ public class LinkService {
         // 링크 조회
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
-        if (!link.getCategory().getUser().getId().equals(userId)) {
+        if (!link.getUser().getId().equals(userId)) {
             throw new LinkException(LINK_FORBIDDEN);
         }
         // 카테고리 조회
         Category category = categoryRepository.findById(updateLinkRequest.getCategoryId())
-                .orElseThrow(() -> new CategoryException(CATEGORY_FORBIDDEN));
+                .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         // 링크 정보 수정 (연관관계 메서드)
         link.updateLinkInfo(updateLinkRequest.getTitle(), updateLinkRequest.getSummary(), updateLinkRequest.getUrl(), category);
         linkRepository.save(link);
