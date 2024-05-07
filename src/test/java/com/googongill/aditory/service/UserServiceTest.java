@@ -84,15 +84,17 @@ class UserServiceTest {
 
         // then
         Assertions.assertThat(savedUser.getNickname()).isEqualTo(signupRequest.getNickname());
+        Assertions.assertThat(savedUser.getUserCategories().get(0).getCategoryName()).isEqualTo(createdCategories.get(0).getCategoryName());
     }
     @Test
     public void createUser_Failed_ExistingUsername() throws Exception {
         // given
         SignupRequest signupRequest = createSignupRequest();
         User existingUser = new User(signupRequest.getUsername(),
-                "existingPw",
-                Role.ROLE_USER, SocialType.LOCAL,
-                "존재하는 유저",
+                "existing user pw",
+                Role.ROLE_USER,
+                SocialType.LOCAL,
+                "already existing username",
                 "010-1234-5678");
 
         given(userRepository.findByUsername(signupRequest.getUsername())).willReturn(Optional.of(existingUser));
@@ -162,7 +164,7 @@ class UserServiceTest {
         given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.of(user));
 
         // when
-        userService.logoutUser(user.getUsername(), accessToken);
+        userService.logoutUser(accessToken, user.getUsername());
 
         // then
         verify(userRepository, times(1)).save(user);
@@ -178,7 +180,7 @@ class UserServiceTest {
         given(userRepository.findByUsername(username)).willReturn(Optional.empty());
 
         // when
-        UserException exception = org.junit.jupiter.api.Assertions.assertThrows(UserException.class, () -> userService.logoutUser(username, accessToken));
+        UserException exception = org.junit.jupiter.api.Assertions.assertThrows(UserException.class, () -> userService.logoutUser(accessToken, username));
 
         // then
         org.junit.jupiter.api.Assertions.assertEquals(USER_NOT_FOUND, exception.getErrorCode());
