@@ -51,7 +51,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
-@WithMockUser
 @MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(controllers = UserController.class)
 @ComponentScan(basePackages = "com.googongill.aditory.security")
@@ -71,11 +70,18 @@ class UserControllerTest {
     private PrincipalDetailsService principalDetailsService;
     @MockBean
     private TokenProvider tokenProvider;
-    ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private User user;
+    private String accessToken = "";
 
     @BeforeEach
     public void init(@Value("${jwt.test-secret}") String TEST_SECRET) {
         tokenProvider = new TokenProvider(TEST_SECRET);
+
+        user = createUser();
+        accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
+        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
+        given(principalDetails.getUserId()).willReturn(user.getId());
     }
 
     @Test
@@ -93,8 +99,8 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 post("/users/signup")
                         .with(csrf())
-                        .content(successSignupRequestJson)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(successSignupRequestJson)
         );
 
         // then
@@ -179,11 +185,6 @@ class UserControllerTest {
     @Test
     public void logout_Success() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
         willDoNothing().given(userService).logoutUser(user.getUsername(), accessToken);
 
         // when
@@ -225,13 +226,6 @@ class UserControllerTest {
     @Test
     public void updateProfileImage_Success() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
-
         MockMultipartFile mockMultipartFile = createMockMultipartFile();
         ProfileImageResult profileImageResult = createProfileImageResult();
 
@@ -254,13 +248,6 @@ class UserControllerTest {
     @Test
     public void updateProfileImage_Failed_Without_File() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
-
         MockMultipartFile mockMultipartFile = createMockMultipartFile();
         ProfileImageResult profileImageResult = createProfileImageResult();
 
@@ -281,12 +268,6 @@ class UserControllerTest {
     @Test
     public void getUserInfo_Success() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         // when
@@ -305,14 +286,9 @@ class UserControllerTest {
     @Test
     public void getProfileImage_Success() throws Exception {
         // given
-        User user = createUser();
         ProfileImage profileImage = createProfileImage();
         user.updateProfileImage(profileImage);
         userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         S3DownloadResult s3DownloadResult = createS3DownloadResult();
@@ -333,12 +309,6 @@ class UserControllerTest {
     @Test
     public void getProfileImage_Failed_NotExistingProfileImage() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         // when
@@ -356,13 +326,6 @@ class UserControllerTest {
     @Test
     public void updateUserInfo_Success() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
-
         UpdateUserRequest updateUserRequest = createUpdateUserRequest();
         UpdateUserResult updateUserResult = createUpdateUserResult();
         String successUpdateUserRequestJson = objectMapper.writeValueAsString(updateUserRequest);
@@ -387,16 +350,10 @@ class UserControllerTest {
     @Test
     public void updateUserInfo_Failed_Without_RequiredField() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
-
         UpdateUserRequest updateUserRequest = createUpdateUserRequest();
-        updateUserRequest.setNickname("");
         UpdateUserResult updateUserResult = createUpdateUserResult();
+
+        updateUserRequest.setNickname("");
         String failUpdateUserRequestJson = objectMapper.writeValueAsString(updateUserRequest);
 
         given(userService.updateUserInfo(updateUserRequest, principalDetails.getUserId())).willReturn(updateUserResult);
@@ -418,12 +375,6 @@ class UserControllerTest {
     @Test
     public void signout_Success() throws Exception {
         // given
-        User user = createUser();
-        userRepository.save(user);
-        String accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
-
-        given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
-        given(principalDetails.getUserId()).willReturn(user.getId());
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         willDoNothing().given(userRepository).delete(user);

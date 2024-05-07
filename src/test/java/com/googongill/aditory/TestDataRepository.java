@@ -1,15 +1,21 @@
 package com.googongill.aditory;
 
+import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
 import com.googongill.aditory.controller.dto.user.UpdateUserRequest;
 import com.googongill.aditory.domain.Category;
+import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.domain.enums.SocialType;
 import com.googongill.aditory.external.s3.dto.S3DownloadResult;
+import com.googongill.aditory.service.dto.link.LinkInfo;
+import com.googongill.aditory.service.dto.link.LinkResult;
+import com.googongill.aditory.service.dto.link.ReminderResult;
 import com.googongill.aditory.service.dto.user.ProfileImageResult;
 import com.googongill.aditory.service.dto.user.UpdateUserResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
@@ -17,20 +23,38 @@ import lombok.Getter;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.time.LocalDateTime.now;
 
 @Getter
 @TestComponent
 public class TestDataRepository {
 
     public static User createUser() {
-        User user = new User("testuser",
+        return new User("testuser",
                 "testuserpw",
-                Role.ROLE_USER, SocialType.LOCAL,
+                Role.ROLE_USER,
+                SocialType.LOCAL,
                 "tester nickname",
                 "010-1234-5678");
-        return user;
+    }
+
+    public static Category createCategory() {
+        return new Category(
+                "development",
+                createUser());
+    }
+
+    public static Link createLink(Category category, User user) {
+        return new Link(
+                "C++ library",
+                "How to use C++ library's function",
+                "https://www.c++library.com",
+                category,
+                user);
     }
 
     public static List<Category> createCategories() {
@@ -124,6 +148,48 @@ public class TestDataRepository {
                 .userId(0L)
                 .nickname("updated test nickname")
                 .contact("010-5678-1234")
+                .build();
+    }
+
+    public static CreateLinkRequest createCreateLinkRequest() {
+        return CreateLinkRequest.builder()
+                .autoComplete(false)
+                .title("C++ library")
+                .summary("How to use C++ library's function")
+                .url("https://www.c++library.com")
+                .categoryId(0L)
+                .build();
+    }
+
+    public static LinkResult createLinkResult() {
+        return LinkResult.builder()
+                .linkId(0L)
+                .categoryId(0L)
+                .createdAt(now())
+                .build();
+    }
+
+    public static ReminderResult createReminderResult() {
+        return ReminderResult.builder()
+                .linkList(Arrays.asList(
+                        LinkInfo.builder()
+                                .linkId(0L)
+                                .title("C++ library")
+                                .summary("How to use C++ library's function")
+                                .linkState(false)
+                                .createdAt(now())
+                                .lastModifiedAt(now())
+                                .build()
+                ))
+                .build();
+    }
+
+    public static UpdateLinkRequest createUpdateLinkRequest() {
+        return UpdateLinkRequest.builder()
+                .title("updated Link title")
+                .summary("updated Link summary")
+                .url("https://www.updatedLink.com")
+                .categoryId(0L)
                 .build();
     }
 }
