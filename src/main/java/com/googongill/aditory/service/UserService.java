@@ -125,9 +125,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        if (user.getProfileImage() != null) {
-            awss3Service.deleteOne(user.getProfileImage().getUploadedName());
-        }
+        user.getProfileImage().ifPresent(profileImage -> {
+            String uploadedName = profileImage.getUploadedName();
+            awss3Service.deleteOne(uploadedName);
+        });
 
         ProfileImage profileImage = awss3Service.uploadOne(multipartFile);
         user.updateProfileImage(profileImage);

@@ -2,6 +2,7 @@ package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
 import com.googongill.aditory.controller.dto.user.*;
+import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.external.s3.AWSS3Service;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
+import static com.googongill.aditory.common.code.UserErrorCode.PROFILE_IMAGE_NOT_FOUND;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 
 @Slf4j
@@ -81,8 +83,10 @@ public class UserController {
     public ResponseEntity<ApiResponse<ProfileImageResponse>> getProfileImage(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         User user = userRepository.findById(principalDetails.getUserId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        ProfileImage profileImage = user.getProfileImage()
+                .orElseThrow(() -> new UserException(PROFILE_IMAGE_NOT_FOUND));
         return ApiResponse.success(GET_PROFILE_IMAGE_SUCCESS,
-                ProfileImageResponse.of(user, awss3Service.downloadOne(user.getProfileImage())));
+                ProfileImageResponse.of(user, awss3Service.downloadOne(profileImage)));
     }
 
     // ======= Update =======

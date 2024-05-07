@@ -15,6 +15,7 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingRequestHeaderException.class)
     protected ResponseEntity<ErrorResponse> missingRequestHeaderException(MissingRequestHeaderException e) {
-        ErrorResponse errorResponse = ErrorResponse.of(HEADER_REQUEST_MISSING);
+        ErrorResponse errorResponse = ErrorResponse.of(REQUEST_HEADER_MISSING);
+        return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    protected ResponseEntity<ErrorResponse> missingServletRequestPartException(MissingServletRequestPartException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(REQUEST_PART_MISSING);
         return ResponseEntity.status(errorResponse.getHttpStatus()).body(errorResponse);
     }
 

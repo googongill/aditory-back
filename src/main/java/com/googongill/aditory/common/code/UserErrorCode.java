@@ -29,6 +29,7 @@ public enum UserErrorCode implements BusinessErrorCode {
      * 404 Not Found
      */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
+    PROFILE_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "프로필 사진이 존재하지 않는 사용자입니다."),
 
     /**
      * 409 Conflict
