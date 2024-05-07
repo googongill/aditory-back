@@ -4,16 +4,22 @@ import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
+import com.googongill.aditory.controller.dto.user.UpdateUserRequest;
 import com.googongill.aditory.domain.Category;
+import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.domain.enums.SocialType;
 import com.googongill.aditory.exception.UserException;
+import com.googongill.aditory.external.s3.AWSS3Service;
+import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
+import com.googongill.aditory.service.dto.user.ProfileImageResult;
 import com.googongill.aditory.service.dto.user.SignupResult;
+import com.googongill.aditory.service.dto.user.UpdateUserResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -23,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -43,6 +50,8 @@ class UserServiceTest {
     private UserService userService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private AWSS3Service awss3Service;
     @Mock
     private CategoryRepository categoryRepository;
     @Mock
@@ -206,5 +215,79 @@ class UserServiceTest {
         Assertions.assertThat(actualResult).isNotNull();
         Assertions.assertThat(actualResult.getUserId()).isEqualTo(targetResult.getUserId());
         Assertions.assertThat(actualResult.getNickname()).isEqualTo(targetResult.getNickname());
+    }
+
+    @Test
+    public void updateUserInfo_Success() throws Exception {
+        // given
+        User user = createUser();
+        TestUtils.setEntityId(0L, user);
+
+        UpdateUserRequest updateUserRequest = createUpdateUserRequest();
+        UpdateUserResult targetResult = createUpdateUserResult();
+
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+        // when
+        UpdateUserResult actualResult = userService.updateUserInfo(updateUserRequest, user.getId());
+
+        // then
+        Assertions.assertThat(actualResult.getUserId()).isEqualTo(targetResult.getUserId());
+        Assertions.assertThat(actualResult.getNickname()).isEqualTo(targetResult.getNickname());
+    }
+
+    @Test
+    public void updateUserInfo_Failed_With_NotExistingUser() throws Exception {
+        // given
+        Long userId = -1L;
+
+        UpdateUserRequest updateUserRequest = createUpdateUserRequest();
+
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        UserException exception = org.junit.jupiter.api.Assertions.assertThrows(UserException.class, () -> userService.updateUserInfo(updateUserRequest, userId));
+
+        // then
+        org.junit.jupiter.api.Assertions.assertEquals(USER_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    public void updateProfileImage_Success() throws Exception {
+        // given
+        User user = createUser();
+        TestUtils.setEntityId(0L, user);
+
+        MockMultipartFile mockMultipartFile = createMockMultipartFile();
+        ProfileImage profileImage = createProfileImage();
+        S3DownloadResult s3DownloadResult = createS3DownloadResult();
+        ProfileImageResult targetResult = ProfileImageResult.of(user, s3DownloadResult);
+
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+        given(awss3Service.uploadOne(mockMultipartFile)).willReturn(profileImage);
+        given(awss3Service.downloadOne(profileImage)).willReturn(s3DownloadResult);
+
+        // when
+        ProfileImageResult actualResult = userService.updateProfileImage(mockMultipartFile, user.getId());
+
+        // then
+        Assertions.assertThat(actualResult.getUserId()).isEqualTo(user.getId());
+        Assertions.assertThat(actualResult.getS3DownloadResult().getOriginalName()).isEqualTo(targetResult.getS3DownloadResult().getOriginalName());
+    }
+
+    @Test
+    public void updateProfileImage_Failed_With_NotExisingUser() throws Exception {
+        // given
+        Long userId = -1L;
+
+        MockMultipartFile mockMultipartFile = createMockMultipartFile();
+
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when
+        UserException exception = org.junit.jupiter.api.Assertions.assertThrows(UserException.class, () -> userService.updateProfileImage(mockMultipartFile, userId));
+
+        // then
+        org.junit.jupiter.api.Assertions.assertEquals(USER_NOT_FOUND, exception.getErrorCode());
     }
 }
