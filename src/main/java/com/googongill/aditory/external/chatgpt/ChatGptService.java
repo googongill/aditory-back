@@ -25,8 +25,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 public class ChatGptService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
     private final ChatGptConfig chatGptConfig;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public HttpEntity<ChatGptRequest> buildHttpEntity(ChatGptRequest chatGptRequest) {
         HttpHeaders headers = new HttpHeaders();
@@ -59,7 +59,6 @@ public class ChatGptService {
         String messageContent = url + " summarizing it in one line with a 'summary', a fitting 'title', " +
                                         "and selecting the most appropriate category among " +
                                 categories + ", returning it as a JSON object named 'category'.";
-        log.info("message= {}", messageContent);
         return messageContent;
     }
 
