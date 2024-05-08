@@ -1,10 +1,12 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
+import com.googongill.aditory.controller.dto.category.GetCategoryLikeResponse;
 import com.googongill.aditory.controller.dto.category.*;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.exception.CategoryException;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
+import com.googongill.aditory.service.CategoryLikeService;
 import com.googongill.aditory.service.CategoryService;
 import com.googongill.aditory.repository.CategoryRepository;
 
@@ -27,6 +29,7 @@ import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORB
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final CategoryLikeService categoryLikeService;
     private final CategoryRepository categoryRepository;
 
     // ======= Create =======
@@ -36,6 +39,13 @@ public class CategoryController {
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(SAVE_CATEGORY_SUCCESS,
                 CreateCategoryResponse.of(categoryService.createCategory(createCategoryRequest, principalDetails.getUserId())));
+    }
+    //좋아요
+    @PostMapping("/categories/{categoryId}/like")
+    public ResponseEntity<ApiResponse<LikeCategoryResponse>> likeCategory(@PathVariable Long categoryId,
+                                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(SAVE_CATEGORY_LIKE_SUCCESS,
+                LikeCategoryResponse.of(categoryLikeService.likeCategory(categoryId, principalDetails.getUserId())));
     }
 
     // ======== Read ========
@@ -47,19 +57,23 @@ public class CategoryController {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
                 CategoryResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
-  
     // 내 카테고리 목록 조회
     @GetMapping("/categories/my")
     public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
                 CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
     }
-  
     //공개 카테고리 목록 조회
     @GetMapping("/categories/public")
     public ResponseEntity<ApiResponse<CategoryPublicListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_PUBLIC_CATEGORY_LIST_SUCCESS,
                 CategoryPublicListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
+    }
+    // 카테고리 전체 좋아요 수 반환
+    @GetMapping("/categories/{categoryId}/like")
+    public ResponseEntity<ApiResponse<GetCategoryLikeResponse>> getCategoryLike(@PathVariable Long categoryId) {
+        return ApiResponse.success(GET_CATEGORY_LIKE_SUCCESS,
+                GetCategoryLikeResponse.of(categoryService.getCategoryLike(categoryId)));
     }
 
     // ======= Update =======
@@ -84,5 +98,12 @@ public class CategoryController {
         categoryRepository.delete(category);
         return ApiResponse.success(DELETE_CATEGORY_SUCCESS,
                 DeleteCategoryResponse.of(categoryId));
+    }
+    // 좋아요 취소
+    @DeleteMapping("/categories/{categoryId}/like")
+    public ResponseEntity<ApiResponse<UnlikeCategoryResponse>> unlikeCategory(@PathVariable Long categoryId,
+                                                                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(DELETE_CATEGORY_LIKE_SUCCESS,
+                UnlikeCategoryResponse.of(categoryLikeService.unlikeCategory(categoryId, principalDetails.getUserId())));
     }
 }
