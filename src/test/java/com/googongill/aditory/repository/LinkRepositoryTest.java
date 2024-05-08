@@ -16,8 +16,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-
 @Slf4j
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
