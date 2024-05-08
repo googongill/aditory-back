@@ -12,6 +12,7 @@ import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.Role;
 import com.googongill.aditory.domain.enums.SocialType;
+import com.googongill.aditory.external.chatgpt.dto.AutoCategorizeResult;
 import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 import com.googongill.aditory.service.dto.link.LinkResult;
@@ -23,7 +24,6 @@ import lombok.Getter;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -161,11 +161,26 @@ public class TestDataRepository {
                 .build();
     }
 
+    public static CreateLinkRequest createAutoCreateLinkRequest() {
+        return CreateLinkRequest.builder()
+                .autoComplete(true)
+                .url("https://www.c++library.com")
+                .build();
+    }
+
     public static LinkResult createLinkResult() {
         return LinkResult.builder()
                 .linkId(0L)
                 .categoryId(0L)
                 .createdAt(now())
+                .build();
+    }
+
+    public AutoCategorizeResult createAuthCategorizeResult() {
+        return AutoCategorizeResult.builder()
+                .title("auto title")
+                .summary("auto summary")
+                .categoryName("development")
                 .build();
     }
 

@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
 
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
-import static com.googongill.aditory.common.code.LinkErrorCode.LINK_FORBIDDEN;
-import static com.googongill.aditory.common.code.LinkErrorCode.LINK_NOT_FOUND;
+import static com.googongill.aditory.common.code.LinkErrorCode.*;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 
 @Slf4j
@@ -36,10 +35,10 @@ import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 @RequiredArgsConstructor
 public class LinkService {
 
+    private final ChatGptService chatGptService;
     private final UserRepository userRepository;
     private final LinkRepository linkRepository;
     private final CategoryRepository categoryRepository;
-    private final ChatGptService chatGptService;
 
     public LinkResult createLink(CreateLinkRequest createLinkRequest, Long userId) {
         if (createLinkRequest.isAutoComplete()) {
@@ -110,7 +109,9 @@ public class LinkService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         List<Link> oldestLinks = linkRepository.findTop10ByUserAndLinkStateOrderByCreatedAtAsc(user, false);
-
+        if (oldestLinks.isEmpty()) {
+            throw new LinkException(REMINDER_EMPTY);
+        }
         List<LinkInfo> linkInfoList = oldestLinks.stream()
                 .map(link -> LinkInfo.builder()
                         .linkId(link.getId())

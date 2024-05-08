@@ -1,5 +1,6 @@
 package com.googongill.aditory.service;
 
+import com.googongill.aditory.TestDataRepository;
 import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.googongill.aditory.TestDataRepository.*;
 import static com.googongill.aditory.common.code.UserErrorCode.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -48,10 +48,12 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
-    @Mock
-    private UserRepository userRepository;
+    @InjectMocks
+    private TestDataRepository testDataRepository;
     @Mock
     private AWSS3Service awss3Service;
+    @Mock
+    private UserRepository userRepository;
     @Mock
     private CategoryRepository categoryRepository;
     @Mock
@@ -68,7 +70,7 @@ class UserServiceTest {
     @Test
     public void createUser_Success() throws Exception {
         // given
-        SignupRequest signupRequest = createSignupRequest();
+        SignupRequest signupRequest = testDataRepository.createSignupRequest();
         User user = signupRequest.toEntity();
         Long expectedUserId = 123L;
         TestUtils.setEntityId(expectedUserId, user);
@@ -98,7 +100,7 @@ class UserServiceTest {
     @Test
     public void createUser_Failed_ExistingUsername() throws Exception {
         // given
-        SignupRequest signupRequest = createSignupRequest();
+        SignupRequest signupRequest = testDataRepository.createSignupRequest();
         User existingUser = new User(signupRequest.getUsername(),
                 "existing user pw",
                 Role.ROLE_USER,
@@ -118,9 +120,9 @@ class UserServiceTest {
     @Test
     public void loginUser_Success_ValidToken() throws Exception {
         // given
-        User user = createUser();
-        LoginRequest loginRequest = createLoginRequest();
-        UserTokenResult targetResult = createUserTokenResult();
+        User user = testDataRepository.createUser();
+        LoginRequest loginRequest = testDataRepository.createLoginRequest();
+        UserTokenResult targetResult = testDataRepository.createUserTokenResult();
 
         given(userRepository.findByUsername(loginRequest.getUsername())).willReturn(Optional.of(user));
         given(bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())).willReturn(true);
@@ -137,7 +139,7 @@ class UserServiceTest {
     @Test
     public void loginUser_Failed_NotExistingUser() throws Exception {
         // given
-        LoginRequest loginRequest = createLoginRequest();
+        LoginRequest loginRequest = testDataRepository.createLoginRequest();
 
         given(userRepository.findByUsername(loginRequest.getUsername())).willReturn(Optional.empty());
 
@@ -151,8 +153,8 @@ class UserServiceTest {
     @Test
     public void loginUser_Failed_IncorrectPassword() throws Exception {
         // given
-        LoginRequest loginRequest = createLoginRequest();
-        User user = createUser();
+        LoginRequest loginRequest = testDataRepository.createLoginRequest();
+        User user = testDataRepository.createUser();
 
         given(userRepository.findByUsername(loginRequest.getUsername())).willReturn(Optional.of(user));
         given(bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword())).willReturn(false);
@@ -167,7 +169,7 @@ class UserServiceTest {
     @Test
     public void logoutUser_Success_DeletingRefreshToken() throws Exception {
         // given
-        User user = createUser();
+        User user = testDataRepository.createUser();
         String accessToken = "accessToken";
 
         given(userRepository.findByUsername(user.getUsername())).willReturn(Optional.of(user));
@@ -198,13 +200,13 @@ class UserServiceTest {
     @Test
     public void refreshUser_Success() throws Exception {
         // given
-        User user = createUser();
+        User user = testDataRepository.createUser();
         TestUtils.setEntityId(0L, user);
         JwtResult jwtResult = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
         user.saveRefreshToken(jwtResult.getRefreshToken());
 
-        RefreshRequest refreshRequest = createRefreshRequest("Bearer " + jwtResult.getRefreshToken());
-        UserTokenResult targetResult = createUserTokenResult(jwtResult.getAccessToken(), jwtResult.getRefreshToken());
+        RefreshRequest refreshRequest = testDataRepository.createRefreshRequest("Bearer " + jwtResult.getRefreshToken());
+        UserTokenResult targetResult = testDataRepository.createUserTokenResult(jwtResult.getAccessToken(), jwtResult.getRefreshToken());
 
         given(userRepository.findById(refreshRequest.getUserId())).willReturn(Optional.of(user));
 
@@ -220,13 +222,14 @@ class UserServiceTest {
     @Test
     public void updateUserInfo_Success() throws Exception {
         // given
-        User user = createUser();
-        TestUtils.setEntityId(0L, user);
+        User user = testDataRepository.createUser();
+        Long userId = 0L;
+        TestUtils.setEntityId(userId, user);
 
-        UpdateUserRequest updateUserRequest = createUpdateUserRequest();
-        UpdateUserResult targetResult = createUpdateUserResult();
+        UpdateUserRequest updateUserRequest = testDataRepository.createUpdateUserRequest();
+        UpdateUserResult targetResult = testDataRepository.createUpdateUserResult();
 
-        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
 
         // when
         UpdateUserResult actualResult = userService.updateUserInfo(updateUserRequest, user.getId());
@@ -241,7 +244,7 @@ class UserServiceTest {
         // given
         Long userId = -1L;
 
-        UpdateUserRequest updateUserRequest = createUpdateUserRequest();
+        UpdateUserRequest updateUserRequest = testDataRepository.createUpdateUserRequest();
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
@@ -255,12 +258,12 @@ class UserServiceTest {
     @Test
     public void updateProfileImage_Success() throws Exception {
         // given
-        User user = createUser();
+        User user = testDataRepository.createUser();
         TestUtils.setEntityId(0L, user);
 
-        MockMultipartFile mockMultipartFile = createMockMultipartFile();
-        ProfileImage profileImage = createProfileImage();
-        S3DownloadResult s3DownloadResult = createS3DownloadResult();
+        MockMultipartFile mockMultipartFile = testDataRepository.createMockMultipartFile();
+        ProfileImage profileImage = testDataRepository.createProfileImage();
+        S3DownloadResult s3DownloadResult = testDataRepository.createS3DownloadResult();
         ProfileImageResult targetResult = ProfileImageResult.of(user, s3DownloadResult);
 
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
@@ -280,7 +283,7 @@ class UserServiceTest {
         // given
         Long userId = -1L;
 
-        MockMultipartFile mockMultipartFile = createMockMultipartFile();
+        MockMultipartFile mockMultipartFile = testDataRepository.createMockMultipartFile();
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 

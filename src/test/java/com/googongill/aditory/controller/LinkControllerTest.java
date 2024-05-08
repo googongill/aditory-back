@@ -1,6 +1,7 @@
 package com.googongill.aditory.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googongill.aditory.TestDataRepository;
 import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
 import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,7 +36,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Optional;
 
-import static com.googongill.aditory.TestDataRepository.*;
 import static com.googongill.aditory.common.code.LinkErrorCode.LINK_FORBIDDEN;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -55,12 +57,16 @@ class LinkControllerTest {
     @MockBean
     private LinkRepository linkRepository;
     @MockBean
+    private TokenProvider tokenProvider;
+    @MockBean
     private PrincipalDetails principalDetails;
     @MockBean
     private PrincipalDetailsService principalDetailsService;
-    @MockBean
-    private TokenProvider tokenProvider;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @InjectMocks
+    private TestDataRepository testDataRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Mock
     private User user;
     private String accessToken = "";
 
@@ -68,7 +74,7 @@ class LinkControllerTest {
     public void init(@Value("${jwt.test-secret}") String TEST_SECRET) throws Exception {
         tokenProvider = new TokenProvider(TEST_SECRET);
 
-        user = createUser();
+        user = testDataRepository.createUser();
         TestUtils.setEntityId(0L, user);
         accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
         given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
@@ -78,8 +84,8 @@ class LinkControllerTest {
     @Test
     public void createLink_Success() throws Exception {
         // given
-        CreateLinkRequest createLinkRequest = createCreateLinkRequest();
-        LinkResult linkResult = createLinkResult();
+        CreateLinkRequest createLinkRequest = testDataRepository.createCreateLinkRequest();
+        LinkResult linkResult = testDataRepository.createLinkResult();
         String successCreateLinkRequestJson = objectMapper.writeValueAsString(createLinkRequest);
 
         given(linkService.createLink(createLinkRequest, principalDetails.getUserId())).willReturn(linkResult);
@@ -101,8 +107,8 @@ class LinkControllerTest {
     @Test
     public void createLink_Failed_Without_RequiredField() throws Exception {
         // given
-        CreateLinkRequest createLinkRequest = createCreateLinkRequest();
-        LinkResult linkResult = createLinkResult();
+        CreateLinkRequest createLinkRequest = testDataRepository.createCreateLinkRequest();
+        LinkResult linkResult = testDataRepository.createLinkResult();
 
         createLinkRequest.setUrl("");
         String failCreateLinkRequestJson = objectMapper.writeValueAsString(createLinkRequest);
@@ -126,9 +132,9 @@ class LinkControllerTest {
     @Test
     public void getLink_Success() throws Exception {
         // given
-        Category category = createCategory();
+        Category category = testDataRepository.createCategory();
 
-        Link link = createLink(category, user);
+        Link link = testDataRepository.createLink(category, user);
         Long linkId = 0L;
         TestUtils.setEntityId(linkId, link);
 
@@ -169,12 +175,12 @@ class LinkControllerTest {
     @Test
     public void getLink_Failed_With_ForbiddenLink() throws Exception {
         // given
-        User anotherUser = createUser();
+        User anotherUser = testDataRepository.createUser();
         TestUtils.setEntityId(123L, anotherUser);
-        Category pricateCategory = createCategory();
+        Category pricateCategory = testDataRepository.createCategory();
         pricateCategory.setUser(anotherUser);
 
-        Link forbiddenLink = createLink(pricateCategory, anotherUser);
+        Link forbiddenLink = testDataRepository.createLink(pricateCategory, anotherUser);
         Long forbiddenLinkId = 0L;
         TestUtils.setEntityId(forbiddenLinkId, forbiddenLink);
 
@@ -195,8 +201,7 @@ class LinkControllerTest {
     @Test
     public void getReminder_Success() throws Exception {
         // given
-
-        ReminderResult reminderResult = createReminderResult();
+        ReminderResult reminderResult = testDataRepository.createReminderResult();
 
         given(linkService.getReminder(principalDetails.getUserId())).willReturn(reminderResult);
 
@@ -215,14 +220,14 @@ class LinkControllerTest {
     @Test
     public void updateLink_Success() throws Exception {
         // given
-        Category category = createCategory();
+        Category category = testDataRepository.createCategory();
 
-        Link link = createLink(category, user);
+        Link link = testDataRepository.createLink(category, user);
         Long linkId = 0L;
         TestUtils.setEntityId(linkId, link);
 
-        UpdateLinkRequest updateLinkRequest = createUpdateLinkRequest();
-        LinkResult linkResult = createLinkResult();
+        UpdateLinkRequest updateLinkRequest = testDataRepository.createUpdateLinkRequest();
+        LinkResult linkResult = testDataRepository.createLinkResult();
         String successUpdateLinkRequestJson = objectMapper.writeValueAsString(updateLinkRequest);
 
         given(linkService.updateLink(linkId, updateLinkRequest, principalDetails.getUserId())).willReturn(linkResult);
@@ -244,14 +249,14 @@ class LinkControllerTest {
     @Test
     public void updateLink_Failed_Without_RequiredField() throws Exception {
         // given
-        Category category = createCategory();
+        Category category = testDataRepository.createCategory();
 
-        Link link = createLink(category, user);
+        Link link = testDataRepository.createLink(category, user);
         Long linkId = 0L;
         TestUtils.setEntityId(linkId, link);
 
-        UpdateLinkRequest updateLinkRequest = createUpdateLinkRequest();
-        LinkResult linkResult = createLinkResult();
+        UpdateLinkRequest updateLinkRequest = testDataRepository.createUpdateLinkRequest();
+        LinkResult linkResult = testDataRepository.createLinkResult();
 
         updateLinkRequest.setUrl("");
         String failUpdateLinkRequestJson = objectMapper.writeValueAsString(updateLinkRequest);
@@ -275,9 +280,9 @@ class LinkControllerTest {
     @Test
     public void deleteLink_Success() throws Exception {
         // given
-        Category category = createCategory();
+        Category category = testDataRepository.createCategory();
 
-        Link link = createLink(category, user);
+        Link link = testDataRepository.createLink(category, user);
         Long linkId = 0L;
         TestUtils.setEntityId(linkId, link);
 
@@ -318,12 +323,12 @@ class LinkControllerTest {
     @Test
     public void deleteLink_Failed_With_ForbiddenLink() throws Exception {
         // given
-        User anotherUser = createUser();
+        User anotherUser = testDataRepository.createUser();
         TestUtils.setEntityId(123L, anotherUser);
-        Category pricateCategory = createCategory();
+        Category pricateCategory = testDataRepository.createCategory();
         pricateCategory.setUser(anotherUser);
 
-        Link forbiddenLink = createLink(pricateCategory, anotherUser);
+        Link forbiddenLink = testDataRepository.createLink(pricateCategory, anotherUser);
         Long forbiddenLinkId = 0L;
         TestUtils.setEntityId(forbiddenLinkId, forbiddenLink);
 

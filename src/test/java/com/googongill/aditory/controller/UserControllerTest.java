@@ -1,6 +1,8 @@
 package com.googongill.aditory.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googongill.aditory.TestDataRepository;
+import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.controller.dto.user.LoginRequest;
 import com.googongill.aditory.controller.dto.user.RefreshRequest;
 import com.googongill.aditory.controller.dto.user.SignupRequest;
@@ -24,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,7 +45,6 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import java.util.List;
 import java.util.Optional;
 
-import static com.googongill.aditory.TestDataRepository.*;
 import static com.googongill.aditory.common.code.SuccessCode.LOGOUT_SUCCESS;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -60,24 +63,29 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
     @MockBean
+    private AWSS3Service awss3Service;
+    @MockBean
     private UserRepository userRepository;
     @MockBean
-    private AWSS3Service awss3Service;
+    private TokenProvider tokenProvider;
     @MockBean
     private PrincipalDetails principalDetails;
     @MockBean
     private PrincipalDetailsService principalDetailsService;
-    @MockBean
-    private TokenProvider tokenProvider;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @InjectMocks
+    private TestDataRepository testDataRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Mock
     private User user;
     private String accessToken = "";
 
     @BeforeEach
-    public void init(@Value("${jwt.test-secret}") String TEST_SECRET) {
+    public void init(@Value("${jwt.test-secret}") String TEST_SECRET) throws Exception {
         tokenProvider = new TokenProvider(TEST_SECRET);
 
-        user = createUser();
+        user = testDataRepository.createUser();
+        TestUtils.setEntityId(0L, user);
         accessToken = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole()).getAccessToken();
         given(principalDetailsService.loadUserByUsername(user.getUsername())).willReturn(new PrincipalDetails(user));
         given(principalDetails.getUserId()).willReturn(user.getId());
@@ -86,8 +94,8 @@ class UserControllerTest {
     @Test
     public void signup_Success() throws Exception {
         // given
-        SignupRequest signupRequest = createSignupRequest();
-        List<Category> createdCategories = createCategories();
+        SignupRequest signupRequest = testDataRepository.createSignupRequest();
+        List<Category> createdCategories = testDataRepository.createCategories();
         SignupResult signupResult = SignupResult.of(signupRequest.toEntity(), createdCategories);
 
         String successSignupRequestJson = objectMapper.writeValueAsString(signupRequest);
@@ -111,8 +119,8 @@ class UserControllerTest {
     @Test
     public void signup_Failed_Without_RequiredField() throws Exception {
         // given
-        SignupRequest signupRequest = createSignupRequest();
-        List<Category> createdCategories = createCategories();
+        SignupRequest signupRequest = testDataRepository.createSignupRequest();
+        List<Category> createdCategories = testDataRepository.createCategories();
         SignupResult signupResult = SignupResult.of(signupRequest.toEntity(), createdCategories);
 
         signupRequest.setPassword("");
@@ -136,8 +144,8 @@ class UserControllerTest {
     @Test
     public void login_Success() throws Exception {
         // given
-        LoginRequest loginRequest = createLoginRequest();
-        UserTokenResult userTokenResult = createUserTokenResult();
+        LoginRequest loginRequest = testDataRepository.createLoginRequest();
+        UserTokenResult userTokenResult = testDataRepository.createUserTokenResult();
 
         String successLoginRequestJson = objectMapper.writeValueAsString(loginRequest);
 
@@ -160,8 +168,8 @@ class UserControllerTest {
     @Test
     public void login_Failed_Without_RequiredField() throws Exception {
         // given
-        LoginRequest loginRequest = createLoginRequest();
-        UserTokenResult userTokenResult = createUserTokenResult();
+        LoginRequest loginRequest = testDataRepository.createLoginRequest();
+        UserTokenResult userTokenResult = testDataRepository.createUserTokenResult();
 
         loginRequest.setPassword("");
         String failLoginRequestJson = objectMapper.writeValueAsString(loginRequest);
@@ -201,8 +209,8 @@ class UserControllerTest {
     @Test
     public void refresh_Success() throws Exception {
         // given
-        RefreshRequest refreshRequest = createRefreshRequest("refreshToken");
-        UserTokenResult userTokenResult = createUserTokenResult();
+        RefreshRequest refreshRequest = testDataRepository.createRefreshRequest("refreshToken");
+        UserTokenResult userTokenResult = testDataRepository.createUserTokenResult();
 
         String successSignupRequestJson = objectMapper.writeValueAsString(refreshRequest);
 
@@ -225,8 +233,8 @@ class UserControllerTest {
     @Test
     public void updateProfileImage_Success() throws Exception {
         // given
-        MockMultipartFile mockMultipartFile = createMockMultipartFile();
-        ProfileImageResult profileImageResult = createProfileImageResult();
+        MockMultipartFile mockMultipartFile = testDataRepository.createMockMultipartFile();
+        ProfileImageResult profileImageResult = testDataRepository.createProfileImageResult();
 
         given(userService.updateProfileImage(mockMultipartFile, principalDetails.getUserId())).willReturn(profileImageResult);
 
@@ -247,8 +255,8 @@ class UserControllerTest {
     @Test
     public void updateProfileImage_Failed_Without_File() throws Exception {
         // given
-        MockMultipartFile mockMultipartFile = createMockMultipartFile();
-        ProfileImageResult profileImageResult = createProfileImageResult();
+        MockMultipartFile mockMultipartFile = testDataRepository.createMockMultipartFile();
+        ProfileImageResult profileImageResult = testDataRepository.createProfileImageResult();
 
         given(userService.updateProfileImage(mockMultipartFile, principalDetails.getUserId())).willReturn(profileImageResult);
 
@@ -285,12 +293,12 @@ class UserControllerTest {
     @Test
     public void getProfileImage_Success() throws Exception {
         // given
-        ProfileImage profileImage = createProfileImage();
+        ProfileImage profileImage = testDataRepository.createProfileImage();
         user.updateProfileImage(profileImage);
         userRepository.save(user);
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
-        S3DownloadResult s3DownloadResult = createS3DownloadResult();
+        S3DownloadResult s3DownloadResult = testDataRepository.createS3DownloadResult();
         given(awss3Service.downloadOne(profileImage)).willReturn(s3DownloadResult);
 
         // when
@@ -325,8 +333,8 @@ class UserControllerTest {
     @Test
     public void updateUserInfo_Success() throws Exception {
         // given
-        UpdateUserRequest updateUserRequest = createUpdateUserRequest();
-        UpdateUserResult updateUserResult = createUpdateUserResult();
+        UpdateUserRequest updateUserRequest = testDataRepository.createUpdateUserRequest();
+        UpdateUserResult updateUserResult = testDataRepository.createUpdateUserResult();
         String successUpdateUserRequestJson = objectMapper.writeValueAsString(updateUserRequest);
 
         given(userService.updateUserInfo(updateUserRequest, principalDetails.getUserId())).willReturn(updateUserResult);
@@ -349,8 +357,8 @@ class UserControllerTest {
     @Test
     public void updateUserInfo_Failed_Without_RequiredField() throws Exception {
         // given
-        UpdateUserRequest updateUserRequest = createUpdateUserRequest();
-        UpdateUserResult updateUserResult = createUpdateUserResult();
+        UpdateUserRequest updateUserRequest = testDataRepository.createUpdateUserRequest();
+        UpdateUserResult updateUserResult = testDataRepository.createUpdateUserResult();
 
         updateUserRequest.setNickname("");
         String failUpdateUserRequestJson = objectMapper.writeValueAsString(updateUserRequest);

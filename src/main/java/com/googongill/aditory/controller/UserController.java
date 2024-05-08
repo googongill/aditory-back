@@ -27,8 +27,8 @@ import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
     private final AWSS3Service awss3Service;
+    private final UserRepository userRepository;
 
     // ======= Create =======
 

@@ -1,13 +1,12 @@
 package com.googongill.aditory.repository;
 
+import com.googongill.aditory.TestDataRepository;
 import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
-import com.googongill.aditory.domain.enums.Role;
-import com.googongill.aditory.domain.enums.SocialType;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,8 +15,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static com.googongill.aditory.TestDataRepository.createCategory;
-import static com.googongill.aditory.TestDataRepository.createUser;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
@@ -25,6 +22,8 @@ import static org.assertj.core.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryTest {
 
+    @InjectMocks
+    private TestDataRepository testDataRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -34,9 +33,9 @@ class UserRepositoryTest {
     public void findById_Success() throws Exception {
         // given
         Long userId = 1L;
-        User user = createUser();
+        User user = testDataRepository.createUser();
         TestUtils.setEntityId(userId, user);
-        Category category = createCategory();
+        Category category = testDataRepository.createCategory();
         user.addCategories(Arrays.asList(category));
         userRepository.save(user);
 

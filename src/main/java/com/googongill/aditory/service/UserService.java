@@ -31,10 +31,10 @@ import static com.googongill.aditory.security.jwt.TokenProvider.*;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final AWSS3Service awss3Service;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final AWSS3Service awss3Service;
 
     public SignupResult createUser(SignupRequest signupRequest) {
         // 이미 존재하는 username 존재하는지 확인

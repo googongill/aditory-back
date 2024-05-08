@@ -18,6 +18,7 @@ public enum LinkErrorCode implements BusinessErrorCode {
      * 404 Not Found
      */
     LINK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 링크입니다."),
+    REMINDER_EMPTY(HttpStatus.NOT_FOUND, "리마인더가 존재하지 않습니다."),
 
     ;
 
