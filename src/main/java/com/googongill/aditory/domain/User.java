@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -78,7 +79,7 @@ public class User extends BaseTimeEntity {
         link.setUser(this);
     }
 
-    public void changeProfileImage(ProfileImage profileImage) {
+    public void updateProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
     }
 
@@ -93,5 +94,8 @@ public class User extends BaseTimeEntity {
     public void updateUserInfo(String nickname, String contact) {
         this.nickname = nickname;
         this.contact = contact;
+    }
+    public Optional<ProfileImage> getProfileImage() {
+        return Optional.ofNullable(this.profileImage);
     }
 }

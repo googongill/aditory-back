@@ -1,10 +1,11 @@
 package com.googongill.aditory.repository;
 
 import com.googongill.aditory.TestDataRepository;
-import com.googongill.aditory.TestUtils;
 import com.googongill.aditory.domain.Category;
+import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,50 +14,41 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Arrays;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
+import java.util.List;
 
 @Slf4j
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserRepositoryTest {
+class LinkRepositoryTest {
 
     @InjectMocks
     private TestDataRepository testDataRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private LinkRepository linkRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
     private TestEntityManager testEntityManager;
 
     @Test
-    public void findById_Success() throws Exception {
+    public void findTop10ByUserAndLinkStateOrderByCreatedAtAsc_Success() throws Exception {
         // given
-        Long userId = 1L;
         User user = testDataRepository.createUser();
-        TestUtils.setEntityId(userId, user);
+        userRepository.save(user);
         Category category = testDataRepository.createCategory();
         user.addCategories(Arrays.asList(category));
-        userRepository.save(user);
+        categoryRepository.save(category);
+        Link link = testDataRepository.createLink(category, user);
+        linkRepository.save(link);
+
+        List<Link> targetLinks = Arrays.asList(link);
 
         // when
-        Optional<User> foundUser = userRepository.findById(userId);
+        List<Link> actualLinks = linkRepository.findTop10ByUserAndLinkStateOrderByCreatedAtAsc(user, false);
 
         // then
-        assertThat(foundUser).isNotEmpty();
-        assertThat(foundUser.get().getId()).isEqualTo(userId);
-        assertThat(foundUser.get().getCategories().get(0).getCategoryName()).isEqualTo(category.getCategoryName());
-    }
-
-    @Test
-    public void findById_NotExists_ReturnsEmptyOptional() {
-        // given
-        Long nonExistentUserId = 999L; // 존재하지 않는 ID
-
-        // when
-        Optional<User> foundUser = userRepository.findById(nonExistentUserId);
-
-        // then
-        assertThat(foundUser).isEmpty();
+        Assertions.assertThat(actualLinks.get(0).getTitle()).isEqualTo(targetLinks.get(0).getTitle());
     }
 }

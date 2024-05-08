@@ -46,7 +46,7 @@ public class LinkController {
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
         // link 가 소속된 category 의 state 가 private 인데 category 의 소유주가 아닌 user 가 접근하는 경우
         if (link.getCategory().getCategoryState().equals(CategoryState.PRIVATE) &&
-            !link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
+            !link.getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(LINK_FORBIDDEN);
         }
         // link 읽음 상태 true 로
@@ -66,7 +66,7 @@ public class LinkController {
     // ======= Update =======
 
     @PatchMapping("/links/{linkId}")
-    public ResponseEntity<ApiResponse<LinkResponse>> updateLink(@PathVariable Long linkId, @RequestBody UpdateLinkRequest updateLinkRequest,
+    public ResponseEntity<ApiResponse<LinkResponse>> updateLink(@PathVariable Long linkId, @Valid @RequestBody UpdateLinkRequest updateLinkRequest,
                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(UPDATE_LINK_SUCCESS,
                 LinkResponse.of(linkService.updateLink(linkId, updateLinkRequest, principalDetails.getUserId())));
@@ -79,7 +79,7 @@ public class LinkController {
                                                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
-        if (!link.getCategory().getUser().getId().equals(principalDetails.getUserId())) {
+        if (!link.getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(LINK_FORBIDDEN);
         }
         Long deletedLinkId = linkId;

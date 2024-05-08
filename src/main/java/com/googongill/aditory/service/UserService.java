@@ -31,10 +31,10 @@ import static com.googongill.aditory.security.jwt.TokenProvider.*;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final AWSS3Service awss3Service;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final AWSS3Service awss3Service;
 
     public SignupResult createUser(SignupRequest signupRequest) {
         // 이미 존재하는 username 존재하는지 확인
@@ -125,12 +125,13 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        if (user.getProfileImage() != null) {
-            awss3Service.deleteOne(user.getProfileImage().getUploadedName());
-        }
+        user.getProfileImage().ifPresent(profileImage -> {
+            String uploadedName = profileImage.getUploadedName();
+            awss3Service.deleteOne(uploadedName);
+        });
 
         ProfileImage profileImage = awss3Service.uploadOne(multipartFile);
-        user.changeProfileImage(profileImage);
+        user.updateProfileImage(profileImage);
         userRepository.save(user);
 
         S3DownloadResult s3DownloadResult = awss3Service.downloadOne(profileImage);
