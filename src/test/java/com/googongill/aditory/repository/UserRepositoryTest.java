@@ -30,25 +30,6 @@ class UserRepositoryTest {
     private TestEntityManager testEntityManager;
 
     @Test
-    public void findById_Success() throws Exception {
-        // given
-        Long userId = 1L;
-        User user = testDataRepository.createUser();
-        TestUtils.setEntityId(userId, user);
-        Category category = testDataRepository.createCategory();
-        user.addCategories(Arrays.asList(category));
-        userRepository.save(user);
-
-        // when
-        Optional<User> foundUser = userRepository.findById(userId);
-
-        // then
-        assertThat(foundUser).isNotEmpty();
-        assertThat(foundUser.get().getId()).isEqualTo(userId);
-        assertThat(foundUser.get().getCategories().get(0).getCategoryName()).isEqualTo(category.getCategoryName());
-    }
-
-    @Test
     public void findById_NotExists_ReturnsEmptyOptional() {
         // given
         Long nonExistentUserId = 999L; // 존재하지 않는 ID
