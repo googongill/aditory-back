@@ -89,5 +89,5 @@ jobs:
           sudo docker rm -f $(docker ps -qa)
           sudo docker pull ${{ secrets.DOCKER_REPO_SERVER }}
           sudo docker pull ${{ secrets.DOCKER_REPO_NGINX }}
-          docker compose up -d
+          docker-compose up -d
           sudo docker image prune -f
