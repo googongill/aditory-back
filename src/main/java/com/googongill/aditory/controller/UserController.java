@@ -66,9 +66,9 @@ public class UserController {
 
     // ======== Read ========
 
-    @GetMapping("/users/test")
-    public String test() {
-        return "test success!";
+    @GetMapping("/home")
+    public String welcome() {
+        return "Welcome";
     }
 
     @GetMapping("/users")
