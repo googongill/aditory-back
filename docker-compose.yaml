@@ -1,8 +1,10 @@
-version: '3.8'
+version: '3'
 services:
   server:
     container_name: server
     image: sngjuni/aditory
+    expose:
+      - "8081"
     ports:
       - "8080:8080"
     restart: "always"
@@ -12,5 +14,17 @@ services:
     image: sngjuni/aditory-nginx
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     depends_on:
       - "server"
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
