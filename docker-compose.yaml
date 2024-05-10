@@ -1,0 +1,16 @@
+version: '3'
+services:
+  server:
+    container_name: server
+    image: sngjuni/aditory
+    ports:
+      - 8080:8080
+    restart: "always"
+
+  nginx:
+    container_name: nginx
+    image: sngjuni/aditory-nginx
+    ports:
+      - 80:80
+    depends_on:
+      - "server"
