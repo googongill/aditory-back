@@ -41,7 +41,10 @@ public class TokenProvider {
         // refresh-token 발급
         String refreshToken = createRefreshToken();
 
-        return new JwtResult(accessToken, refreshToken);
+        return JwtResult.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     private static String createAccessToken(Long userId, String username, Role role) {

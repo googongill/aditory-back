@@ -24,7 +24,6 @@ import com.googongill.aditory.service.dto.user.UpdateUserResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -60,12 +59,6 @@ class UserServiceTest {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Mock
     private TokenProvider tokenProvider;
-
-    @BeforeEach
-    public void init() {
-        // test 를 위한 더미 secret 주입 -> 추후 수정
-        tokenProvider = new TokenProvider("YWRpdG9yeS1iYWNrZW5kLXRlc3QtZ29vZ29uZ2lsbC1zZXVuZ2p1bmh3YW5nLWV1Z2VuZWxlZS1qaWV1bnBhcms=");
-    }
 
     @Test
     public void createUser_Success() throws Exception {
@@ -202,6 +195,10 @@ class UserServiceTest {
         // given
         User user = testDataRepository.createUser();
         TestUtils.setEntityId(0L, user);
+
+        // test 를 위한 더미 secret 주입
+        tokenProvider = new TokenProvider("YWRpdG9yeS1iYWNrZW5kLXRlc3QtZ29vZ29uZ2lsbC1zZXVuZ2p1bmh3YW5nLWV1Z2VuZWxlZS1qaWV1bnBhcms=");
+
         JwtResult jwtResult = tokenProvider.createTokens(user.getId(), user.getUsername(), user.getRole());
         user.saveRefreshToken(jwtResult.getRefreshToken());
 
