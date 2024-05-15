@@ -23,10 +23,10 @@ import static com.googongill.aditory.common.code.UserErrorCode.*;
 public class TokenProvider {
     private final String secret;
     private static Key secretKey;
-    // access-token : 30 min
-    private static final long accessTokenExpiredMs = 60 * 30;
-    // refresh-token : 7 days (1 week)
-    private static final long refreshTokenExpiredMs = 60 * 60 * 24 * 7;
+    // access-token : 30 min = 60 * 30
+    private static final long accessTokenExpiredMs = 60 * 10;
+    // refresh-token : 7 days (1 week) = 60 * 60 * 24 * 7
+    private static final long refreshTokenExpiredMs = 60 * 60 * 6;
 
     public TokenProvider(@Value("${jwt.secret}") String secret) {
         this.secret = secret;
