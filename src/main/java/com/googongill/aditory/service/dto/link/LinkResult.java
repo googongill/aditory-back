@@ -13,12 +13,14 @@ public class LinkResult {
     private Long linkId;
     private Long categoryId;
     private LocalDateTime createdAt;
+    private LocalDateTime lastModifiedAt;
 
     public static LinkResult of(Link link, Category category) {
         return LinkResult.builder()
                 .linkId(link.getId())
                 .categoryId(category.getId())
                 .createdAt(link.getCreatedAt())
+                .lastModifiedAt(link.getLastModifiedAt())
                 .build();
     }
 }

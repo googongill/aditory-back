@@ -42,24 +42,24 @@ public class CategoryController {
   
     // 카테고리 조회
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable Long categoryId,
-                                                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<CategoryDetailResponse>> getCategory(@PathVariable Long categoryId,
+                                                                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
-                CategoryResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
+                CategoryDetailResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
   
     // 내 카테고리 목록 조회
     @GetMapping("/categories/my")
-    public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<MyCategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
-                CategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
+                MyCategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
     }
   
     //공개 카테고리 목록 조회
     @GetMapping("/categories/public")
-    public ResponseEntity<ApiResponse<CategoryPublicListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<PublicCategoryListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_PUBLIC_CATEGORY_LIST_SUCCESS,
-                CategoryPublicListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
+                PublicCategoryListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
     }
 
     // ======= Update =======

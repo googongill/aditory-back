@@ -14,12 +14,14 @@ public class LinkResponse {
     private Long linkId;
     private Long categoryId;
     private LocalDateTime createdAt;
+    private LocalDateTime lastModifiedAt;
 
     public static LinkResponse of(LinkResult linkResult) {
         return LinkResponse.builder()
                 .linkId(linkResult.getLinkId())
                 .categoryId(linkResult.getCategoryId())
                 .createdAt(linkResult.getCreatedAt())
+                .lastModifiedAt(linkResult.getLastModifiedAt())
                 .build();
     }
 }

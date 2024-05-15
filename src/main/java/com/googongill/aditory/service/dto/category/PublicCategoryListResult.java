@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 @Getter
 @Builder
-public class CategoryPublicListResult {
+public class PublicCategoryListResult {
     @Builder.Default
-    List<CategoryPublicInfo> categoryPublicList = new ArrayList<>();
+    List<PublicCategoryInfo> categoryPublicList = new ArrayList<>();
 
-    public static CategoryPublicListResult of(List<CategoryPublicInfo> categoryPublicList) {
-        return CategoryPublicListResult.builder()
+    public static PublicCategoryListResult of(List<PublicCategoryInfo> categoryPublicList) {
+        return PublicCategoryListResult.builder()
                 .categoryPublicList(categoryPublicList)
                 .build();
     }
