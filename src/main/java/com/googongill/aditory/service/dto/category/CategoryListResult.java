@@ -10,9 +10,9 @@ import java.util.List;
 @Builder
 public class CategoryListResult {
     @Builder.Default
-    List<CategoryInfo> categoryList = new ArrayList<>();
+    List<MyCategoryInfo> categoryList = new ArrayList<>();
 
-    public static CategoryListResult of(List<CategoryInfo> categoryList) {
+    public static CategoryListResult of(List<MyCategoryInfo> categoryList) {
         return CategoryListResult.builder()
                 .categoryList(categoryList)
                 .build();

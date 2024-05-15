@@ -2,10 +2,11 @@ package com.googongill.aditory.controller.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.googongill.aditory.service.dto.category.CategoryIdAndName;
+import com.googongill.aditory.service.dto.category.CategoryResult;
 import com.googongill.aditory.service.dto.user.SignupResult;
 import lombok.Builder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -14,7 +15,8 @@ import java.util.List;
 public class SignupResponse {
     private Long userId;
     private String nickname;
-    private List<CategoryIdAndName> userCategories;
+    @Builder.Default
+    private List<CategoryResult> userCategories = new ArrayList<>();
 
     public static SignupResponse of(SignupResult signupResult) {
         return SignupResponse.builder()

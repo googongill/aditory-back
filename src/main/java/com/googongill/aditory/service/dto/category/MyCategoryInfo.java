@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class CategoryInfo {
+public class MyCategoryInfo {
     private Long categoryId;
     private String categoryName;
     private Integer linkCount;

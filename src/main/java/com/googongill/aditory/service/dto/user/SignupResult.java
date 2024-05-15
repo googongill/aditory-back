@@ -2,7 +2,7 @@ package com.googongill.aditory.service.dto.user;
 
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
-import com.googongill.aditory.service.dto.category.CategoryIdAndName;
+import com.googongill.aditory.service.dto.category.CategoryResult;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,11 +16,11 @@ public class SignupResult {
     private Long userId;
     private String nickname;
     @Builder.Default
-    private List<CategoryIdAndName> userCategories = new ArrayList<>();
+    private List<CategoryResult> userCategories = new ArrayList<>();
 
     public static SignupResult of(User user, List<Category> categories) {
-        List<CategoryIdAndName> userCategories = categories.stream()
-                .map(category -> CategoryIdAndName.builder()
+        List<CategoryResult> userCategories = categories.stream()
+                .map(category -> CategoryResult.builder()
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
                         .build())

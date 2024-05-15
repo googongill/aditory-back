@@ -52,8 +52,8 @@ public class CategoryService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 조회한 user 의 카테고리 목록 조회하며 각 카테고리별 정보 입력
-        List<CategoryInfo> categoryInfoList = user.getCategories().stream()
-                .map(category -> CategoryInfo.builder()
+        List<MyCategoryInfo> myCategoryInfoList = user.getCategories().stream()
+                .map(category -> MyCategoryInfo.builder()
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
                         .linkCount(category.getLinks().size())
@@ -62,15 +62,15 @@ public class CategoryService {
                         .lastModifiedAt(category.getLastModifiedAt())
                         .build())
                 .collect(Collectors.toList());
-        return CategoryListResult.of(categoryInfoList);
+        return CategoryListResult.of(myCategoryInfoList);
     }
-    public CategoryPublicListResult getPublicCategoryList(Long userId) {
+    public PublicCategoryListResult getPublicCategoryList(Long userId) {
         // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
-        List<CategoryPublicInfo> categoryPublicInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
-                .map(category -> CategoryPublicInfo.builder()
+        List<PublicCategoryInfo> publicCategoryInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
+                .map(category -> PublicCategoryInfo.builder()
                             .categoryId(category.getId())
                             .categoryName(category.getCategoryName())
                             .asCategoryName(category.getAsCategoryName())
@@ -80,10 +80,10 @@ public class CategoryService {
                             .lastModifiedAt(category.getLastModifiedAt())
                             .build())
                 .collect(Collectors.toList());
-        return CategoryPublicListResult.of(categoryPublicInfoList);
+        return PublicCategoryListResult.of(publicCategoryInfoList);
     }
 
-    public CategoryResult getCategory(Long categoryId, Long userId) {
+    public MyCategoryResult getCategory(Long categoryId, Long userId) {
         // 카테고리 조회
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
@@ -102,7 +102,7 @@ public class CategoryService {
                         .lastModifiedAt(link.getLastModifiedAt())
                         .build()
                 ).collect(Collectors.toList());
-        return CategoryResult.of(category, linkInfoList);
+        return MyCategoryResult.of(category, linkInfoList);
     }
     public UpdateCategoryResult updateCategory(Long categoryId, UpdateCategoryRequest updateCategoryRequest, Long userId) {
         // 카테고리 조회
