@@ -122,7 +122,7 @@ public class CategoryService {
         categoryRepository.save(category);
         return UpdateCategoryResult.of(category);
     }
-
+    //카테고리 복사
     public CopyCategoryResult copyCategory(Long categoryId, Long userId) {
         // 카테고리 조회
         Category category = categoryRepository.findById(categoryId)
@@ -146,7 +146,7 @@ public class CategoryService {
 
         return CopyCategoryResult.of(newCategory);
     }
-
+    // 카테고리 속 링크 이동
     public MyCategoryResult moveCategory(MoveCategoryRequest moveCategoryRequest, Long userId) {
         // user 조회
         User user = userRepository.findById(userId)
@@ -168,8 +168,17 @@ public class CategoryService {
             // 링크의 카테고리를 대상 카테고리로 변경
             link.setCategory(targetCategory);
             // 변경된 링크 저장
-            linkRepository.save(link);
+            //linkRepository.save(link);
+            // 변경된 링크 저장2 (지연로딩 x)
+            linkRepository.saveAndFlush(link);
         }
+        //categoryRepository.save(targetCategory);
+        // 변경된 카테고리 저장2 (지연로딩 x)
+        categoryRepository.saveAndFlush(targetCategory);
+
+        // 강제로 Links 컬렉션을 로드해서 response에 나타내기
+        targetCategory.getLinks().size();
+
         // 대상 카테고리의 링크 목록 조회하며 각 링크별 정보 입력
         List<LinkInfo> linkInfoList = targetCategory.getLinks().stream()
                 .map(link -> LinkInfo.builder()
@@ -184,4 +193,3 @@ public class CategoryService {
         return MyCategoryResult.of(targetCategory, linkInfoList);
         }
     }
-

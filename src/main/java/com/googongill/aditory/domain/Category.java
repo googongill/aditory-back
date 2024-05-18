@@ -46,7 +46,7 @@ public class Category extends BaseEntity {
     public Category(Category category){
         this.categoryName = category.getCategoryName();
         this.asCategoryName = category.getAsCategoryName();
-        this.categoryState = category.getCategoryState();
+        this.categoryState = CategoryState.PRIVATE;
         this.viewCount = category.getViewCount();
         this.user = category.getUser();
     }

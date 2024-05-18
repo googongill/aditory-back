@@ -23,24 +23,4 @@ public class CopyCategoryResponse{
                 .createdAt(copyCategoryResult.getCreatedAt())
                 .build();
     }
-
-
 }
-
-
-
-/*
-Response Body
-{
-        "httpStatus": 201,
-        "message": "카테고리 복사에 성공했습니다.",
-        "success": true,
-        "data": {
-        "categoryId": 1,
-        "categoryName": "학술",
-        "categoryState": "PRIVATE",
-        "createdAt": "2024-04-15T10:00:00Z"
-        }
-        }
-Http Status: 201 Created
-*/
