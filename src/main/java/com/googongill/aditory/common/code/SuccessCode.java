@@ -48,6 +48,7 @@ public enum SuccessCode {
     // Category
     SAVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 저장에 성공했습니다."),
     COPY_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 복사에 성공했습니다."),
+    MOVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 이동에 성공했습니다."),
 
     ;
 

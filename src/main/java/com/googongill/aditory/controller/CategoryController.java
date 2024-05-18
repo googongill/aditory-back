@@ -37,7 +37,18 @@ public class CategoryController {
         return ApiResponse.success(SAVE_CATEGORY_SUCCESS,
                 CreateCategoryResponse.of(categoryService.createCategory(createCategoryRequest, principalDetails.getUserId())));
     }
-
+    @PostMapping("/categories/{categoryId}/copy")
+    public ResponseEntity<ApiResponse<CopyCategoryResponse>> copyCategory(@PathVariable Long categoryId,
+                                                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(COPY_CATEGORY_SUCCESS,
+                CopyCategoryResponse.of(categoryService.copyCategory(categoryId, principalDetails.getUserId())));
+    }
+    @PostMapping("/categories/{categoryId}/move")
+    public ResponseEntity<ApiResponse<MoveCategoryResponse>> moveCategory(@Valid @RequestBody MoveCategoryRequest moveCategoryRequest,
+                                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(MOVE_CATEGORY_SUCCESS,
+                MoveCategoryResponse.of(categoryService.moveCategory(moveCategoryRequest,principalDetails.getUserId())));
+    }
     // ======== Read ========
   
     // 카테고리 조회
