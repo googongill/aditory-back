@@ -96,6 +96,10 @@ public class UserService {
             throw new UserException(TOKEN_INVALID);
         }
         JwtResult newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
+        // User 에 refresh Token 저장
+        String refreshToken = newToken.getRefreshToken();
+        user.saveRefreshToken(refreshToken);
+        userRepository.save(user);
         return UserTokenResult.of(user, newToken);
     }
 
