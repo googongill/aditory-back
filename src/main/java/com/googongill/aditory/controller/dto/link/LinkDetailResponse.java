@@ -16,6 +16,8 @@ public class LinkDetailResponse {
     private String summary;
     private Boolean linkState;
     private String url;
+    private Long categoryId;
+    private String categoryName;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 
@@ -26,6 +28,8 @@ public class LinkDetailResponse {
                 .summary(link.getSummary())
                 .linkState(link.getLinkState())
                 .url(link.getUrl())
+                .categoryId(link.getCategory().getId())
+                .categoryName(link.getCategory().getCategoryName())
                 .createdAt(link.getCreatedAt())
                 .lastModifiedAt(link.getLastModifiedAt())
                 .build();
