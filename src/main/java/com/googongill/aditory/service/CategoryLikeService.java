@@ -11,7 +11,6 @@ import com.googongill.aditory.repository.CategoryLikeRepository;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.service.dto.category.LikeCategoryResult;
-import com.googongill.aditory.service.dto.category.UnlikeCategoryResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,16 +38,16 @@ public class CategoryLikeService {
         }
         CategoryLike categoryLike = new CategoryLike(user, category);
         categoryLikeRepository.save(categoryLike);
-        Long likeCount = categoryLikeRepository.countByCategory(category);
-        LikeCategoryResult likeCategoryResult = LikeCategoryResult.builder()
-                .categoryId(categoryId)
-                .likeCount(likeCount)
-                .build();
+        Integer likeCount = categoryLikeRepository.countByCategory(category);
+//        LikeCategoryResult likeCategoryResult = LikeCategoryResult.builder()
+//                .categoryId(categoryId)
+//                .likeCount(likeCount)
+//                .build();
 
-        return likeCategoryResult.of(categoryId, likeCount);
+        return LikeCategoryResult.of(categoryId, likeCount);
     }
 
-    public UnlikeCategoryResult unlikeCategory(Long categoryId, Long userId) {
+    public LikeCategoryResult unlikeCategory(Long categoryId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         Category category = categoryRepository.findById(categoryId)
@@ -57,12 +56,12 @@ public class CategoryLikeService {
                 .orElseThrow(() -> new CategoryException(CategoryErrorCode.CATEGORY_NOT_LIKED));
 
         categoryLikeRepository.delete(categoryLike);
-        Long likeCount = categoryLikeRepository.countByCategory(category);
-        UnlikeCategoryResult unlikeCategoryResult = UnlikeCategoryResult.builder()
-                .categoryId(categoryId)
-                .likeCount(likeCount)
-                .build();
+        Integer likeCount = categoryLikeRepository.countByCategory(category);
+//        LikeCategoryResult unlikeCategoryResult = LikeCategoryResult.builder()
+//                .categoryId(categoryId)
+//                .likeCount(likeCount)
+//                .build();
 
-        return unlikeCategoryResult.of(categoryId, likeCount);
+        return LikeCategoryResult.of(categoryId, likeCount);
     }
 }

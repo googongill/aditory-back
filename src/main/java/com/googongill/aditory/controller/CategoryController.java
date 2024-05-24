@@ -1,7 +1,6 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.category.GetCategoryLikeResponse;
 import com.googongill.aditory.controller.dto.category.*;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.exception.CategoryException;
@@ -69,12 +68,6 @@ public class CategoryController {
         return ApiResponse.success(GET_PUBLIC_CATEGORY_LIST_SUCCESS,
                 CategoryPublicListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
     }
-    // 카테고리 전체 좋아요 수 반환
-    @GetMapping("/categories/{categoryId}/like")
-    public ResponseEntity<ApiResponse<GetCategoryLikeResponse>> getCategoryLike(@PathVariable Long categoryId) {
-        return ApiResponse.success(GET_CATEGORY_LIKE_SUCCESS,
-                GetCategoryLikeResponse.of(categoryService.getCategoryLike(categoryId)));
-    }
 
     // ======= Update =======
     //카테고리 수정
@@ -101,9 +94,9 @@ public class CategoryController {
     }
     // 좋아요 취소
     @DeleteMapping("/categories/{categoryId}/like")
-    public ResponseEntity<ApiResponse<UnlikeCategoryResponse>> unlikeCategory(@PathVariable Long categoryId,
+    public ResponseEntity<ApiResponse<LikeCategoryResponse>> unlikeCategory(@PathVariable Long categoryId,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(DELETE_CATEGORY_LIKE_SUCCESS,
-                UnlikeCategoryResponse.of(categoryLikeService.unlikeCategory(categoryId, principalDetails.getUserId())));
+                LikeCategoryResponse.of(categoryLikeService.unlikeCategory(categoryId, principalDetails.getUserId())));
     }
 }

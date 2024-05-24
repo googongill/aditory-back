@@ -7,9 +7,9 @@ import lombok.Getter;
 @Builder
 public class LikeCategoryResult {
     private Long categoryId;
-    private Long likeCount;
+    private Integer likeCount;
 
-    public static LikeCategoryResult of(Long categoryId, Long likeCount) {
+    public static LikeCategoryResult of(Long categoryId, Integer likeCount) {
         return LikeCategoryResult.builder()
                 .categoryId(categoryId)
                 .likeCount(likeCount)

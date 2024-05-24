@@ -18,11 +18,11 @@ public enum CategoryErrorCode implements BusinessErrorCode {
      * 404 Not Found
      */
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리입니다."),
-    CATEGORY_NOT_LIKED(HttpStatus.NOT_FOUND, "좋아요가 눌리지 않은 카테고리입니다."),
+    CATEGORY_NOT_LIKED(HttpStatus.NOT_FOUND, "좋아요하지 않은 카테고리입니다."),
     /**
      * 409 Conflict
      */
-    CATEGORY_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요가 눌린 카테고리입니다."),
+    CATEGORY_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요한 카테고리입니다."),
 
 
     ;

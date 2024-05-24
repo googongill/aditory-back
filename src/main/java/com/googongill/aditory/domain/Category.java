@@ -59,8 +59,4 @@ public class Category extends BaseEntity {
         this.asCategoryName = asCategoryName;
         this.categoryState = categoryState;
     }
-
-    public int getTotalLikeCount() {
-        return this.categoryLikes.size();
-    }
 }

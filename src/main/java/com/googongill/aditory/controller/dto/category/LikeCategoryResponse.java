@@ -10,7 +10,7 @@ import lombok.Builder;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class LikeCategoryResponse {
     private Long categoryId;
-    private Long likeCount;
+    private Integer likeCount;
 
     public static LikeCategoryResponse of(LikeCategoryResult likeCategoryResult) {
         return new LikeCategoryResponse(likeCategoryResult.getCategoryId(), likeCategoryResult.getLikeCount());

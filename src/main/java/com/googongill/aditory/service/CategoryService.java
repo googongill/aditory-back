@@ -116,11 +116,4 @@ public class CategoryService {
         categoryRepository.save(category);
         return UpdateCategoryResult.of(category);
     }
-
-    public GetCategoryLikeResult getCategoryLike(Long categoryId) {
-        // 카테고리 조회
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        return GetCategoryLikeResult.of(category);
-    }
 }
