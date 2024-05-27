@@ -51,10 +51,11 @@ public class CategoryController {
 
     // 카테고리 속 링크 이동
     @PostMapping("/categories/{categoryId}/move")
-    public ResponseEntity<ApiResponse<MoveCategoryResponse>> moveCategory(@Valid @RequestBody MoveCategoryRequest moveCategoryRequest,
+    public ResponseEntity<ApiResponse<MoveCategoryResponse>> moveCategory(@PathVariable Long categoryId,
+                                                                          @Valid @RequestBody MoveCategoryRequest moveCategoryRequest,
                                                                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(MOVE_CATEGORY_SUCCESS,
-                MoveCategoryResponse.of(categoryService.moveCategory(moveCategoryRequest,principalDetails.getUserId())));
+                MoveCategoryResponse.of(categoryService.moveCategory(categoryId, moveCategoryRequest,principalDetails.getUserId())));
     }
 
     // 좋아요

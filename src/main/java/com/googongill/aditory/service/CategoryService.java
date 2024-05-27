@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
 import static com.googongill.aditory.common.code.LinkErrorCode.LINK_NOT_FOUND;
+import static com.googongill.aditory.common.code.LinkErrorCode.LINK_NOT_IN_CATEGORY;
 import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 
 @Slf4j
@@ -156,31 +157,38 @@ public class CategoryService {
     }
 
     // 카테고리 속 링크 이동
-    public MyCategoryResult moveCategory(MoveCategoryRequest moveCategoryRequest, Long userId) {
+    public MyCategoryResult moveCategory(Long categoryId, MoveCategoryRequest moveCategoryRequest, Long userId) {
         // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
+        // 원래 카테고리 조회
+        Category originalCategory = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
+        // 원래 카테고리의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
+        if (originalCategory.getCategoryState().equals(CategoryState.PRIVATE) && !originalCategory.getUser().getId().equals(userId)) {
+            throw new CategoryException(CATEGORY_FORBIDDEN);
+        }
         // 대상 카테고리 조회
         Category targetCategory = categoryRepository.findById(moveCategoryRequest.getTargetCategoryId())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-
         // 대상 카테고리의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (targetCategory.getCategoryState().equals(CategoryState.PRIVATE) && !targetCategory.getUser().getId().equals(userId)) {
             throw new CategoryException(CATEGORY_FORBIDDEN);
         }
 
-        for (Long linkId : moveCategoryRequest.getLinkIdList()) {
-            // 링크 조회
-            Link link = linkRepository.findById(linkId)
-                    .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
-            // 링크의 카테고리를 대상 카테고리로 변경
-            link.setCategory(targetCategory);
-            // 변경된 링크 저장
-             linkRepository.save(link);
-        }
-        // 대상 카테고리 저장
-        categoryRepository.saveAndFlush(targetCategory);
+        moveCategoryRequest.getLinkIdList().stream()
+                .map(linkId -> {
+                    Link link = linkRepository.findById(linkId)
+                            .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
+                    if (!link.getCategory().getId().equals(originalCategory.getId())) {
+                        throw new LinkException(LINK_NOT_IN_CATEGORY);
+                    }
+                    link.setCategory(targetCategory);
+                    targetCategory.getLinks().add(link);
+                    return linkRepository.save(link);
+                })
+                .collect(Collectors.toList());
 
         // 대상 카테고리의 링크 목록 조회하며 각 링크별 정보 입력
         List<LinkInfo> linkInfoList = targetCategory.getLinks().stream()
