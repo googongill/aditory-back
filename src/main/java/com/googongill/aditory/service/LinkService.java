@@ -35,9 +35,9 @@ import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 @RequiredArgsConstructor
 public class LinkService {
 
-    private final ChatGptService chatGptService;
     private final UserRepository userRepository;
     private final LinkRepository linkRepository;
+    private final ChatGptService chatGptService;
     private final CategoryRepository categoryRepository;
 
     public LinkResult createLink(CreateLinkRequest createLinkRequest, Long userId) {

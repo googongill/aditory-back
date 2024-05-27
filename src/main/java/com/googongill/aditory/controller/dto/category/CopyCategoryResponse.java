@@ -6,6 +6,8 @@ import com.googongill.aditory.domain.enums.CategoryState;
 import com.googongill.aditory.service.dto.category.CopyCategoryResult;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
 @JsonSerialize
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -13,7 +15,7 @@ public class CopyCategoryResponse{
     private Long categoryId;
     private String categoryName;
     private CategoryState categoryState;
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     public static CopyCategoryResponse of(CopyCategoryResult copyCategoryResult) {
         return CopyCategoryResponse.builder()

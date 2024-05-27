@@ -37,8 +37,8 @@ import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 public class CategoryService {
 
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
     private final LinkRepository linkRepository;
+    private final CategoryRepository categoryRepository;
 
     public CreateCategoryResult createCategory(CreateCategoryRequest createCategoryRequest, Long userId) {
         return getCreateCategoryResult(createCategoryRequest, userId);
