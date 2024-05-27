@@ -137,22 +137,19 @@ public class CategoryService {
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-
-        //새카테고리 생성 및 user 설정
+        // 새카테고리 생성 및 user 설정
         Category newCategory = new Category(category.getAsCategoryName(),user);
-
         // 원본 카테고리의 링크를 가져옴
         List<Link> originalLinks = category.getLinks();
-
-        //링크를 복사하여 새로운 카테고리에 추가
-        for(Link link : originalLinks){
-            Link newLink = new Link(link.getTitle(),link.getSummary(),link.getUrl(),newCategory,user);
-            newCategory.getLinks().add(newLink);
-        }
-        //새카테고리를 사용자의 카테고리 목록에 추가
+        // 링크를 복사하여 새로운 카테고리에 추가
+        List<Link> newLinks = originalLinks.stream()
+                .map(link -> new Link(link.getTitle(), link.getSummary(), link.getUrl(), newCategory, user))
+                .collect(Collectors.toList());
+        newLinks.forEach(linkRepository::save);
+        newCategory.getLinks().addAll(newLinks);
+        // 새카테고리를 사용자의 카테고리 목록에 추가
         user.getCategories().add(newCategory);
-
-        //새 카테고리 저장
+        // 새 카테고리 저장
         categoryRepository.save(newCategory);
 
         return CopyCategoryResult.of(newCategory);
