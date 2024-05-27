@@ -82,6 +82,7 @@ public class CategoryService {
                             .categoryName(category.getCategoryName())
                             .asCategoryName(category.getAsCategoryName())
                             .linkCount(category.getLinks().size())
+                            .likeCount(category.getCategoryLikes().size())
                             .categoryState(category.getCategoryState())
                             .createdAt(category.getCreatedAt())
                             .lastModifiedAt(category.getLastModifiedAt())

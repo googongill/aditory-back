@@ -12,7 +12,5 @@ public interface CategoryLikeRepository extends JpaRepository<CategoryLike, Long
 
     boolean existsByUserAndCategory(User user, Category category);
 
-    Integer countByCategory(Category category);
-
     Optional<CategoryLike> findByUserAndCategory(User user, Category category);
 }

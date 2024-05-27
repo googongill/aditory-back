@@ -38,13 +38,9 @@ public class CategoryLikeService {
         }
         CategoryLike categoryLike = new CategoryLike(user, category);
         categoryLikeRepository.save(categoryLike);
-        Integer likeCount = categoryLikeRepository.countByCategory(category);
-//        LikeCategoryResult likeCategoryResult = LikeCategoryResult.builder()
-//                .categoryId(categoryId)
-//                .likeCount(likeCount)
-//                .build();
+        category.addCategoryLike(categoryLike);
 
-        return LikeCategoryResult.of(categoryId, likeCount);
+        return LikeCategoryResult.of(category);
     }
 
     public LikeCategoryResult unlikeCategory(Long categoryId, Long userId) {
@@ -54,14 +50,8 @@ public class CategoryLikeService {
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         CategoryLike categoryLike = categoryLikeRepository.findByUserAndCategory(user, category)
                 .orElseThrow(() -> new CategoryException(CategoryErrorCode.CATEGORY_NOT_LIKED));
-
         categoryLikeRepository.delete(categoryLike);
-        Integer likeCount = categoryLikeRepository.countByCategory(category);
-//        LikeCategoryResult unlikeCategoryResult = LikeCategoryResult.builder()
-//                .categoryId(categoryId)
-//                .likeCount(likeCount)
-//                .build();
 
-        return LikeCategoryResult.of(categoryId, likeCount);
+        return LikeCategoryResult.of(category);
     }
 }

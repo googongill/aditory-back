@@ -35,12 +35,10 @@ public enum SuccessCode {
     GET_MY_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "내 카테고리 목록 조회에 성공했습니다."),
     GET_PUBLIC_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "공개 카테고리 목록 조회에 성공했습니다."),
     // CategoryLike
-    SAVE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요에 성공했습니다."),
     DELETE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 삭제에 성공했습니다."),
     // Move Link to another category
     MOVE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 이동에 성공했습니다."),
     GET_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 조회에 성공했습니다."),
-
 
     /**
      * 201 Created
@@ -52,7 +50,7 @@ public enum SuccessCode {
     // Category
     SAVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 저장에 성공했습니다."),
     COPY_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 복사에 성공했습니다."),
-
+    SAVE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요에 성공했습니다."),
 
     ;
     private final HttpStatus httpStatus;

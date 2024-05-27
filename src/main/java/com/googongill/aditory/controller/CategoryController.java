@@ -118,7 +118,7 @@ public class CategoryController {
     // 좋아요 취소
     @DeleteMapping("/categories/{categoryId}/like")
     public ResponseEntity<ApiResponse<LikeCategoryResponse>> unlikeCategory(@PathVariable Long categoryId,
-                                                                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                                                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(DELETE_CATEGORY_LIKE_SUCCESS,
                 LikeCategoryResponse.of(categoryLikeService.unlikeCategory(categoryId, principalDetails.getUserId())));
     }

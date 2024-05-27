@@ -54,6 +54,11 @@ public class Category extends BaseEntity {
         link.setCategory(this);
     }
 
+    public void addCategoryLike(CategoryLike categoryLike) {
+        this.categoryLikes.add(categoryLike);
+        categoryLike.setCategory(this);
+    }
+
     public void updateCategoryInfo(String categoryName, String asCategoryName, CategoryState categoryState) {
         this.categoryName = categoryName;
         this.asCategoryName = asCategoryName;

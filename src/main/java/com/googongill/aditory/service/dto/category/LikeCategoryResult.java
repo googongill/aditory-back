@@ -1,5 +1,6 @@
 package com.googongill.aditory.service.dto.category;
 
+import com.googongill.aditory.domain.Category;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,10 +10,10 @@ public class LikeCategoryResult {
     private Long categoryId;
     private Integer likeCount;
 
-    public static LikeCategoryResult of(Long categoryId, Integer likeCount) {
+    public static LikeCategoryResult of(Category category) {
         return LikeCategoryResult.builder()
-                .categoryId(categoryId)
-                .likeCount(likeCount)
+                .categoryId(category.getId())
+                .likeCount(category.getCategoryLikes().size())
                 .build();
     }
 
