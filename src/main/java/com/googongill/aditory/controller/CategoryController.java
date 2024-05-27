@@ -39,6 +39,21 @@ public class CategoryController {
         return ApiResponse.success(SAVE_CATEGORY_SUCCESS,
                 CreateCategoryResponse.of(categoryService.createCategory(createCategoryRequest, principalDetails.getUserId())));
     }
+
+    //카테고리 복사
+    @PostMapping("/categories/{categoryId}/copy")
+    public ResponseEntity<ApiResponse<CopyCategoryResponse>> copyCategory(@PathVariable Long categoryId,
+                                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(COPY_CATEGORY_SUCCESS,
+                CopyCategoryResponse.of(categoryService.copyCategory(categoryId, principalDetails.getUserId())));
+    }
+    //카테고리 속 링크 이동
+    @PostMapping("/categories/{categoryId}/move")
+    public ResponseEntity<ApiResponse<MoveCategoryResponse>> moveCategory(@Valid @RequestBody MoveCategoryRequest moveCategoryRequest,
+                                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(MOVE_CATEGORY_SUCCESS,
+                MoveCategoryResponse.of(categoryService.moveCategory(moveCategoryRequest,principalDetails.getUserId())));
+    }
     //좋아요
     @PostMapping("/categories/{categoryId}/like")
     public ResponseEntity<ApiResponse<LikeCategoryResponse>> likeCategory(@PathVariable Long categoryId,
@@ -77,7 +92,6 @@ public class CategoryController {
         return ApiResponse.success(UPDATE_CATEGORY_SUCCESS,
                 UpdateCategoryResponse.of(categoryService.updateCategory(categoryId, updateCategoryRequest, principalDetails.getUserId())));
     }
-
     // ======= Delete =======
     //카테고리 삭제
     @DeleteMapping("/categories/{categoryId}")
