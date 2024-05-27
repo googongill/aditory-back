@@ -1,4 +1,3 @@
-// CategoryLikeService.java
 package com.googongill.aditory.service;
 
 import com.googongill.aditory.common.code.CategoryErrorCode;
@@ -24,6 +23,7 @@ import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryLikeService {
+
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryLikeRepository categoryLikeRepository;

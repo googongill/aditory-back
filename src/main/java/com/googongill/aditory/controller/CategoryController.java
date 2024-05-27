@@ -28,10 +28,11 @@ import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORB
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final CategoryLikeService categoryLikeService;
     private final CategoryRepository categoryRepository;
+    private final CategoryLikeService categoryLikeService;
 
     // ======= Create =======
+
     //카테고리 저장
     @PostMapping("/categories")
     public ResponseEntity<ApiResponse<CreateCategoryResponse>> createCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest,
@@ -47,6 +48,7 @@ public class CategoryController {
         return ApiResponse.success(COPY_CATEGORY_SUCCESS,
                 CopyCategoryResponse.of(categoryService.copyCategory(categoryId, principalDetails.getUserId())));
     }
+
     //카테고리 속 링크 이동
     @PostMapping("/categories/{categoryId}/move")
     public ResponseEntity<ApiResponse<MoveCategoryResponse>> moveCategory(@Valid @RequestBody MoveCategoryRequest moveCategoryRequest,
@@ -54,6 +56,7 @@ public class CategoryController {
         return ApiResponse.success(MOVE_CATEGORY_SUCCESS,
                 MoveCategoryResponse.of(categoryService.moveCategory(moveCategoryRequest,principalDetails.getUserId())));
     }
+
     //좋아요
     @PostMapping("/categories/{categoryId}/like")
     public ResponseEntity<ApiResponse<LikeCategoryResponse>> likeCategory(@PathVariable Long categoryId,
@@ -71,12 +74,14 @@ public class CategoryController {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
                 CategoryDetailResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
     }
+
     // 내 카테고리 목록 조회
     @GetMapping("/categories/my")
     public ResponseEntity<ApiResponse<MyCategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
                 MyCategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
     }
+
     //공개 카테고리 목록 조회
     @GetMapping("/categories/public")
     public ResponseEntity<ApiResponse<PublicCategoryListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -85,6 +90,7 @@ public class CategoryController {
     }
 
     // ======= Update =======
+
     //카테고리 수정
     @PatchMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<UpdateCategoryResponse>> updateCategory(@PathVariable Long categoryId, @RequestBody UpdateCategoryRequest updateCategoryRequest,
@@ -92,7 +98,9 @@ public class CategoryController {
         return ApiResponse.success(UPDATE_CATEGORY_SUCCESS,
                 UpdateCategoryResponse.of(categoryService.updateCategory(categoryId, updateCategoryRequest, principalDetails.getUserId())));
     }
+
     // ======= Delete =======
+
     //카테고리 삭제
     @DeleteMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<DeleteCategoryResponse>> deleteCategory(@PathVariable Long categoryId,
@@ -106,6 +114,7 @@ public class CategoryController {
         return ApiResponse.success(DELETE_CATEGORY_SUCCESS,
                 DeleteCategoryResponse.of(categoryId));
     }
+
     // 좋아요 취소
     @DeleteMapping("/categories/{categoryId}/like")
     public ResponseEntity<ApiResponse<LikeCategoryResponse>> unlikeCategory(@PathVariable Long categoryId,
@@ -113,4 +122,5 @@ public class CategoryController {
         return ApiResponse.success(DELETE_CATEGORY_LIKE_SUCCESS,
                 LikeCategoryResponse.of(categoryLikeService.unlikeCategory(categoryId, principalDetails.getUserId())));
     }
+
 }

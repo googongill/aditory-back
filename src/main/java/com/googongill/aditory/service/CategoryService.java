@@ -19,7 +19,6 @@ import com.googongill.aditory.controller.dto.category.CreateCategoryRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,6 +70,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
         return CategoryListResult.of(myCategoryInfoList);
     }
+
     public PublicCategoryListResult getPublicCategoryList(Long userId) {
         // user 조회
         User user = userRepository.findById(userId)
@@ -111,6 +111,7 @@ public class CategoryService {
                 ).collect(Collectors.toList());
         return MyCategoryResult.of(category, linkInfoList);
     }
+
     public UpdateCategoryResult updateCategory(Long categoryId, UpdateCategoryRequest updateCategoryRequest, Long userId) {
         // 카테고리 조회
         Category category = categoryRepository.findById(categoryId)
@@ -123,6 +124,7 @@ public class CategoryService {
         categoryRepository.save(category);
         return UpdateCategoryResult.of(category);
     }
+
     //카테고리 복사
     public CopyCategoryResult copyCategory(Long categoryId, Long userId) {
         // 카테고리 조회
@@ -154,6 +156,7 @@ public class CategoryService {
 
         return CopyCategoryResult.of(newCategory);
     }
+
     // 카테고리 속 링크 이동
     public MyCategoryResult moveCategory(MoveCategoryRequest moveCategoryRequest, Long userId) {
         // user 조회
@@ -193,5 +196,5 @@ public class CategoryService {
                         .build()
                 ).collect(Collectors.toList());
         return MyCategoryResult.of(targetCategory, linkInfoList);
-        }
     }
+}
