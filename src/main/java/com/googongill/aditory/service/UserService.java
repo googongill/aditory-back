@@ -117,14 +117,6 @@ public class UserService {
         return dbRefreshToken;
     }
 
-    public UpdateUserResult updateUserInfo(UpdateUserRequest updateUserRequest, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getContact());
-        userRepository.save(user);
-        return UpdateUserResult.of(user);
-    }
-
     public ProfileImageResult updateProfileImage(MultipartFile multipartFile, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
@@ -141,5 +133,17 @@ public class UserService {
         S3DownloadResult s3DownloadResult = awss3Service.downloadOne(profileImage);
 
         return ProfileImageResult.of(user, s3DownloadResult);
+    }
+
+    public UserTokenResult socialLoginUser(String code) {
+        return null;
+    }
+
+    public UpdateUserResult updateUserInfo(UpdateUserRequest updateUserRequest, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getContact());
+        userRepository.save(user);
+        return UpdateUserResult.of(user);
     }
 }

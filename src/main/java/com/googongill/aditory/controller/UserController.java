@@ -71,6 +71,12 @@ public class UserController {
         return "test success!";
     }
 
+    @GetMapping("/oauth/login")
+    public ResponseEntity<ApiResponse<UserTokenResponse>> socialLogin(@RequestBody String code) {
+        return ApiResponse.success(LOGIN_SUCCESS,
+                UserTokenResponse.of(userService.socialLoginUser(code)));
+    }
+
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<UserInfoResponse>> getUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         User user = userRepository.findById(principalDetails.getUserId())
