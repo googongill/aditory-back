@@ -71,10 +71,10 @@ public class UserController {
         return "test success!";
     }
 
-    @GetMapping("/oauth/login")
-    public ResponseEntity<ApiResponse<UserTokenResponse>> socialLogin(@RequestBody String code) {
+    @GetMapping("/oauth/login/{provider}")
+    public ResponseEntity<ApiResponse<UserTokenResponse>> socialLogin(@PathVariable String provider, @RequestParam String code) {
         return ApiResponse.success(LOGIN_SUCCESS,
-                UserTokenResponse.of(userService.socialLoginUser(code)));
+                UserTokenResponse.of(userService.socialLoginUser(provider, code)));
     }
 
     @GetMapping("/users")

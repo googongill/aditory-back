@@ -4,6 +4,8 @@ import com.googongill.aditory.controller.dto.user.*;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
+import com.googongill.aditory.domain.enums.Role;
+import com.googongill.aditory.domain.enums.SocialType;
 import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.external.s3.AWSS3Service;
 import com.googongill.aditory.external.s3.dto.S3DownloadResult;
@@ -11,15 +13,24 @@ import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
+import com.googongill.aditory.security.oauth.KakaoUserProfile;
+import com.googongill.aditory.security.oauth.OAuth2UserInfo;
 import com.googongill.aditory.service.dto.user.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.googongill.aditory.common.code.UserErrorCode.*;
@@ -35,6 +46,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final InMemoryClientRegistrationRepository inMemoryRepository;
 
     public SignupResult createUser(SignupRequest signupRequest) {
         // 이미 존재하는 username 존재하는지 확인
@@ -135,8 +147,67 @@ public class UserService {
         return ProfileImageResult.of(user, s3DownloadResult);
     }
 
-    public UserTokenResult socialLoginUser(String code) {
-        return null;
+    public UserTokenResult socialLoginUser(String providerName, String code) {
+        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
+
+        User user = getUserProfile(providerName, code, provider);
+
+        JwtResult newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
+        String refreshToken = newToken.getRefreshToken();
+        user.saveRefreshToken(refreshToken);
+        userRepository.save(user);
+
+        return UserTokenResult.of(user, newToken);
+    }
+
+    public User getUserProfile(String providerName, String code, ClientRegistration provider) {
+        Map<String, Object> userAttributes = getUserAttributes(provider, code);
+        OAuth2UserInfo oAuth2UserInfo = getOAuthUserInfo(providerName, userAttributes);
+        SocialType socialType = getSocialType(providerName);
+
+        String providerId = oAuth2UserInfo.getProviderId();
+        String nickname = oAuth2UserInfo.getNickname();
+
+        Optional<User> userEntity = userRepository.findBySocialId(providerId);
+
+        return userEntity
+                .orElseGet(() -> saveUser(socialType, providerId, nickname));
+    }
+
+    private Map<String, Object> getUserAttributes(ClientRegistration provider, String code) {
+        return WebClient.create()
+                .get()
+                .uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
+                .headers(header -> header.setBearerAuth(code))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                })
+                .block();
+    }
+
+    private OAuth2UserInfo getOAuthUserInfo(String providerName, Map<String, Object> userAttributes) {
+        if (providerName.equals("kakao")) {
+            return new KakaoUserProfile(userAttributes);
+        }
+        throw new UserException(SOCIAL_PLATFORM_INVALID);
+    }
+
+    private SocialType getSocialType(String providerName) {
+        if (providerName.equals("kakao")) {
+            return SocialType.KAKAO;
+        }
+        throw new UserException(SOCIAL_PLATFORM_INVALID);
+    }
+
+    private User saveUser(SocialType socialType, String providerId, String nickname) {
+        User socialUser = new User(
+                String.valueOf(UUID.randomUUID()),
+                Role.ROLE_USER,
+                socialType,
+                providerId,
+                nickname);
+        userRepository.save(socialUser);
+        return socialUser;
     }
 
     public UpdateUserResult updateUserInfo(UpdateUserRequest updateUserRequest, Long userId) {
