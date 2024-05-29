@@ -11,6 +11,7 @@ public class LinkInfo {
     private Long linkId;
     private String title;
     private String summary;
+    private String url;
     private Boolean linkState;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;

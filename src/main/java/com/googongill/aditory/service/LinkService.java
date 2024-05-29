@@ -35,9 +35,9 @@ import static com.googongill.aditory.common.code.UserErrorCode.USER_NOT_FOUND;
 @RequiredArgsConstructor
 public class LinkService {
 
-    private final ChatGptService chatGptService;
     private final UserRepository userRepository;
     private final LinkRepository linkRepository;
+    private final ChatGptService chatGptService;
     private final CategoryRepository categoryRepository;
 
     public LinkResult createLink(CreateLinkRequest createLinkRequest, Long userId) {
@@ -99,6 +99,9 @@ public class LinkService {
         // 카테고리 조회
         Category category = categoryRepository.findById(updateLinkRequest.getCategoryId())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
+        if (!category.getUser().getId().equals(userId)) {
+            throw new CategoryException(CATEGORY_FORBIDDEN);
+        }
         // 링크 정보 수정 (연관관계 메서드)
         link.updateLinkInfo(updateLinkRequest.getTitle(), updateLinkRequest.getSummary(), updateLinkRequest.getUrl(), category);
         linkRepository.save(link);
@@ -117,6 +120,7 @@ public class LinkService {
                         .linkId(link.getId())
                         .title(link.getTitle())
                         .summary(link.getSummary())
+                        .url(link.getUrl())
                         .linkState(link.getLinkState())
                         .createdAt(link.getCreatedAt())
                         .lastModifiedAt(link.getLastModifiedAt())

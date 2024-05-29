@@ -10,6 +10,11 @@ import org.springframework.http.HttpStatus;
 public enum LinkErrorCode implements BusinessErrorCode {
 
     /**
+     * 400 Bad Request
+     */
+    LINK_NOT_IN_CATEGORY(HttpStatus.BAD_REQUEST, "해당 카테고리에 속해있지 않는 링크가 포함되어 있습니다."),
+
+    /**
      * 401 Forbidden
      */
     LINK_FORBIDDEN(HttpStatus.FORBIDDEN, "접근할 수 없는 링크입니다."),

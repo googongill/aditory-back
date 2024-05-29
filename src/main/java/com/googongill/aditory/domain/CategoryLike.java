@@ -20,4 +20,14 @@ public class CategoryLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    public CategoryLike(User user, Category category) {
+        this.user = user;
+        this.category = category;
+    }
+
+    // 연관관계 메서드
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

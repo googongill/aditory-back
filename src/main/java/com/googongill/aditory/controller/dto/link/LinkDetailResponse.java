@@ -14,8 +14,8 @@ public class LinkDetailResponse {
     private Long linkId;
     private String title;
     private String summary;
-    private Boolean linkState;
     private String url;
+    private Boolean linkState;
     private Long categoryId;
     private String categoryName;
     private LocalDateTime createdAt;

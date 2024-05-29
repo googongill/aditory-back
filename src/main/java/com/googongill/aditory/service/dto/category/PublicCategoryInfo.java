@@ -13,6 +13,7 @@ public class PublicCategoryInfo {
     private String categoryName;
     private String asCategoryName;
     private Integer linkCount;
+    private Integer likeCount;
     private CategoryState categoryState;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;

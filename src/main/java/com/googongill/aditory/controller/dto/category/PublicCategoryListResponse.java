@@ -14,11 +14,11 @@ import java.util.List;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PublicCategoryListResponse {
     @Builder.Default
-    List<PublicCategoryInfo> categoryPublicList = new ArrayList<>();
+    List<PublicCategoryInfo> publicCategoryList = new ArrayList<>();
 
     public static PublicCategoryListResponse of(PublicCategoryListResult publicCategoryListResult) {
         return PublicCategoryListResponse.builder()
-                .categoryPublicList(publicCategoryListResult.getCategoryPublicList())
+                .publicCategoryList(publicCategoryListResult.getPublicCategoryList())
                 .build();
     }
 }
