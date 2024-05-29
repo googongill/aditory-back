@@ -9,11 +9,11 @@ import java.util.List;
 @Builder
 public class PublicCategoryListResult {
     @Builder.Default
-    List<PublicCategoryInfo> categoryPublicList = new ArrayList<>();
+    List<PublicCategoryInfo> publicCategoryList = new ArrayList<>();
 
     public static PublicCategoryListResult of(List<PublicCategoryInfo> categoryPublicList) {
         return PublicCategoryListResult.builder()
-                .categoryPublicList(categoryPublicList)
+                .publicCategoryList(categoryPublicList)
                 .build();
     }
 }

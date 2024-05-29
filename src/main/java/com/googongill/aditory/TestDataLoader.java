@@ -44,8 +44,8 @@ public class TestDataLoader implements CommandLineRunner {
         categoryRepository.saveAll(Arrays.asList(category1, category2));
 
         Link link1 = new Link("C++ library", "How to use C++ library's function", "https://www.entertainment.com", category1, testUser);
-        Link link2 = new Link("test", "strategy for test", "https://www.test.com", category1, testAdmin);
-        Link link3 = new Link("news", "summary for news", "https://www.news.com", category2, testUser);
+        Link link2 = new Link("test", "strategy for test", "https://www.test.com", category1, testUser);
+        Link link3 = new Link("news", "summary for news", "https://www.news.com", category2, testAdmin);
         linkRepository.saveAll(Arrays.asList(link1, link2, link3));
     }
 }

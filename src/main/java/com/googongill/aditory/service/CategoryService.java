@@ -106,6 +106,7 @@ public class CategoryService {
                         .linkId(link.getId())
                         .title(link.getTitle())
                         .summary(link.getSummary())
+                        .url(link.getUrl())
                         .linkState(link.getLinkState())
                         .createdAt(link.getCreatedAt())
                         .lastModifiedAt(link.getLastModifiedAt())

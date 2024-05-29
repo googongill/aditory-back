@@ -7,6 +7,7 @@ import com.googongill.aditory.service.dto.category.MyCategoryResult;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class MoveCategoryResponse {
     private CategoryState categoryState;
     @Builder.Default
     private List<LinkInfo> linkList = new ArrayList<>();
+    private LocalDateTime createdAt;
+    private LocalDateTime lastModifiedAt;
 
     public static MoveCategoryResponse of(MyCategoryResult myCategoryResult) {
         return MoveCategoryResponse.builder()
@@ -28,6 +31,8 @@ public class MoveCategoryResponse {
                 .linkCount(myCategoryResult.getLinkCount())
                 .categoryState(myCategoryResult.getCategoryState())
                 .linkList(myCategoryResult.getLinkList())
+                .createdAt(myCategoryResult.getCreatedAt())
+                .lastModifiedAt(myCategoryResult.getLastModifiedAt())
                 .build();
     }
 }

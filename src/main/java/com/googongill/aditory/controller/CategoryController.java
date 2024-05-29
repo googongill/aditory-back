@@ -68,7 +68,7 @@ public class CategoryController {
 
     // ======== Read ========
   
-    // 카테고리 조회
+    // 카테고리 상세 조회
     @GetMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<CategoryDetailResponse>> getCategory(@PathVariable Long categoryId,
                                                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
