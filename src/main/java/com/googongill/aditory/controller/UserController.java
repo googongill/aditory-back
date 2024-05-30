@@ -72,6 +72,11 @@ public class UserController {
 
     // ======== Read ========
 
+    @GetMapping("/home")
+    public String welcome() {
+        return "Welcome";
+    }
+
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<UserInfoResponse>> getUserInfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         User user = userRepository.findById(principalDetails.getUserId())
