@@ -70,17 +70,17 @@ public class CategoryController {
   
     // 카테고리 상세 조회
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryDetailResponse>> getCategory(@PathVariable Long categoryId,
-                                                                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<CategoryDetailResponse>> getCategoryDetail(@PathVariable Long categoryId,
+                                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_CATEGORY_SUCCESS,
-                CategoryDetailResponse.of(categoryService.getCategory(categoryId, principalDetails.getUserId())));
+                CategoryDetailResponse.of(categoryService.getCategoryDetail(categoryId, principalDetails.getUserId())));
     }
 
     // 내 카테고리 목록 조회
     @GetMapping("/categories/my")
     public ResponseEntity<ApiResponse<MyCategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
-                MyCategoryListResponse.of(categoryService.getCategoryList(principalDetails.getUserId())));
+                MyCategoryListResponse.of(categoryService.getMyCategoryList(principalDetails.getUserId())));
     }
 
     // 공개 카테고리 목록 조회
