@@ -8,12 +8,12 @@ import java.util.List;
 
 @Getter
 @Builder
-public class CategoryListResult {
+public class MyCategoryListResult {
     @Builder.Default
     List<MyCategoryInfo> categoryList = new ArrayList<>();
 
-    public static CategoryListResult of(List<MyCategoryInfo> categoryList) {
-        return CategoryListResult.builder()
+    public static MyCategoryListResult of(List<MyCategoryInfo> categoryList) {
+        return MyCategoryListResult.builder()
                 .categoryList(categoryList)
                 .build();
     }

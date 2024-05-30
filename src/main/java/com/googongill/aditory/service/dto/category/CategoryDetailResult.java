@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class MyCategoryResult {
+public class CategoryDetailResult {
     private Long categoryId;
     private String categoryName;
     private Integer linkCount;
@@ -22,8 +22,8 @@ public class MyCategoryResult {
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 
-    public static MyCategoryResult of(Category category, List<LinkInfo> linkList) {
-        return MyCategoryResult.builder()
+    public static CategoryDetailResult of(Category category, List<LinkInfo> linkList) {
+        return CategoryDetailResult.builder()
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
                 .linkCount(category.getLinks().size())

@@ -64,10 +64,10 @@ public class UserController {
     }
 
     @PostMapping("/users/profile-image")
-    public ResponseEntity<ApiResponse<ProfileImageResponse>> updateProfileImage(@RequestParam MultipartFile multipartFile,
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> updateProfileImage(@RequestParam MultipartFile profileImage,
                                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(UPDATE_PROFILE_IMAGE_SUCCESS,
-                ProfileImageResponse.of(userService.updateProfileImage(multipartFile, principalDetails.getUserId())));
+                ProfileImageResponse.of(userService.updateProfileImage(profileImage, principalDetails.getUserId())));
     }
 
     // ======== Read ========
