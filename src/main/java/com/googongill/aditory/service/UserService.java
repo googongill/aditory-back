@@ -20,16 +20,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -147,10 +144,10 @@ public class UserService {
         return ProfileImageResult.of(user, s3DownloadResult);
     }
 
-    public UserTokenResult socialLoginUser(String providerName, String code) {
-        ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
+    public UserTokenResult socialLoginUser(SocialLoginRequest socialLoginRequest) {
+        ClientRegistration provider = inMemoryRepository.findByRegistrationId(socialLoginRequest.getProvider());
 
-        User user = getUserProfile(providerName, code, provider);
+        User user = getUserProfile(socialLoginRequest.getProvider(), socialLoginRequest.getCode(), provider);
 
         JwtResult newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
         String refreshToken = newToken.getRefreshToken();
