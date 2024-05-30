@@ -35,6 +35,14 @@ public class Link extends BaseEntity {
         this.user = user;
     }
 
+    public Link(String title, String url, Boolean linkState, Category category, User user) {
+        this.title = title;
+        this.url = url;
+        this.linkState = linkState;
+        this.category = category;
+        this.user = user;
+    }
+
     // 연관관계 메서드
     public void setCategory(Category category) {
         this.category = category;

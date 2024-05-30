@@ -10,6 +10,11 @@ import org.springframework.http.HttpStatus;
 public enum CategoryErrorCode implements BusinessErrorCode {
 
     /**
+     * 400 Bad Request
+     */
+    IMPORT_FILE_PARSE_FAIL(HttpStatus.BAD_REQUEST, "파일 파싱 중 오류가 발생했습니다."),
+
+    /**
      * 401 Forbidden
      */
     CATEGORY_FORBIDDEN(HttpStatus.FORBIDDEN, "접근할 수 없는 카테고리입니다."),
