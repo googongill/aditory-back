@@ -75,7 +75,8 @@ public class SecurityConfig {
         return new OrRequestMatcher(
                 new AntPathRequestMatcher("/users/signup", "POST"),
                 new AntPathRequestMatcher("/users/login", "POST"),
-                new AntPathRequestMatcher("/users/refresh", "POST")
+                new AntPathRequestMatcher("/users/refresh", "POST"),
+                new AntPathRequestMatcher("/oauth/login", "POST")
         );
     }
 }

@@ -53,12 +53,12 @@ public class User extends BaseTimeEntity {
         this.contact = contact;
     }
 
-    public User(SocialType socialType, String socialId, String username, String nickname, Role role) {
+    public User(String username, Role role, SocialType socialType, String socialId, String nickname) {
+        this.username = username;
+        this.role = role;
         this.socialType = socialType;
         this.socialId = socialId;
-        this.username = username;
         this.nickname = nickname;
-        this.role = role;
     }
 
     // 연관관계 메서드

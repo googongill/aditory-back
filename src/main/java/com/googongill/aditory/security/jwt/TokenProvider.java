@@ -63,9 +63,9 @@ public class TokenProvider {
                 .compact();
     }
 
-    public static String createAccessToken(String email) {
+    public static String createAccessToken(String username) {
         Claims claims = Jwts.claims();
-        claims.put("email", email);
+        claims.put("username", username);
 
         return Jwts.builder()
                 .setSubject("access-token")
