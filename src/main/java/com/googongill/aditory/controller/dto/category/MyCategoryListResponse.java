@@ -3,7 +3,7 @@ package com.googongill.aditory.controller.dto.category;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.googongill.aditory.service.dto.category.MyCategoryInfo;
-import com.googongill.aditory.service.dto.category.CategoryListResult;
+import com.googongill.aditory.service.dto.category.MyCategoryListResult;
 import lombok.Builder;
 
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ public class MyCategoryListResponse {
     @Builder.Default
     List<MyCategoryInfo> categoryList = new ArrayList<>();
 
-    public static MyCategoryListResponse of(CategoryListResult categoryListResult) {
+    public static MyCategoryListResponse of(MyCategoryListResult myCategoryListResult) {
         return MyCategoryListResponse.builder()
-                .categoryList(categoryListResult.getCategoryList())
+                .categoryList(myCategoryListResult.getCategoryList())
                 .build();
     }
 }
