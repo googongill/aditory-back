@@ -44,6 +44,12 @@ public class UserController {
                 UserTokenResponse.of(userService.loginUser(loginRequest)));
     }
 
+    @PostMapping("/oauth/login")
+    public ResponseEntity<ApiResponse<UserTokenResponse>> socialLogin(@Valid @RequestBody SocialLoginRequest socialLoginRequest) {
+        return ApiResponse.success(LOGIN_SUCCESS,
+                UserTokenResponse.of(userService.socialLoginUser(socialLoginRequest)));
+    }
+
     @PostMapping("/users/logout")
     public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken,
                                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {

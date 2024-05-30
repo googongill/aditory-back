@@ -82,10 +82,9 @@ public class LinkController {
         if (!link.getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(LINK_FORBIDDEN);
         }
-        Long deletedLinkId = linkId;
         linkRepository.delete(link);
         return ApiResponse.success(DELETE_LINK_SUCCESS,
-                DeleteLinkResponse.of(deletedLinkId));
+                DeleteLinkResponse.of(linkId));
     }
 
 }

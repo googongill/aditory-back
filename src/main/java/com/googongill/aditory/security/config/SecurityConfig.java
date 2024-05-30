@@ -76,7 +76,8 @@ public class SecurityConfig {
                 new AntPathRequestMatcher("/home", "GET"),
                 new AntPathRequestMatcher("/users/signup", "POST"),
                 new AntPathRequestMatcher("/users/login", "POST"),
-                new AntPathRequestMatcher("/users/refresh", "POST")
+                new AntPathRequestMatcher("/users/refresh", "POST"),
+                new AntPathRequestMatcher("/oauth/login", "POST")
         );
     }
 }
