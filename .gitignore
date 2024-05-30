@@ -42,5 +42,5 @@ out/
 /src/test/resources/application.yml
 /src/test/resources/application.yaml
 
-### TestDataLoader
+### TestDataLoader ###
 /src/main/java/com/googongill/aditory/TestDataLoader.java
