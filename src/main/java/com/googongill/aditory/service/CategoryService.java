@@ -19,9 +19,14 @@ import com.googongill.aditory.controller.dto.category.CreateCategoryRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -212,5 +217,60 @@ public class CategoryService {
     public void importCategories(MultipartFile importFile, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        try {
+            Document doc = Jsoup.parse(importFile.getInputStream(), "UTF-8", "");
+
+            Elements unReadElements = doc.select("h1:contains(Unread) + ul > li > a");
+            processElements(unReadElements, user, true);
+
+            Elements readElements = doc.select("h1:contains(Read Archive) + ul > li > a");
+            processElements(readElements, user, true);
+
+        } catch (IOException e) {
+            throw new CategoryException(IMPORT_FILE_PARSE_FAIL);
+        }
+    }
+
+    private void processElements(Elements elements, User user, boolean linkState) {
+        elements.stream()
+                .map(element -> {
+                    String categoryName = element.attr("tags");
+                    String linkTitle = element.text();
+                    String url = element.attr("href");
+
+                    if (!categoryName.isEmpty()) {
+                        addLinkToAlreadyExistingCategory(user, linkState, categoryName, linkTitle, url);
+                    } else {
+                        addLinkAndCategory(user, linkState, linkTitle, url);
+                    }
+                    return element;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private void addLinkToAlreadyExistingCategory(User user, boolean linkState, String categoryName, String linkTitle, String url) {
+        Category category = categoryRepository.findByCategoryNameAndUser(categoryName, user)
+                .orElseGet(() -> {
+                    Category newCategory = categoryRepository.save(new Category(categoryName, user));
+                    user.addCategory(newCategory);
+                    return newCategory;
+                });
+        Link link = new Link(linkTitle, url, linkState, category, user);
+        linkRepository.save(link);
+        category.addLink(link);
+        user.addLink(link);
+    }
+
+    private void addLinkAndCategory(User user, boolean linkState, String linkTitle, String url) {
+        Category category = categoryRepository.findByCategoryName("imported Category")
+                .orElseGet(() -> {
+                    Category newCategory = categoryRepository.save(new Category("imported Category", user));
+                    user.addCategory(newCategory);
+                    return newCategory;
+                });
+        Link link = new Link(linkTitle, url, linkState, category, user);
+        linkRepository.save(link);
+        category.addLink(link);
+        user.addLink(link);
     }
 }
