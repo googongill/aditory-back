@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
@@ -64,6 +65,13 @@ public class CategoryController {
                                                                           @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(SAVE_CATEGORY_LIKE_SUCCESS,
                 LikeCategoryResponse.of(categoryLikeService.likeCategory(categoryId, principalDetails.getUserId())));
+    }
+
+    @PostMapping("/categories/import")
+    public ResponseEntity<ApiResponse<Object>> importCategories(@RequestParam MultipartFile importFile,
+                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        categoryService.importCategories(importFile, principalDetails.getUserId());
+        return ApiResponse.success(IMPORT_CATEGORY_SUCCESS);
     }
 
     // ======== Read ========
