@@ -69,6 +69,9 @@ public class CategoryService {
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        if (user.getCategories().stream().anyMatch(userCategory -> userCategory.getId().equals(categoryId))) {
+            throw new CategoryException(CATEGORY_ALREADY_OWNED);
+        }
         // category 갯수 제한
         if (user.getCategories().size() >= 30) {
             throw new CategoryException(CATEGORY_LIMIT_EXCEEDED);
