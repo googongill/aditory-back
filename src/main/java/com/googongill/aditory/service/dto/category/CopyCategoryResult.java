@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class CopyCategoryResult {
     private Long categoryId;
     private String categoryName;
+    private String asCategoryName;
     private CategoryState categoryState;
     private LocalDateTime createdAt;
 
@@ -19,6 +20,7 @@ public class CopyCategoryResult {
         return CopyCategoryResult.builder()
                 .categoryId(newCategory.getId())
                 .categoryName(newCategory.getCategoryName())
+                .asCategoryName(newCategory.getAsCategoryName())
                 .categoryState(newCategory.getCategoryState())
                 .createdAt(newCategory.getCreatedAt())
                 .build();

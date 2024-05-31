@@ -37,8 +37,9 @@ public class Category extends BaseEntity {
         this.categoryName = categoryName;
     }
 
-    public Category(String categoryName, User user) {
+    public Category(String categoryName, String asCategoryName, User user) {
         this.categoryName = categoryName;
+        this.asCategoryName = asCategoryName;
         this.viewCount = 0;
         this.categoryState = CategoryState.PRIVATE;
         this.user = user;

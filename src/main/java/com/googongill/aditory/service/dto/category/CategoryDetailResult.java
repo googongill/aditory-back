@@ -15,6 +15,7 @@ import java.util.List;
 public class CategoryDetailResult {
     private Long categoryId;
     private String categoryName;
+    private String asCategoryName;
     private Integer linkCount;
     private CategoryState categoryState;
     @Builder.Default
@@ -26,6 +27,7 @@ public class CategoryDetailResult {
         return CategoryDetailResult.builder()
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
+                .asCategoryName(category.getAsCategoryName())
                 .linkCount(category.getLinks().size())
                 .categoryState(category.getCategoryState())
                 .linkList(linkList)

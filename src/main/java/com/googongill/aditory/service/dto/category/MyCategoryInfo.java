@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class MyCategoryInfo {
     private Long categoryId;
     private String categoryName;
+    private String asCategoryName;
     private Integer linkCount;
     private CategoryState categoryState;
     private LocalDateTime createdAt;
