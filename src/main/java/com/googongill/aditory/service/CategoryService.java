@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,7 +74,7 @@ public class CategoryService {
             throw new CategoryException(CATEGORY_LIMIT_EXCEEDED);
         }
         // 새카테고리 생성 및 user 설정
-        Category newCategory = new Category(category.getAsCategoryName(),user);
+        Category newCategory = new Category(category.getAsCategoryName(), category.getAsCategoryName(), user);
         // 원본 카테고리의 링크를 가져옴
         List<Link> originalLinks = category.getLinks();
         // 링크를 복사하여 새로운 카테고리에 추가
@@ -172,6 +171,7 @@ public class CategoryService {
                 .map(category -> MyCategoryInfo.builder()
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
+                        .asCategoryName(category.getAsCategoryName())
                         .linkCount(category.getLinks().size())
                         .categoryState(category.getCategoryState())
                         .createdAt(category.getCreatedAt())
@@ -251,7 +251,7 @@ public class CategoryService {
     private void addLinkToAlreadyExistingCategory(User user, boolean linkState, String categoryName, String linkTitle, String url) {
         Category category = categoryRepository.findByCategoryNameAndUser(categoryName, user)
                 .orElseGet(() -> {
-                    Category newCategory = categoryRepository.save(new Category(categoryName, user));
+                    Category newCategory = categoryRepository.save(new Category(categoryName, "(default)", user));
                     user.addCategory(newCategory);
                     return newCategory;
                 });
@@ -264,7 +264,7 @@ public class CategoryService {
     private void addLinkAndCategory(User user, boolean linkState, String linkTitle, String url) {
         Category category = categoryRepository.findByCategoryName("imported Category")
                 .orElseGet(() -> {
-                    Category newCategory = categoryRepository.save(new Category("imported Category", user));
+                    Category newCategory = categoryRepository.save(new Category("imported Category", "(default)", user));
                     user.addCategory(newCategory);
                     return newCategory;
                 });
