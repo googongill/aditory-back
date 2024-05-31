@@ -10,6 +10,7 @@ import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.external.s3.AWSS3Service;
 import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.repository.CategoryRepository;
+import com.googongill.aditory.repository.ProfileImageRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
@@ -43,6 +44,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ProfileImageRepository profileImageRepository;
     private final InMemoryClientRegistrationRepository inMemoryRepository;
 
     public SignupResult createUser(SignupRequest signupRequest) {
@@ -136,8 +138,8 @@ public class UserService {
         });
 
         ProfileImage profileImage = awss3Service.uploadOne(multipartFile);
+        profileImageRepository.save(profileImage);
         user.updateProfileImage(profileImage);
-        userRepository.save(user);
 
         S3DownloadResult s3DownloadResult = awss3Service.downloadOne(profileImage);
 

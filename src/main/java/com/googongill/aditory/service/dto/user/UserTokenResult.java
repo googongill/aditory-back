@@ -17,6 +17,7 @@ public class UserTokenResult {
     private Long userId;
     private String username;
     private String nickname;
+    private String contact;
     private String accessToken;
     private String refreshToken;
     @Builder.Default
@@ -34,6 +35,7 @@ public class UserTokenResult {
                 .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
+                .contact(user.getContact())
                 .accessToken(jwtResult.getAccessToken())
                 .refreshToken(jwtResult.getRefreshToken())
                 .userCategories(userCategories)

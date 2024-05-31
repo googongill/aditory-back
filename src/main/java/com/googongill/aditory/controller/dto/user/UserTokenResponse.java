@@ -16,6 +16,7 @@ public class UserTokenResponse {
     private Long userId;
     private String username;
     private String nickname;
+    private String contact;
     private String accessToken;
     private String refreshToken;
     @Builder.Default
@@ -26,6 +27,7 @@ public class UserTokenResponse {
                 .userId(userTokenResult.getUserId())
                 .username(userTokenResult.getUsername())
                 .nickname(userTokenResult.getNickname())
+                .contact(userTokenResult.getContact())
                 .accessToken(userTokenResult.getAccessToken())
                 .refreshToken(userTokenResult.getRefreshToken())
                 .userCategories(userTokenResult.getUserCategories())
