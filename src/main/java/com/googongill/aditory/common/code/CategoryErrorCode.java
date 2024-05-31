@@ -30,9 +30,9 @@ public enum CategoryErrorCode implements BusinessErrorCode {
      */
     CATEGORY_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요한 카테고리입니다."),
     CATEGORY_LIMIT_EXCEEDED(HttpStatus.CONFLICT, "카테고리는 최대 30개까지 추가할 수 있습니다."),
+    CATEGORY_ALREADY_OWNED(HttpStatus.CONFLICT, "이미 소유하고 있는 카테고리입니다."),
 
     ;
-
 
     private final HttpStatus httpStatus;
     private final String message;

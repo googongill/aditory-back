@@ -60,6 +60,10 @@ public class Category extends BaseEntity {
         categoryLike.setCategory(this);
     }
 
+    public void deleteCategoryLike(CategoryLike categoryLike) {
+        this.categoryLikes.remove(categoryLike);
+    }
+
     public void updateCategoryInfo(String categoryName, String asCategoryName, CategoryState categoryState) {
         this.categoryName = categoryName;
         this.asCategoryName = asCategoryName;
