@@ -2,8 +2,12 @@ package com.googongill.aditory.controller.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.googongill.aditory.service.dto.category.CategoryResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
 import lombok.Builder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @JsonSerialize
@@ -14,6 +18,8 @@ public class UserTokenResponse {
     private String nickname;
     private String accessToken;
     private String refreshToken;
+    @Builder.Default
+    private List<CategoryResult> userCategories = new ArrayList<>();
 
     public static UserTokenResponse of(UserTokenResult userTokenResult) {
         return UserTokenResponse.builder()
@@ -22,6 +28,7 @@ public class UserTokenResponse {
                 .nickname(userTokenResult.getNickname())
                 .accessToken(userTokenResult.getAccessToken())
                 .refreshToken(userTokenResult.getRefreshToken())
+                .userCategories(userTokenResult.getUserCategories())
                 .build();
     }
 }
