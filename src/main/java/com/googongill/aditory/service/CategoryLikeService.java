@@ -50,6 +50,7 @@ public class CategoryLikeService {
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         CategoryLike categoryLike = categoryLikeRepository.findByUserAndCategory(user, category)
                 .orElseThrow(() -> new CategoryException(CategoryErrorCode.CATEGORY_NOT_LIKED));
+        category.deleteCategoryLike(categoryLike);
         categoryLikeRepository.delete(categoryLike);
 
         return LikeCategoryResult.of(category);
