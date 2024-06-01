@@ -39,6 +39,8 @@ public enum SuccessCode {
     // Move Link to another category
     MOVE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 이동에 성공했습니다."),
     GET_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 조회에 성공했습니다."),
+    //Search
+    SEARCH_SUCCESS(HttpStatus.OK, "검색에 성공했습니다."),
 
     /**
      * 201 Created
