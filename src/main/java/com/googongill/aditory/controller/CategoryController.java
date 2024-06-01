@@ -98,6 +98,12 @@ public class CategoryController {
                 PublicCategoryListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
     }
 
+    @GetMapping("/categories/like")
+    public ResponseEntity<ApiResponse<LikeCategoryListResponse>> getLikeCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(GET_LIKE_CATEGORY_LIST_SUCCESS,
+                LikeCategoryListResponse.of(categoryLikeService.getLikeCategoryList(principalDetails.getUserId())));
+    }
+
     // ======= Update =======
 
     // 카테고리 수정

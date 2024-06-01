@@ -36,6 +36,7 @@ public enum SuccessCode {
     GET_PUBLIC_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "공개 카테고리 목록 조회에 성공했습니다."),
     // CategoryLike
     DELETE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 삭제에 성공했습니다."),
+    GET_LIKE_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "좋아요 한 카테고리 목록 조회에 성공했습니다."),
     // Move Link to another category
     MOVE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 이동에 성공했습니다."),
     GET_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 조회에 성공했습니다."),
