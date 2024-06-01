@@ -37,8 +37,9 @@ public class Category extends BaseEntity {
         this.categoryName = categoryName;
     }
 
-    public Category(String categoryName, User user) {
+    public Category(String categoryName, String asCategoryName, User user) {
         this.categoryName = categoryName;
+        this.asCategoryName = asCategoryName;
         this.viewCount = 0;
         this.categoryState = CategoryState.PRIVATE;
         this.user = user;
@@ -57,6 +58,10 @@ public class Category extends BaseEntity {
     public void addCategoryLike(CategoryLike categoryLike) {
         this.categoryLikes.add(categoryLike);
         categoryLike.setCategory(this);
+    }
+
+    public void deleteCategoryLike(CategoryLike categoryLike) {
+        this.categoryLikes.remove(categoryLike);
     }
 
     public void updateCategoryInfo(String categoryName, String asCategoryName, CategoryState categoryState) {

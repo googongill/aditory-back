@@ -3,7 +3,7 @@ package com.googongill.aditory.controller.dto.category;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.googongill.aditory.domain.enums.CategoryState;
-import com.googongill.aditory.service.dto.category.MyCategoryResult;
+import com.googongill.aditory.service.dto.category.CategoryDetailResult;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 import lombok.Builder;
 
@@ -17,6 +17,7 @@ import java.util.List;
 public class MoveCategoryResponse {
     private Long categoryId;
     private String categoryName;
+    private String asCategoryName;
     private Integer linkCount;
     private CategoryState categoryState;
     @Builder.Default
@@ -24,15 +25,16 @@ public class MoveCategoryResponse {
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 
-    public static MoveCategoryResponse of(MyCategoryResult myCategoryResult) {
+    public static MoveCategoryResponse of(CategoryDetailResult categoryDetailResult) {
         return MoveCategoryResponse.builder()
-                .categoryId(myCategoryResult.getCategoryId())
-                .categoryName(myCategoryResult.getCategoryName())
-                .linkCount(myCategoryResult.getLinkCount())
-                .categoryState(myCategoryResult.getCategoryState())
-                .linkList(myCategoryResult.getLinkList())
-                .createdAt(myCategoryResult.getCreatedAt())
-                .lastModifiedAt(myCategoryResult.getLastModifiedAt())
+                .categoryId(categoryDetailResult.getCategoryId())
+                .categoryName(categoryDetailResult.getCategoryName())
+                .asCategoryName(categoryDetailResult.getAsCategoryName())
+                .linkCount(categoryDetailResult.getLinkCount())
+                .categoryState(categoryDetailResult.getCategoryState())
+                .linkList(categoryDetailResult.getLinkList())
+                .createdAt(categoryDetailResult.getCreatedAt())
+                .lastModifiedAt(categoryDetailResult.getLastModifiedAt())
                 .build();
     }
 }

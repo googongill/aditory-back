@@ -1,6 +1,7 @@
 package com.googongill.aditory.repository;
 
 import com.googongill.aditory.domain.Category;
+import com.googongill.aditory.domain.User;
 import com.googongill.aditory.domain.enums.CategoryState;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByCategoryState(CategoryState categoryState);
 
     List<Category> findByAsCategoryNameContaining(String categoryName);
+
+    Optional<Category> findByCategoryNameAndUser(String categoryName, User user);
+
 }

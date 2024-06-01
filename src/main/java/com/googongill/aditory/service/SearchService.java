@@ -11,7 +11,7 @@ import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.LinkRepository;
 import com.googongill.aditory.repository.UserRepository;
-import com.googongill.aditory.service.dto.category.CategoryListResult;
+import com.googongill.aditory.service.dto.category.MyCategoryListResult;
 import com.googongill.aditory.service.dto.category.MyCategoryInfo;
 import com.googongill.aditory.service.dto.category.PublicCategoryInfo;
 import com.googongill.aditory.service.dto.category.PublicCategoryListResult;
@@ -95,7 +95,7 @@ public class SearchService {
             if (myCategoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return CategoryListResult.of(myCategoryInfoList);
+            return MyCategoryListResult.of(myCategoryInfoList);
         } else {
             throw new SearchException(INVALID_CATEGORY_SCOPE);
         }
@@ -142,7 +142,7 @@ public class SearchService {
             if (myCategoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return CategoryListResult.of(myCategoryInfoList);
+            return MyCategoryListResult.of(myCategoryInfoList);
         } else {
             throw new SearchException(INVALID_CATEGORY_SCOPE);
         }
@@ -167,10 +167,10 @@ public class SearchService {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
             return PublicCategoryListResult.of(publicCategoryInfoList);
-        } else if (categorySearchResult instanceof CategoryListResult && linkSearchResult instanceof CategoryListResult) {
+        } else if (categorySearchResult instanceof MyCategoryListResult && linkSearchResult instanceof MyCategoryListResult) {
             // 내 카테고리 내에서 카테고리와 링크 검색
-            List<MyCategoryInfo> myCategoryInfoList = ((CategoryListResult) categorySearchResult).getCategoryList();
-            List<MyCategoryInfo> linkMyCategoryInfoList = ((CategoryListResult) linkSearchResult).getCategoryList();
+            List<MyCategoryInfo> myCategoryInfoList = ((MyCategoryListResult) categorySearchResult).getCategoryList();
+            List<MyCategoryInfo> linkMyCategoryInfoList = ((MyCategoryListResult) linkSearchResult).getCategoryList();
             // 두 검색결과 중복을 제거하여 합침
             myCategoryInfoList.addAll(linkMyCategoryInfoList);
             myCategoryInfoList = myCategoryInfoList.stream()
@@ -179,7 +179,7 @@ public class SearchService {
             if (myCategoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return CategoryListResult.of(myCategoryInfoList);
+            return MyCategoryListResult.of(myCategoryInfoList);
         } else {
             throw new SearchException(INVALID_SEARCH_RESULT_TYPE);
         }

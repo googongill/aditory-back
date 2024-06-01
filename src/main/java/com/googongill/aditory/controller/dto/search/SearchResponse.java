@@ -3,7 +3,7 @@ package com.googongill.aditory.controller.dto.search;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.googongill.aditory.exception.SearchException;
-import com.googongill.aditory.service.dto.category.CategoryListResult;
+import com.googongill.aditory.service.dto.category.MyCategoryListResult;
 import com.googongill.aditory.service.dto.category.MyCategoryInfo;
 import com.googongill.aditory.service.dto.category.PublicCategoryInfo;
 import com.googongill.aditory.service.dto.search.SearchResult;;
@@ -30,7 +30,7 @@ public class SearchResponse {
             return SearchResponse.builder()
                     .publicCategoryList(publicResult.getPublicCategoryList())
                     .build();
-        } else if (searchResult instanceof CategoryListResult myResult) {
+        } else if (searchResult instanceof MyCategoryListResult myResult) {
             return SearchResponse.builder()
                     .myCategoryList(myResult.getCategoryList())
                     .build();

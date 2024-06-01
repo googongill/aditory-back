@@ -44,6 +44,12 @@ public class UserController {
                 UserTokenResponse.of(userService.loginUser(loginRequest)));
     }
 
+    @PostMapping("/oauth/login")
+    public ResponseEntity<ApiResponse<UserTokenResponse>> socialLogin(@Valid @RequestBody SocialLoginRequest socialLoginRequest) {
+        return ApiResponse.success(LOGIN_SUCCESS,
+                UserTokenResponse.of(userService.socialLoginUser(socialLoginRequest)));
+    }
+
     @PostMapping("/users/logout")
     public ResponseEntity<ApiResponse<Object>> logout(@RequestHeader("Authorization") String accessToken,
                                                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -58,17 +64,17 @@ public class UserController {
     }
 
     @PostMapping("/users/profile-image")
-    public ResponseEntity<ApiResponse<ProfileImageResponse>> updateProfileImage(@RequestParam MultipartFile multipartFile,
+    public ResponseEntity<ApiResponse<ProfileImageResponse>> updateProfileImage(@RequestParam MultipartFile profileImage,
                                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(UPDATE_PROFILE_IMAGE_SUCCESS,
-                ProfileImageResponse.of(userService.updateProfileImage(multipartFile, principalDetails.getUserId())));
+                ProfileImageResponse.of(userService.updateProfileImage(profileImage, principalDetails.getUserId())));
     }
 
     // ======== Read ========
 
-    @GetMapping("/users/test")
-    public String test() {
-        return "test success!";
+    @GetMapping("/home")
+    public String welcome() {
+        return "Welcome";
     }
 
     @GetMapping("/users")

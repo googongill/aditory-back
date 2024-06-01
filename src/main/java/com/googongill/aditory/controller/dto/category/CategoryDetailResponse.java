@@ -3,7 +3,7 @@ package com.googongill.aditory.controller.dto.category;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.googongill.aditory.domain.enums.CategoryState;
-import com.googongill.aditory.service.dto.category.MyCategoryResult;
+import com.googongill.aditory.service.dto.category.CategoryDetailResult;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 import lombok.Builder;
 
@@ -16,18 +16,20 @@ import java.util.List;
 public class CategoryDetailResponse {
     private Long categoryId;
     private String categoryName;
+    private String asCategoryName;
     private Integer linkCount;
     private CategoryState categoryState;
     @Builder.Default
     private List<LinkInfo> linkList = new ArrayList<>();
 
-    public static CategoryDetailResponse of(MyCategoryResult myCategoryResult) {
+    public static CategoryDetailResponse of(CategoryDetailResult categoryDetailResult) {
         return CategoryDetailResponse.builder()
-                .categoryId(myCategoryResult.getCategoryId())
-                .categoryName(myCategoryResult.getCategoryName())
-                .linkCount(myCategoryResult.getLinkCount())
-                .categoryState(myCategoryResult.getCategoryState())
-                .linkList(myCategoryResult.getLinkList())
+                .categoryId(categoryDetailResult.getCategoryId())
+                .categoryName(categoryDetailResult.getCategoryName())
+                .asCategoryName(categoryDetailResult.getAsCategoryName())
+                .linkCount(categoryDetailResult.getLinkCount())
+                .categoryState(categoryDetailResult.getCategoryState())
+                .linkList(categoryDetailResult.getLinkList())
                 .build();
     }
 }

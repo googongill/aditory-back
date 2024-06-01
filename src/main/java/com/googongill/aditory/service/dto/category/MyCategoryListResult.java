@@ -9,12 +9,13 @@ import java.util.List;
 
 @Getter
 @Builder
-public class CategoryListResult implements SearchResult {
+
+public class MyCategoryListResult implements SearchResult {
     @Builder.Default
     List<MyCategoryInfo> categoryList = new ArrayList<>();
 
-    public static CategoryListResult of(List<MyCategoryInfo> categoryList) {
-        return CategoryListResult.builder()
+    public static MyCategoryListResult of(List<MyCategoryInfo> categoryList) {
+        return MyCategoryListResult.builder()
                 .categoryList(categoryList)
                 .build();
     }

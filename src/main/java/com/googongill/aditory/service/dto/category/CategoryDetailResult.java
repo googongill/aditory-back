@@ -12,9 +12,10 @@ import java.util.List;
 
 @Getter
 @Builder
-public class MyCategoryResult {
+public class CategoryDetailResult {
     private Long categoryId;
     private String categoryName;
+    private String asCategoryName;
     private Integer linkCount;
     private CategoryState categoryState;
     @Builder.Default
@@ -22,10 +23,11 @@ public class MyCategoryResult {
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 
-    public static MyCategoryResult of(Category category, List<LinkInfo> linkList) {
-        return MyCategoryResult.builder()
+    public static CategoryDetailResult of(Category category, List<LinkInfo> linkList) {
+        return CategoryDetailResult.builder()
                 .categoryId(category.getId())
                 .categoryName(category.getCategoryName())
+                .asCategoryName(category.getAsCategoryName())
                 .linkCount(category.getLinks().size())
                 .categoryState(category.getCategoryState())
                 .linkList(linkList)

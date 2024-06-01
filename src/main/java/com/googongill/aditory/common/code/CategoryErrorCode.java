@@ -10,6 +10,11 @@ import org.springframework.http.HttpStatus;
 public enum CategoryErrorCode implements BusinessErrorCode {
 
     /**
+     * 400 Bad Request
+     */
+    IMPORT_FILE_PARSE_FAIL(HttpStatus.BAD_REQUEST, "파일 파싱 중 오류가 발생했습니다."),
+
+    /**
      * 401 Forbidden
      */
     CATEGORY_FORBIDDEN(HttpStatus.FORBIDDEN, "접근할 수 없는 카테고리입니다."),
@@ -24,9 +29,10 @@ public enum CategoryErrorCode implements BusinessErrorCode {
      * 409 Conflict
      */
     CATEGORY_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요한 카테고리입니다."),
+    CATEGORY_LIMIT_EXCEEDED(HttpStatus.CONFLICT, "카테고리는 최대 30개까지 추가할 수 있습니다."),
+    CATEGORY_ALREADY_OWNED(HttpStatus.CONFLICT, "이미 소유하고 있는 카테고리입니다."),
 
     ;
-
 
     private final HttpStatus httpStatus;
     private final String message;
