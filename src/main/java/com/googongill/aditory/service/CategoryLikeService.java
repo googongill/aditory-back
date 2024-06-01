@@ -10,11 +10,15 @@ import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.CategoryLikeRepository;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.UserRepository;
+import com.googongill.aditory.service.dto.category.LikeCategoryListResult;
 import com.googongill.aditory.service.dto.category.LikeCategoryResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
@@ -62,5 +66,16 @@ public class CategoryLikeService {
         categoryLikeRepository.delete(categoryLike);
 
         return LikeCategoryResult.of(category);
+    }
+
+    public LikeCategoryListResult getLikeCategoryList(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        List<CategoryLike> categoryLikeList = categoryLikeRepository.findByUser(user);
+        List<Long> likeCategoryIdList = categoryLikeList.stream()
+                .map(categoryLike -> categoryLike.getCategory().getId())
+                .collect(Collectors.toList());
+
+        return LikeCategoryListResult.of(likeCategoryIdList);
     }
 }
