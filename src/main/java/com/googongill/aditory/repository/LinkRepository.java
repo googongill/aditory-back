@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface LinkRepository extends JpaRepository<Link, Long> {
     List<Link> findTop10ByUserAndLinkStateOrderByCreatedAtAsc(User user, boolean linkState);
+
+    List<Link> findByTitleContaining(String title);
 }
