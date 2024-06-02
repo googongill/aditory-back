@@ -176,7 +176,7 @@ public class CategoryService {
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
                         .asCategoryName(category.getAsCategoryName())
-                        .linkCount(user.getLinks().size())
+                        .linkCount(category.getLinks().size())
                         .likeCount(category.getCategoryLikes().size())
                         .categoryState(category.getCategoryState())
                         .prevLinks(category.getLinks().stream()
