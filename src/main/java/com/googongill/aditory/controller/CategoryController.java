@@ -86,16 +86,16 @@ public class CategoryController {
 
     // 내 카테고리 목록 조회
     @GetMapping("/categories/my")
-    public ResponseEntity<ApiResponse<MyCategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<CategoryListResponse>> getCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_MY_CATEGORY_LIST_SUCCESS,
-                MyCategoryListResponse.of(categoryService.getMyCategoryList(principalDetails.getUserId())));
+                CategoryListResponse.of(categoryService.getMyCategoryList(principalDetails.getUserId())));
     }
 
     // 공개 카테고리 목록 조회
     @GetMapping("/categories/public")
-    public ResponseEntity<ApiResponse<PublicCategoryListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<CategoryListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_PUBLIC_CATEGORY_LIST_SUCCESS,
-                PublicCategoryListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
+                CategoryListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
     }
 
     @GetMapping("/categories/like")

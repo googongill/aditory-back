@@ -11,16 +11,15 @@ import com.googongill.aditory.exception.UserException;
 import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.LinkRepository;
 import com.googongill.aditory.repository.UserRepository;
-import com.googongill.aditory.service.dto.category.MyCategoryListResult;
-import com.googongill.aditory.service.dto.category.MyCategoryInfo;
-import com.googongill.aditory.service.dto.category.PublicCategoryInfo;
-import com.googongill.aditory.service.dto.category.PublicCategoryListResult;
+import com.googongill.aditory.service.dto.category.CategoryInfo;
+import com.googongill.aditory.service.dto.category.CategoryListResult;
 import com.googongill.aditory.service.dto.search.SearchResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,32 +61,45 @@ public class SearchService {
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 공유 카테고리 내에서 검색 시 공유 카테고리 이름으로 검색
         if (searchRequest.getCategoryScope() == CategoryScope.IN_PUBLIC) {
-            List<PublicCategoryInfo> publicCategoryInfoList = categoryRepository.findByAsCategoryNameContaining(searchRequest.getQuery()).stream()
+            List<CategoryInfo> categoryInfoList = categoryRepository.findByAsCategoryNameContaining(searchRequest.getQuery()).stream()
                     .filter(category -> category.getCategoryState() == CategoryState.PUBLIC)
-                    .map(category -> PublicCategoryInfo.builder()
+                    .map(category -> CategoryInfo.builder()
                             .categoryId(category.getId())
                             .categoryName(category.getCategoryName())
                             .asCategoryName(category.getAsCategoryName())
                             .linkCount(category.getLinks().size())
                             .likeCount(category.getCategoryLikes().size())
                             .categoryState(category.getCategoryState())
+                            .prevLinks(category.getLinks().stream()
+                                    .sorted(Comparator.comparing(Link::getCreatedAt).reversed())
+                                    .limit(4)
+                                    .map(Link::getUrl)
+                                    .collect(Collectors.toList())
+                            )
                             .createdAt(category.getCreatedAt())
                             .lastModifiedAt(category.getLastModifiedAt())
                             .build())
                     .collect(Collectors.toList());
-            if (publicCategoryInfoList.isEmpty()) {
+            if (categoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return PublicCategoryListResult.of(publicCategoryInfoList);
+            return CategoryListResult.of(categoryInfoList);
         } else if (searchRequest.getCategoryScope() == CategoryScope.IN_MY) {
             // 내 카테고리 내에서 검색 시 카테고리 이름으로 검색
-            List<MyCategoryInfo> myCategoryInfoList = user.getCategories().stream()
+            List<CategoryInfo> myCategoryInfoList = user.getCategories().stream()
                     .filter(category -> category.getCategoryName().contains(searchRequest.getQuery()))
-                    .map(category -> MyCategoryInfo.builder()
+                    .map(category -> CategoryInfo.builder()
                             .categoryId(category.getId())
                             .categoryName(category.getCategoryName())
                             .linkCount(category.getLinks().size())
+                            .likeCount(category.getCategoryLikes().size())
                             .categoryState(category.getCategoryState())
+                            .prevLinks(category.getLinks().stream()
+                                    .sorted(Comparator.comparing(Link::getCreatedAt).reversed())
+                                    .limit(4)
+                                    .map(Link::getUrl)
+                                    .collect(Collectors.toList())
+                            )
                             .createdAt(category.getCreatedAt())
                             .lastModifiedAt(category.getLastModifiedAt())
                             .build())
@@ -95,7 +107,7 @@ public class SearchService {
             if (myCategoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return MyCategoryListResult.of(myCategoryInfoList);
+            return CategoryListResult.of(myCategoryInfoList);
         } else {
             throw new SearchException(INVALID_CATEGORY_SCOPE);
         }
@@ -106,35 +118,48 @@ public class SearchService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         if (searchRequest.getCategoryScope() == CategoryScope.IN_PUBLIC) {
-            List<PublicCategoryInfo> publicCategoryInfoList = linkRepository.findByTitleContaining(searchRequest.getQuery()).stream()
+            List<CategoryInfo> categoryInfoList = linkRepository.findByTitleContaining(searchRequest.getQuery()).stream()
                     .map(Link::getCategory)
                     .distinct()
                     .filter(category -> category.getCategoryState() == CategoryState.PUBLIC)
-                    .map(category -> PublicCategoryInfo.builder()
+                    .map(category -> CategoryInfo.builder()
                             .categoryId(category.getId())
                             .categoryName(category.getCategoryName())
                             .asCategoryName(category.getAsCategoryName())
                             .linkCount(category.getLinks().size())
                             .likeCount(category.getCategoryLikes().size())
                             .categoryState(category.getCategoryState())
+                            .prevLinks(category.getLinks().stream()
+                                    .sorted(Comparator.comparing(Link::getCreatedAt).reversed())
+                                    .limit(4)
+                                    .map(Link::getUrl)
+                                    .collect(Collectors.toList())
+                            )
                             .createdAt(category.getCreatedAt())
                             .lastModifiedAt(category.getLastModifiedAt())
                             .build())
                     .collect(Collectors.toList());
-            if (publicCategoryInfoList.isEmpty()) {
+            if (categoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return PublicCategoryListResult.of(publicCategoryInfoList);
+            return CategoryListResult.of(categoryInfoList);
         } else if (searchRequest.getCategoryScope() == CategoryScope.IN_MY) {
-            List<MyCategoryInfo> myCategoryInfoList = linkRepository.findByTitleContaining(searchRequest.getQuery()).stream()
+            List<CategoryInfo> myCategoryInfoList = linkRepository.findByTitleContaining(searchRequest.getQuery()).stream()
                     .map(Link::getCategory)
                     .distinct()
                     .filter(category -> user.getCategories().contains(category))
-                    .map(category -> MyCategoryInfo.builder()
+                    .map(category -> CategoryInfo.builder()
                             .categoryId(category.getId())
                             .categoryName(category.getCategoryName())
                             .linkCount(category.getLinks().size())
+                            .likeCount(category.getCategoryLikes().size())
                             .categoryState(category.getCategoryState())
+                            .prevLinks(category.getLinks().stream()
+                                    .sorted(Comparator.comparing(Link::getCreatedAt).reversed())
+                                    .limit(4)
+                                    .map(Link::getUrl)
+                                    .collect(Collectors.toList())
+                            )
                             .createdAt(category.getCreatedAt())
                             .lastModifiedAt(category.getLastModifiedAt())
                             .build())
@@ -142,7 +167,7 @@ public class SearchService {
             if (myCategoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return MyCategoryListResult.of(myCategoryInfoList);
+            return CategoryListResult.of(myCategoryInfoList);
         } else {
             throw new SearchException(INVALID_CATEGORY_SCOPE);
         }
@@ -155,22 +180,22 @@ public class SearchService {
         SearchResult categorySearchResult = searchCategory(searchRequest, userId);
         SearchResult linkSearchResult = searchLink(searchRequest, userId);
         // 공유 카테고리 내에서 카테고리와 링크 검색
-        if (categorySearchResult instanceof PublicCategoryListResult && linkSearchResult instanceof PublicCategoryListResult) {
-            List<PublicCategoryInfo> publicCategoryInfoList = ((PublicCategoryListResult) categorySearchResult).getPublicCategoryList();
-            List<PublicCategoryInfo> linkPublicCategoryInfoList = ((PublicCategoryListResult) linkSearchResult).getPublicCategoryList();
+        if (categorySearchResult instanceof CategoryListResult && linkSearchResult instanceof CategoryListResult) {
+            List<CategoryInfo> categoryInfoList = ((CategoryListResult) categorySearchResult).getCategoryList();
+            List<CategoryInfo> linkCategoryInfoList = ((CategoryListResult) linkSearchResult).getCategoryList();
             //두 검색결과의 중복을 제거하여 합침
-            publicCategoryInfoList.addAll(linkPublicCategoryInfoList);
-            publicCategoryInfoList = publicCategoryInfoList.stream()
+            categoryInfoList.addAll(linkCategoryInfoList);
+            categoryInfoList = categoryInfoList.stream()
                     .distinct()
                     .collect(Collectors.toList());
-            if (publicCategoryInfoList.isEmpty()) {
+            if (categoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return PublicCategoryListResult.of(publicCategoryInfoList);
-        } else if (categorySearchResult instanceof MyCategoryListResult && linkSearchResult instanceof MyCategoryListResult) {
+            return CategoryListResult.of(categoryInfoList);
+        } else if (categorySearchResult instanceof CategoryListResult && linkSearchResult instanceof CategoryListResult) {
             // 내 카테고리 내에서 카테고리와 링크 검색
-            List<MyCategoryInfo> myCategoryInfoList = ((MyCategoryListResult) categorySearchResult).getCategoryList();
-            List<MyCategoryInfo> linkMyCategoryInfoList = ((MyCategoryListResult) linkSearchResult).getCategoryList();
+            List<CategoryInfo> myCategoryInfoList = ((CategoryListResult) categorySearchResult).getCategoryList();
+            List<CategoryInfo> linkMyCategoryInfoList = ((CategoryListResult) linkSearchResult).getCategoryList();
             // 두 검색결과 중복을 제거하여 합침
             myCategoryInfoList.addAll(linkMyCategoryInfoList);
             myCategoryInfoList = myCategoryInfoList.stream()
@@ -179,7 +204,7 @@ public class SearchService {
             if (myCategoryInfoList.isEmpty()) {
                 throw new SearchException(SEARCH_NOT_FOUND);
             }
-            return MyCategoryListResult.of(myCategoryInfoList);
+            return CategoryListResult.of(myCategoryInfoList);
         } else {
             throw new SearchException(INVALID_SEARCH_RESULT_TYPE);
         }

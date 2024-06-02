@@ -3,11 +3,9 @@ package com.googongill.aditory.controller.dto.search;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.googongill.aditory.exception.SearchException;
-import com.googongill.aditory.service.dto.category.MyCategoryListResult;
-import com.googongill.aditory.service.dto.category.MyCategoryInfo;
-import com.googongill.aditory.service.dto.category.PublicCategoryInfo;
+import com.googongill.aditory.service.dto.category.CategoryInfo;
 import com.googongill.aditory.service.dto.search.SearchResult;;
-import com.googongill.aditory.service.dto.category.PublicCategoryListResult;
+import com.googongill.aditory.service.dto.category.CategoryListResult;
 import lombok.Builder;
 
 import java.util.ArrayList;
@@ -20,17 +18,17 @@ import static com.googongill.aditory.common.code.SearchErrorCode.INVALID_SEARCH_
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class SearchResponse {
     @Builder.Default
-    List<PublicCategoryInfo> publicCategoryList = new ArrayList<>();
+    List<CategoryInfo> publicCategoryList = new ArrayList<>();
     @Builder.Default
-    List<MyCategoryInfo> myCategoryList = new ArrayList<>();
+    List<CategoryInfo> myCategoryList = new ArrayList<>();
 
     public static SearchResponse of(SearchResult searchResult) {
 
-        if (searchResult instanceof PublicCategoryListResult publicResult) {
+        if (searchResult instanceof CategoryListResult publicResult) {
             return SearchResponse.builder()
-                    .publicCategoryList(publicResult.getPublicCategoryList())
+                    .publicCategoryList(publicResult.getCategoryList())
                     .build();
-        } else if (searchResult instanceof MyCategoryListResult myResult) {
+        } else if (searchResult instanceof CategoryListResult myResult) {
             return SearchResponse.builder()
                     .myCategoryList(myResult.getCategoryList())
                     .build();

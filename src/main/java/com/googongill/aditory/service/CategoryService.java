@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -165,43 +166,56 @@ public class CategoryService {
         return CategoryDetailResult.of(category, linkInfoList);
     }
 
-    public MyCategoryListResult getMyCategoryList(Long userId) {
+    public CategoryListResult getMyCategoryList(Long userId) {
         // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 조회한 user 의 카테고리 목록 조회하며 각 카테고리별 정보 입력
-        List<MyCategoryInfo> myCategoryInfoList = user.getCategories().stream()
-                .map(category -> MyCategoryInfo.builder()
+        List<CategoryInfo> myCategoryInfoList = user.getCategories().stream()
+                .map(category -> CategoryInfo.builder()
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
                         .asCategoryName(category.getAsCategoryName())
                         .linkCount(category.getLinks().size())
+                        .linkCount(category.getCategoryLikes().size())
                         .categoryState(category.getCategoryState())
+                        .prevLinks(category.getLinks().stream()
+                                .sorted(Comparator.comparing(Link::getCreatedAt).reversed())
+                                .limit(4)
+                                .map(Link::getUrl)
+                                .collect(Collectors.toList())
+                        )
                         .createdAt(category.getCreatedAt())
                         .lastModifiedAt(category.getLastModifiedAt())
                         .build())
                 .collect(Collectors.toList());
-        return MyCategoryListResult.of(myCategoryInfoList);
+        return CategoryListResult.of(myCategoryInfoList);
     }
 
-    public PublicCategoryListResult getPublicCategoryList(Long userId) {
+    public CategoryListResult getPublicCategoryList(Long userId) {
         // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
-        List<PublicCategoryInfo> publicCategoryInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
-                .map(category -> PublicCategoryInfo.builder()
+        List<CategoryInfo> categoryInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
+                .map(category -> CategoryInfo.builder()
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
                         .asCategoryName(category.getAsCategoryName())
                         .linkCount(category.getLinks().size())
                         .likeCount(category.getCategoryLikes().size())
                         .categoryState(category.getCategoryState())
+                        .prevLinks(category.getLinks().stream()
+                                .sorted(Comparator.comparing(Link::getCreatedAt).reversed())
+                                .limit(4)
+                                .map(Link::getUrl)
+                                .collect(Collectors.toList())
+                        )
                         .createdAt(category.getCreatedAt())
                         .lastModifiedAt(category.getLastModifiedAt())
                         .build())
                 .collect(Collectors.toList());
-        return PublicCategoryListResult.of(publicCategoryInfoList);
+        return CategoryListResult.of(categoryInfoList);
     }
 
     public UpdateCategoryResult updateCategory(Long categoryId, UpdateCategoryRequest updateCategoryRequest, Long userId) {
