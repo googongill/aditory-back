@@ -18,6 +18,7 @@ public class CategoryDetailResponse {
     private String categoryName;
     private String asCategoryName;
     private Integer linkCount;
+    private Integer likeCount;
     private CategoryState categoryState;
     @Builder.Default
     private List<LinkInfo> linkList = new ArrayList<>();
@@ -28,6 +29,7 @@ public class CategoryDetailResponse {
                 .categoryName(categoryDetailResult.getCategoryName())
                 .asCategoryName(categoryDetailResult.getAsCategoryName())
                 .linkCount(categoryDetailResult.getLinkCount())
+                .likeCount(categoryDetailResult.getLikeCount())
                 .categoryState(categoryDetailResult.getCategoryState())
                 .linkList(categoryDetailResult.getLinkList())
                 .build();
