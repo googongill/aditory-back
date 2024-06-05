@@ -2,8 +2,8 @@ package com.googongill.aditory.service;
 
 import com.googongill.aditory.TestDataRepository;
 import com.googongill.aditory.TestUtils;
-import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
-import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.UpdateLinkRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;

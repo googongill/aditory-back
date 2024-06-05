@@ -1,7 +1,7 @@
 package com.googongill.aditory.service;
 
-import com.googongill.aditory.controller.dto.category.MoveCategoryRequest;
-import com.googongill.aditory.controller.dto.category.UpdateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.MoveCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.UpdateCategoryRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;
@@ -15,7 +15,7 @@ import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.service.dto.category.*;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 
-import com.googongill.aditory.controller.dto.category.CreateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.CreateCategoryRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

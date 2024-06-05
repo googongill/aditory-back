@@ -1,7 +1,10 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.category.*;
+import com.googongill.aditory.controller.dto.category.request.CreateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.MoveCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.UpdateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.response.*;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.exception.CategoryException;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;

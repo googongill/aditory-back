@@ -1,11 +1,11 @@
 package com.googongill.aditory;
 
-import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
-import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
-import com.googongill.aditory.controller.dto.user.LoginRequest;
-import com.googongill.aditory.controller.dto.user.RefreshRequest;
-import com.googongill.aditory.controller.dto.user.SignupRequest;
-import com.googongill.aditory.controller.dto.user.UpdateUserRequest;
+import com.googongill.aditory.controller.dto.link.request.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.UpdateLinkRequest;
+import com.googongill.aditory.controller.dto.user.request.LoginRequest;
+import com.googongill.aditory.controller.dto.user.request.RefreshRequest;
+import com.googongill.aditory.controller.dto.user.request.SignupRequest;
+import com.googongill.aditory.controller.dto.user.request.UpdateUserRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.ProfileImage;

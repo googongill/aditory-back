@@ -1,10 +1,9 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.category.CategoryListResponse;
-import com.googongill.aditory.controller.dto.link.LinkListResponse;
+import com.googongill.aditory.controller.dto.category.response.CategoryListResponse;
+import com.googongill.aditory.controller.dto.link.response.LinkListResponse;
 import com.googongill.aditory.controller.dto.search.SearchRequest;
-import com.googongill.aditory.controller.dto.search.SearchResponse;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.service.SearchService;
 import jakarta.validation.Valid;
