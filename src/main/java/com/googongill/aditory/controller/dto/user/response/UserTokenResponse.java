@@ -21,6 +21,7 @@ public class UserTokenResponse {
     private String refreshToken;
     @Builder.Default
     private List<CategoryResult> userCategories = new ArrayList<>();
+    private Integer aditoryPower;
 
     public static UserTokenResponse of(UserTokenResult userTokenResult) {
         return UserTokenResponse.builder()
@@ -31,6 +32,7 @@ public class UserTokenResponse {
                 .accessToken(userTokenResult.getAccessToken())
                 .refreshToken(userTokenResult.getRefreshToken())
                 .userCategories(userTokenResult.getUserCategories())
+                .aditoryPower(userTokenResult.getAditoryPower())
                 .build();
     }
 }
