@@ -16,7 +16,6 @@ public class ErrorResponse {
     private final String message;
     private final boolean success;
 
-
     public static ErrorResponse of(BusinessErrorCode businessErrorCode) {
         return ErrorResponse.builder()
                 .httpStatus(businessErrorCode.getHttpStatus())

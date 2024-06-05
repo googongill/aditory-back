@@ -1,7 +1,8 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.user.*;
+import com.googongill.aditory.controller.dto.user.request.*;
+import com.googongill.aditory.controller.dto.user.response.*;
 import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.exception.UserException;

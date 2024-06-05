@@ -1,7 +1,12 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.link.*;
+import com.googongill.aditory.controller.dto.link.request.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.UpdateLinkRequest;
+import com.googongill.aditory.controller.dto.link.response.DeleteLinkResponse;
+import com.googongill.aditory.controller.dto.link.response.LinkDetailResponse;
+import com.googongill.aditory.controller.dto.link.response.LinkListResponse;
+import com.googongill.aditory.controller.dto.link.response.LinkResponse;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.enums.CategoryState;
 import com.googongill.aditory.exception.LinkException;
@@ -58,9 +63,9 @@ public class LinkController {
     }
 
     @GetMapping("/links/reminder")
-    public ResponseEntity<ApiResponse<ReminderResponse>> getReminder(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<LinkListResponse>> getReminder(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_REMINDER_SUCCESS,
-                ReminderResponse.of(linkService.getReminder(principalDetails.getUserId())));
+                LinkListResponse.of(linkService.getReminder(principalDetails.getUserId())));
     }
 
     // ======= Update =======

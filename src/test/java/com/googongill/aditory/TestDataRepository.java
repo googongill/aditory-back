@@ -1,11 +1,11 @@
 package com.googongill.aditory;
 
-import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
-import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
-import com.googongill.aditory.controller.dto.user.LoginRequest;
-import com.googongill.aditory.controller.dto.user.RefreshRequest;
-import com.googongill.aditory.controller.dto.user.SignupRequest;
-import com.googongill.aditory.controller.dto.user.UpdateUserRequest;
+import com.googongill.aditory.controller.dto.link.request.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.UpdateLinkRequest;
+import com.googongill.aditory.controller.dto.user.request.LoginRequest;
+import com.googongill.aditory.controller.dto.user.request.RefreshRequest;
+import com.googongill.aditory.controller.dto.user.request.SignupRequest;
+import com.googongill.aditory.controller.dto.user.request.UpdateUserRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.ProfileImage;
@@ -16,7 +16,7 @@ import com.googongill.aditory.external.chatgpt.dto.AutoCategorizeResult;
 import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 import com.googongill.aditory.service.dto.link.LinkResult;
-import com.googongill.aditory.service.dto.link.ReminderResult;
+import com.googongill.aditory.service.dto.link.LinkListResult;
 import com.googongill.aditory.service.dto.user.ProfileImageResult;
 import com.googongill.aditory.service.dto.user.UpdateUserResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
@@ -184,8 +184,8 @@ public class TestDataRepository {
                 .build();
     }
 
-    public static ReminderResult createReminderResult() {
-        return ReminderResult.builder()
+    public static LinkListResult createReminderResult() {
+        return LinkListResult.builder()
                 .linkList(Arrays.asList(
                         LinkInfo.builder()
                                 .linkId(0L)

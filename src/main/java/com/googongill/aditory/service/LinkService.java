@@ -1,7 +1,7 @@
 package com.googongill.aditory.service;
 
-import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
-import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.UpdateLinkRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;
@@ -15,7 +15,7 @@ import com.googongill.aditory.repository.LinkRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 import com.googongill.aditory.service.dto.link.LinkResult;
-import com.googongill.aditory.service.dto.link.ReminderResult;
+import com.googongill.aditory.service.dto.link.LinkListResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,7 +108,7 @@ public class LinkService {
         return LinkResult.of(link, category);
     }
 
-    public ReminderResult getReminder(Long userId) {
+    public LinkListResult getReminder(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         List<Link> oldestLinks = linkRepository.findTop10ByUserAndLinkStateOrderByCreatedAtAsc(user, false);
@@ -127,6 +127,6 @@ public class LinkService {
                         .build()
                 )
                 .collect(Collectors.toList());
-        return ReminderResult.of(linkInfoList);
+        return LinkListResult.of(linkInfoList);
     }
 }

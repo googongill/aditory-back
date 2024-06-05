@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SearchErrorCode implements BusinessErrorCode {
@@ -22,9 +21,6 @@ public enum SearchErrorCode implements BusinessErrorCode {
         * 404 Not Found
         */
         SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "검색 결과가 없습니다."),
-
-
-
 
         ;
 

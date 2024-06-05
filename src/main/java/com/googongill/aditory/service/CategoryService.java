@@ -1,7 +1,7 @@
 package com.googongill.aditory.service;
 
-import com.googongill.aditory.controller.dto.category.MoveCategoryRequest;
-import com.googongill.aditory.controller.dto.category.UpdateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.MoveCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.UpdateCategoryRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;
@@ -15,13 +15,17 @@ import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.service.dto.category.*;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 
-import com.googongill.aditory.controller.dto.category.CreateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.CreateCategoryRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -192,12 +196,35 @@ public class CategoryService {
         return CategoryListResult.of(myCategoryInfoList);
     }
 
-    public CategoryListResult getPublicCategoryList(Long userId) {
+    public Page<CategoryInfo> getPublicCategoryList(Pageable pageable, Long userId) {
         // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
-        List<CategoryInfo> categoryInfoList = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC).stream()
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+        Page<Category> categories = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC, pageRequest);
+        return categories.map(category -> CategoryInfo.builder()
+                .categoryId(category.getId())
+                .categoryName(category.getCategoryName())
+                .asCategoryName(category.getAsCategoryName())
+                .linkCount(category.getLinks().size())
+                .likeCount(category.getCategoryLikes().size())
+                .categoryState(category.getCategoryState())
+                .prevLinks(category.getLinks().stream()
+                        .sorted(Comparator.comparing(Link::getCreatedAt).reversed())
+                        .limit(4)
+                        .map(Link::getUrl)
+                        .collect(Collectors.toList())
+                )
+                .createdAt(category.getCreatedAt())
+                .lastModifiedAt(category.getLastModifiedAt())
+                .build());
+    }
+
+    public CategoryListResult getTodayPublicCategoryList(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+        List<CategoryInfo> categoryInfos = categoryRepository.findRandomByCategoryState(CategoryState.PUBLIC.toString()).stream()
                 .map(category -> CategoryInfo.builder()
                         .categoryId(category.getId())
                         .categoryName(category.getCategoryName())
@@ -213,9 +240,11 @@ public class CategoryService {
                         )
                         .createdAt(category.getCreatedAt())
                         .lastModifiedAt(category.getLastModifiedAt())
-                        .build())
+                        .build()
+                )
                 .collect(Collectors.toList());
-        return CategoryListResult.of(categoryInfoList);
+
+        return CategoryListResult.of(categoryInfos);
     }
 
     public UpdateCategoryResult updateCategory(Long categoryId, UpdateCategoryRequest updateCategoryRequest, Long userId) {

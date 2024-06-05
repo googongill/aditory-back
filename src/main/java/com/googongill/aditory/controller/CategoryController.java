@@ -1,7 +1,10 @@
 package com.googongill.aditory.controller;
 
 import com.googongill.aditory.common.ApiResponse;
-import com.googongill.aditory.controller.dto.category.*;
+import com.googongill.aditory.controller.dto.category.request.CreateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.MoveCategoryRequest;
+import com.googongill.aditory.controller.dto.category.request.UpdateCategoryRequest;
+import com.googongill.aditory.controller.dto.category.response.*;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.exception.CategoryException;
 import com.googongill.aditory.security.jwt.user.PrincipalDetails;
@@ -9,9 +12,12 @@ import com.googongill.aditory.service.CategoryLikeService;
 import com.googongill.aditory.service.CategoryService;
 import com.googongill.aditory.repository.CategoryRepository;
 
+import com.googongill.aditory.service.dto.category.CategoryInfo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -91,11 +97,20 @@ public class CategoryController {
                 CategoryListResponse.of(categoryService.getMyCategoryList(principalDetails.getUserId())));
     }
 
-    // 공개 카테고리 목록 조회
-    @GetMapping("/categories/public")
-    public ResponseEntity<ApiResponse<CategoryListResponse>> getPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    // 공개 카테고리 목록 전체 조회
+    @GetMapping("/categories/public/all")
+    public ResponseEntity<ApiResponse<CategoryListResponse>> getPublicCategories(Pageable pageable,
+                                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Page<CategoryInfo> categoryInfoPage = categoryService.getPublicCategoryList(pageable, principalDetails.getUserId());
         return ApiResponse.success(GET_PUBLIC_CATEGORY_LIST_SUCCESS,
-                CategoryListResponse.of(categoryService.getPublicCategoryList(principalDetails.getUserId())));
+                CategoryListResponse.of(categoryInfoPage));
+    }
+
+    // 오늘의 추천 공개 카테고리 목록 조회
+    @GetMapping("/categories/public/today")
+    public ResponseEntity<ApiResponse<CategoryListResponse>> getTodayPublicCategories(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ApiResponse.success(GET_TODAY_PUBLIC_CATEGORY_LIST_SUCCESS,
+                CategoryListResponse.of(categoryService.getTodayPublicCategoryList(principalDetails.getUserId())));
     }
 
     @GetMapping("/categories/like")

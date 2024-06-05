@@ -2,8 +2,8 @@ package com.googongill.aditory.service;
 
 import com.googongill.aditory.TestDataRepository;
 import com.googongill.aditory.TestUtils;
-import com.googongill.aditory.controller.dto.link.CreateLinkRequest;
-import com.googongill.aditory.controller.dto.link.UpdateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.CreateLinkRequest;
+import com.googongill.aditory.controller.dto.link.request.UpdateLinkRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.Link;
 import com.googongill.aditory.domain.User;
@@ -16,7 +16,7 @@ import com.googongill.aditory.repository.CategoryRepository;
 import com.googongill.aditory.repository.LinkRepository;
 import com.googongill.aditory.repository.UserRepository;
 import com.googongill.aditory.service.dto.link.LinkResult;
-import com.googongill.aditory.service.dto.link.ReminderResult;
+import com.googongill.aditory.service.dto.link.LinkListResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -256,7 +256,7 @@ class LinkServiceTest {
     @Test
     public void getReminder_Success() throws Exception {
         // given
-        ReminderResult targetResult = testDataRepository.createReminderResult();
+        LinkListResult targetResult = testDataRepository.createReminderResult();
 
         Link link = testDataRepository.createLink(category, user);
         Long linkId = 0L;
@@ -266,7 +266,7 @@ class LinkServiceTest {
         given(linkRepository.findTop10ByUserAndLinkStateOrderByCreatedAtAsc(user, false)).willReturn(Arrays.asList(link));
 
         // when
-        ReminderResult actualResult = linkService.getReminder(user.getId());
+        LinkListResult actualResult = linkService.getReminder(user.getId());
 
         // then
         Assertions.assertThat(actualResult.getLinkList().get(0).getTitle()).isEqualTo(targetResult.getLinkList().get(0).getTitle());
@@ -289,7 +289,7 @@ class LinkServiceTest {
     @Test
     public void getReminder_Failed_With_ReturnEmptyList() throws Exception {
         // given
-        ReminderResult targetResult = testDataRepository.createReminderResult();
+        LinkListResult targetResult = testDataRepository.createReminderResult();
 
         Link link = testDataRepository.createLink(category, user);
         Long linkId = 0L;

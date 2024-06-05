@@ -1,6 +1,6 @@
 package com.googongill.aditory.service;
 
-import com.googongill.aditory.controller.dto.user.*;
+import com.googongill.aditory.controller.dto.user.request.*;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;

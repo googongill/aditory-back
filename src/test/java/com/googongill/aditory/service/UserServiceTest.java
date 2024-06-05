@@ -2,10 +2,10 @@ package com.googongill.aditory.service;
 
 import com.googongill.aditory.TestDataRepository;
 import com.googongill.aditory.TestUtils;
-import com.googongill.aditory.controller.dto.user.LoginRequest;
-import com.googongill.aditory.controller.dto.user.RefreshRequest;
-import com.googongill.aditory.controller.dto.user.SignupRequest;
-import com.googongill.aditory.controller.dto.user.UpdateUserRequest;
+import com.googongill.aditory.controller.dto.user.request.LoginRequest;
+import com.googongill.aditory.controller.dto.user.request.RefreshRequest;
+import com.googongill.aditory.controller.dto.user.request.SignupRequest;
+import com.googongill.aditory.controller.dto.user.request.UpdateUserRequest;
 import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.ProfileImage;
 import com.googongill.aditory.domain.User;

@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         Map<String, String> validateDetails = new HashMap<>();
 
         for (FieldError error : errors.getFieldErrors()) {
-            String validKeyName = String.format("valid_%s", error.getField());
+            String validKeyName = String.format("valid_error_of_%s", error.getField());
             validateDetails.put(validKeyName, error.getDefaultMessage());
         }
         return ApiResponse.fail(REQUEST_INVALID, validateDetails);
