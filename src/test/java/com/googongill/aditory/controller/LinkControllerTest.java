@@ -15,7 +15,7 @@ import com.googongill.aditory.security.jwt.user.PrincipalDetails;
 import com.googongill.aditory.security.jwt.user.PrincipalDetailsService;
 import com.googongill.aditory.service.LinkService;
 import com.googongill.aditory.service.dto.link.LinkResult;
-import com.googongill.aditory.service.dto.link.ReminderResult;
+import com.googongill.aditory.service.dto.link.LinkListResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -201,9 +201,9 @@ class LinkControllerTest {
     @Test
     public void getReminder_Success() throws Exception {
         // given
-        ReminderResult reminderResult = testDataRepository.createReminderResult();
+        LinkListResult linkListResult = testDataRepository.createReminderResult();
 
-        given(linkService.getReminder(principalDetails.getUserId())).willReturn(reminderResult);
+        given(linkService.getReminder(principalDetails.getUserId())).willReturn(linkListResult);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -214,7 +214,7 @@ class LinkControllerTest {
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.linkList[0].title").value(reminderResult.getLinkList().get(0).getTitle()));
+                .andExpect(jsonPath("$.data.linkList[0].title").value(linkListResult.getLinkList().get(0).getTitle()));
     }
 
     @Test

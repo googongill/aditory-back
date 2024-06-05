@@ -58,9 +58,9 @@ public class LinkController {
     }
 
     @GetMapping("/links/reminder")
-    public ResponseEntity<ApiResponse<ReminderResponse>> getReminder(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<ApiResponse<LinkListResponse>> getReminder(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ApiResponse.success(GET_REMINDER_SUCCESS,
-                ReminderResponse.of(linkService.getReminder(principalDetails.getUserId())));
+                LinkListResponse.of(linkService.getReminder(principalDetails.getUserId())));
     }
 
     // ======= Update =======

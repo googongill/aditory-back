@@ -9,6 +9,7 @@ import lombok.Builder;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class DeleteCategoryResponse {
     private Long categoryId;
+
     public static DeleteCategoryResponse of(Long deletedCategoryId) {
         return DeleteCategoryResponse.builder()
                 .categoryId(deletedCategoryId)

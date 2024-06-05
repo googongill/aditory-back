@@ -8,12 +8,12 @@ import java.util.List;
 
 @Getter
 @Builder
-public class ReminderResult {
+public class LinkListResult {
     @Builder.Default
     private List<LinkInfo> linkList = new ArrayList<>();
 
-    public static ReminderResult of(List<LinkInfo> linkInfoList) {
-        return ReminderResult.builder()
+    public static LinkListResult of(List<LinkInfo> linkInfoList) {
+        return LinkListResult.builder()
                 .linkList(linkInfoList)
                 .build();
     }

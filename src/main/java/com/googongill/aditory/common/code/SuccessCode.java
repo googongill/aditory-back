@@ -29,20 +29,19 @@ public enum SuccessCode {
     // Category
     GET_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 조회에 성공했습니다."),
     GET_CATEGORY_PUBLIC_LIST_SUCCESS(HttpStatus.OK, "공개 카테고리 목록 조회에 성공했습니다."),
-    UPDATE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 수정에 성공했습니다."),
-    DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다."),
-
     GET_MY_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "내 카테고리 목록 조회에 성공했습니다."),
     GET_PUBLIC_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "공개 카테고리 목록 조회에 성공했습니다."),
     GET_TODAY_PUBLIC_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "오늘의 추천 카테고리 목록 조회에 성공했습니다."),
+    UPDATE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 수정에 성공했습니다."),
+    DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다."),
     // CategoryLike
-    DELETE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 삭제에 성공했습니다."),
     GET_LIKE_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "좋아요 한 카테고리 목록 조회에 성공했습니다."),
+    DELETE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 삭제에 성공했습니다."),
     // Move Link to another category
     MOVE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 이동에 성공했습니다."),
-    GET_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 조회에 성공했습니다."),
     //Search
-    SEARCH_SUCCESS(HttpStatus.OK, "검색에 성공했습니다."),
+    CATEGORY_SEARCH_SUCCESS(HttpStatus.OK, "카테고리 검색에 성공했습니다."),
+    LINK_SEARCH_SUCCESS(HttpStatus.OK, "링크 검색에 성공했습니다."),
 
     /**
      * 201 Created
@@ -58,6 +57,7 @@ public enum SuccessCode {
     IMPORT_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 가져오기에 성공했습니다."),
 
     ;
+
     private final HttpStatus httpStatus;
     private final String message;
 }

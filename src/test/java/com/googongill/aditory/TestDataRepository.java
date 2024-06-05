@@ -16,7 +16,7 @@ import com.googongill.aditory.external.chatgpt.dto.AutoCategorizeResult;
 import com.googongill.aditory.external.s3.dto.S3DownloadResult;
 import com.googongill.aditory.service.dto.link.LinkInfo;
 import com.googongill.aditory.service.dto.link.LinkResult;
-import com.googongill.aditory.service.dto.link.ReminderResult;
+import com.googongill.aditory.service.dto.link.LinkListResult;
 import com.googongill.aditory.service.dto.user.ProfileImageResult;
 import com.googongill.aditory.service.dto.user.UpdateUserResult;
 import com.googongill.aditory.service.dto.user.UserTokenResult;
@@ -184,8 +184,8 @@ public class TestDataRepository {
                 .build();
     }
 
-    public static ReminderResult createReminderResult() {
-        return ReminderResult.builder()
+    public static LinkListResult createReminderResult() {
+        return LinkListResult.builder()
                 .linkList(Arrays.asList(
                         LinkInfo.builder()
                                 .linkId(0L)
