@@ -1,6 +1,5 @@
 package com.googongill.aditory.service.dto.user;
 
-import com.googongill.aditory.domain.Category;
 import com.googongill.aditory.domain.User;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
 import com.googongill.aditory.service.dto.category.CategoryResult;
@@ -22,6 +21,7 @@ public class UserTokenResult {
     private String refreshToken;
     @Builder.Default
     private List<CategoryResult> userCategories = new ArrayList<>();
+    private Integer aditoryPower = 0;
 
     public static UserTokenResult of(User user, JwtResult jwtResult) {
         List<CategoryResult> userCategories = user.getCategories().stream()
@@ -30,6 +30,10 @@ public class UserTokenResult {
                         .categoryName(category.getCategoryName())
                         .build())
                 .collect(Collectors.toList());
+        Integer totalLikes = user.getCategories().stream()
+                .mapToInt(category -> category.getCategoryLikes().size())
+                .sum();
+        Integer aditoryPower = user.getCategories().size() + user.getLinks().size() + totalLikes;
 
         return UserTokenResult.builder()
                 .userId(user.getId())
@@ -39,6 +43,7 @@ public class UserTokenResult {
                 .accessToken(jwtResult.getAccessToken())
                 .refreshToken(jwtResult.getRefreshToken())
                 .userCategories(userCategories)
+                .aditoryPower(aditoryPower)
                 .build();
     }
 }
