@@ -45,6 +45,7 @@ public class TestDataRepository {
     public static Category createCategory() {
         return new Category(
                 "development",
+                "(default)",
                 createUser());
     }
 

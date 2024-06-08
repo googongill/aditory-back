@@ -74,7 +74,7 @@ class UserServiceTest {
         List<String> categoryNames = signupRequest.getUserCategories();
         List<Category> createdCategories = categoryNames.stream()
                 .map(categoryName -> {
-                    Category category = new Category(categoryName, user);
+                    Category category = new Category(categoryName, categoryName, user);
                     return category;
                 })
                 .collect(Collectors.toList());
