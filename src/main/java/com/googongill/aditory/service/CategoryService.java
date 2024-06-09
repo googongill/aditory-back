@@ -297,7 +297,7 @@ public class CategoryService {
     private void addLinkToAlreadyExistingCategory(User user, boolean linkState, String categoryName, String linkTitle, String url) {
         Category category = categoryRepository.findByCategoryNameAndUser(categoryName, user)
                 .orElseGet(() -> {
-                    Category newCategory = categoryRepository.save(new Category(categoryName, "(default)", user));
+                    Category newCategory = categoryRepository.save(new Category(categoryName, categoryName, user));
                     user.addCategory(newCategory);
                     return newCategory;
                 });
@@ -310,7 +310,7 @@ public class CategoryService {
     private void addLinkAndCategory(User user, boolean linkState, String linkTitle, String url) {
         Category category = categoryRepository.findByCategoryName("imported Category")
                 .orElseGet(() -> {
-                    Category newCategory = categoryRepository.save(new Category("imported Category", "(default)", user));
+                    Category newCategory = categoryRepository.save(new Category("imported Category", "imported Category", user));
                     user.addCategory(newCategory);
                     return newCategory;
                 });

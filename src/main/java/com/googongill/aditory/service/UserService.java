@@ -61,7 +61,7 @@ public class UserService {
         // 카테고리 생성
         List<Category> createdCategories = signupRequest.getUserCategories().stream()
                 .map(categoryName -> {
-                    Category category = new Category(categoryName, "(default)", createduser);
+                    Category category = new Category(categoryName, categoryName, createduser);
                     return categoryRepository.save(category);
                 })
                 .collect(Collectors.toList());

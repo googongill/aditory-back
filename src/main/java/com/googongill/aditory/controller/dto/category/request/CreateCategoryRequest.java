@@ -15,7 +15,6 @@ public class CreateCategoryRequest {
     private String categoryName;
 
     public Category toEntity(User user) {
-        String asCategoryName = "(default)";
-        return new Category(this.categoryName, asCategoryName, user);
+        return new Category(this.categoryName, this.categoryName, user);
     }
 }
