@@ -16,6 +16,7 @@ import com.googongill.aditory.security.jwt.TokenProvider;
 import com.googongill.aditory.security.jwt.dto.JwtResult;
 import com.googongill.aditory.security.oauth.KakaoUserProfile;
 import com.googongill.aditory.security.oauth.OAuth2UserInfo;
+import com.googongill.aditory.service.dto.user.OAuthToken;
 import com.googongill.aditory.service.dto.user.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
@@ -148,8 +152,8 @@ public class UserService {
 
     public UserTokenResult socialLoginUser(SocialLoginRequest socialLoginRequest) {
         ClientRegistration provider = inMemoryRepository.findByRegistrationId(socialLoginRequest.getProvider());
-
-        User user = getUserProfile(socialLoginRequest.getProvider(), socialLoginRequest.getCode(), provider);
+        OAuthToken tokenResponse = getToken(socialLoginRequest.getCode(), provider);
+        User user = getUserProfile(socialLoginRequest.getProvider(), tokenResponse.getAccess_token(), provider);
 
         JwtResult newToken = createTokens(user.getId(), user.getUsername(), user.getRole());
         String refreshToken = newToken.getRefreshToken();
@@ -157,6 +161,21 @@ public class UserService {
         userRepository.save(user);
 
         return UserTokenResult.of(user, newToken);
+    }
+
+    private OAuthToken getToken(String code, ClientRegistration provider) {
+        return WebClient.create()
+                .post()
+                .uri(provider.getProviderDetails().getTokenUri())
+                .body(BodyInserters
+                        .fromFormData("grant_type", "authorization_code")
+                        .with("client_id", provider.getClientId())
+                        .with("redirect_uri", provider.getRedirectUri())
+                        .with("code", code)
+                        .with("client_secret", provider.getClientSecret()))
+                .retrieve()
+                .bodyToMono(OAuthToken.class)
+                .block();
     }
 
     public User getUserProfile(String providerName, String code, ClientRegistration provider) {
