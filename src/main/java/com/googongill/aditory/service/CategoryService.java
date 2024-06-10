@@ -57,6 +57,9 @@ public class CategoryService {
         if (user.getCategories().size() >= 30) {
             throw new CategoryException(CATEGORY_LIMIT_EXCEEDED);
         }
+        if (categoryRepository.findByCategoryNameAndUser(createCategoryRequest.getCategoryName(), user).isPresent()) {
+            throw new CategoryException(CATEGORY_ALREADY_EXISTED);
+        }
         // category 생성
         Category createdCategory = categoryRepository.save(createCategoryRequest.toEntity(user));
         user.addCategory(createdCategory);
@@ -80,6 +83,9 @@ public class CategoryService {
         // category 갯수 제한
         if (user.getCategories().size() >= 30) {
             throw new CategoryException(CATEGORY_LIMIT_EXCEEDED);
+        }
+        if (categoryRepository.findByCategoryNameAndUser(category.getCategoryName(), user).isPresent()) {
+            throw new CategoryException(CATEGORY_ALREADY_EXISTED);
         }
         // 새카테고리 생성 및 user 설정
         Category newCategory = new Category(category.getAsCategoryName(), category.getAsCategoryName(), user);
