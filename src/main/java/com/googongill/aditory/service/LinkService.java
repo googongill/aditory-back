@@ -59,7 +59,7 @@ public class LinkService {
         AutoCategorizeResult autoCategorizeResult = chatGptService.autoCategorizeLink(
                 createLinkRequest.getUrl(), userCategoryNameList);
         // 해당 카테고리 조회
-        Category category = categoryRepository.findByCategoryName(autoCategorizeResult.getCategoryName())
+        Category category = categoryRepository.findByCategoryNameAndUser(autoCategorizeResult.getCategoryName(), user)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
         // 링크 생성
         Link createdLink = linkRepository.save(createLinkRequest.toEntity(autoCategorizeResult, category, user));
