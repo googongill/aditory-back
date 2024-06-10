@@ -84,7 +84,7 @@ public class CategoryService {
         if (user.getCategories().size() >= 30) {
             throw new CategoryException(CATEGORY_LIMIT_EXCEEDED);
         }
-        if (categoryRepository.findByCategoryNameAndUser(category.getCategoryName(), user).isPresent()) {
+        if (categoryRepository.findByCategoryNameAndUser(category.getAsCategoryName(), user).isPresent()) {
             throw new CategoryException(CATEGORY_ALREADY_EXISTED);
         }
         // 새카테고리 생성 및 user 설정
