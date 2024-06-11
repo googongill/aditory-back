@@ -34,7 +34,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://aditory.vercel.app/"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000",
+                                               "https://aditory.vercel.app/",
+                                               "https://aditory-git-production-jieunparks-projects.vercel.app/"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setExposedHeaders(Arrays.asList("Authorization"));
