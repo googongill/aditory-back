@@ -36,7 +36,8 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000",
                                                "https://aditory.vercel.app/",
-                                               "https://aditory-git-production-jieunparks-projects.vercel.app/"));
+                                               "https://aditory-git-production-jieunparks-projects.vercel.app/",
+                                               "https://aditory-5n9kdzxkm-jieunparks-projects.vercel.app"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setExposedHeaders(Arrays.asList("Authorization"));
