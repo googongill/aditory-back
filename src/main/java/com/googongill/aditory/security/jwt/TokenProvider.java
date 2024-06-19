@@ -24,9 +24,9 @@ public class TokenProvider {
     private final String secret;
     private static Key secretKey;
     // access-token : 30 min = 60 * 30
-    private static final long accessTokenExpiredMs = 60 * 10;
+    private static final long accessTokenExpiredMs = 60 * 30;
     // refresh-token : 7 days (1 week) = 60 * 60 * 24 * 7
-    private static final long refreshTokenExpiredMs = 60 * 60 * 6;
+    private static final long refreshTokenExpiredMs = 60 * 60 * 24 * 7;
 
     public TokenProvider(@Value("${jwt.secret}") String secret) {
         this.secret = secret;
