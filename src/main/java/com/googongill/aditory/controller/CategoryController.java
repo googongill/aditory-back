@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 import static com.googongill.aditory.common.code.SuccessCode.*;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_NOT_FOUND;
 import static com.googongill.aditory.common.code.CategoryErrorCode.CATEGORY_FORBIDDEN;
@@ -74,10 +76,11 @@ public class CategoryController {
     }
 
     @PostMapping("/categories/import")
-    public ResponseEntity<ApiResponse<Object>> importCategories(@RequestParam MultipartFile importFile,
-                                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        categoryService.importCategories(importFile, principalDetails.getUserId());
-        return ApiResponse.success(IMPORT_CATEGORY_SUCCESS);
+    public ResponseEntity<ApiResponse<ImportCategoryResponse>> importCategories(@RequestParam MultipartFile importFile,
+                                                                                @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        List<Category> categories = categoryService.importCategories(importFile, principalDetails.getUserId());
+        return ApiResponse.success(IMPORT_CATEGORY_SUCCESS,
+                ImportCategoryResponse.of(categories));
     }
 
     // ======== Read ========

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -266,24 +267,29 @@ public class CategoryService {
         return UpdateCategoryResult.of(category);
     }
 
-    public void importCategories(MultipartFile importFile, Long userId) {
+    public List<Category> importCategories(MultipartFile importFile, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+        List<Category> newCategories = new ArrayList<>();
+
         try {
             Document doc = Jsoup.parse(importFile.getInputStream(), "UTF-8", "");
 
             Elements unReadElements = doc.select("h1:contains(Unread) + ul > li > a");
-            processElements(unReadElements, user, true);
+            processElements(unReadElements, user, true, newCategories);
 
             Elements readElements = doc.select("h1:contains(Read Archive) + ul > li > a");
-            processElements(readElements, user, true);
+            processElements(readElements, user, true, newCategories);
 
         } catch (IOException e) {
             throw new CategoryException(IMPORT_FILE_PARSE_FAIL);
         }
+
+        return newCategories;
     }
 
-    private void processElements(Elements elements, User user, boolean linkState) {
+    private void processElements(Elements elements, User user, boolean linkState, List<Category> newCategories) {
         elements.stream()
                 .map(element -> {
                     String categoryName = element.attr("tags");
@@ -291,20 +297,21 @@ public class CategoryService {
                     String url = element.attr("href");
 
                     if (!categoryName.isEmpty()) {
-                        addLinkToAlreadyExistingCategory(user, linkState, categoryName, linkTitle, url);
+                        addLinkToAlreadyExistingCategory(user, linkState, categoryName, linkTitle, url, newCategories);
                     } else {
-                        addLinkAndCategory(user, linkState, linkTitle, url);
+                        addLinkAndCategory(user, linkState, linkTitle, url, newCategories);
                     }
                     return element;
                 })
                 .collect(Collectors.toList());
     }
 
-    private void addLinkToAlreadyExistingCategory(User user, boolean linkState, String categoryName, String linkTitle, String url) {
+    private void addLinkToAlreadyExistingCategory(User user, boolean linkState, String categoryName, String linkTitle, String url, List<Category> newCategories) {
         Category category = categoryRepository.findByCategoryNameAndUser(categoryName, user)
                 .orElseGet(() -> {
                     Category newCategory = categoryRepository.save(new Category(categoryName, categoryName, user));
                     user.addCategory(newCategory);
+                    newCategories.add(newCategory);
                     return newCategory;
                 });
         Link link = new Link(linkTitle, url, linkState, category, user);
@@ -313,11 +320,12 @@ public class CategoryService {
         user.addLink(link);
     }
 
-    private void addLinkAndCategory(User user, boolean linkState, String linkTitle, String url) {
+    private void addLinkAndCategory(User user, boolean linkState, String linkTitle, String url, List<Category> newCategories) {
         Category category = categoryRepository.findByCategoryName("imported Category")
                 .orElseGet(() -> {
                     Category newCategory = categoryRepository.save(new Category("imported Category", "imported Category", user));
                     user.addCategory(newCategory);
+                    newCategories.add(newCategory);
                     return newCategory;
                 });
         Link link = new Link(linkTitle, url, linkState, category, user);
