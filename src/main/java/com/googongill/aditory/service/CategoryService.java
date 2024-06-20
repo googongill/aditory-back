@@ -208,7 +208,7 @@ public class CategoryService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
         // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createdAt").descending());
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("lastModifiedAt").descending());
         Page<Category> categories = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC, pageRequest);
         return categories.map(category -> CategoryInfo.builder()
                 .categoryId(category.getId())
