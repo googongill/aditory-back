@@ -91,3 +91,5 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO_NGINX }}
             docker-compose up -d
             sudo docker image prune -f
+
+            
