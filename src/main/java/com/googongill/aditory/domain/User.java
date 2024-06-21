@@ -61,7 +61,6 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
     }
 
-    // 연관관계 메서드
     public void addCategory(Category category) {
         this.categories.add(category);
         category.setUser(this);

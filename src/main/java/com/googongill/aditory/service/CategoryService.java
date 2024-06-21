@@ -51,28 +51,22 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public CreateCategoryResult createCategory(CreateCategoryRequest createCategoryRequest, Long userId) {
-        // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        // category 갯수 제한
         if (user.getCategories().size() >= 30) {
             throw new CategoryException(CATEGORY_LIMIT_EXCEEDED);
         }
         if (categoryRepository.findByCategoryNameAndUser(createCategoryRequest.getCategoryName(), user).isPresent()) {
             throw new CategoryException(CATEGORY_ALREADY_EXISTED);
         }
-        // category 생성
         Category createdCategory = categoryRepository.save(createCategoryRequest.toEntity(user));
         user.addCategory(createdCategory);
         return CreateCategoryResult.of(createdCategory);
     }
 
-    //카테고리 복사
     public CopyCategoryResult copyCategory(Long categoryId, Long userId) {
-        // 카테고리 조회
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (category.getCategoryState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
             throw new CategoryException(CATEGORY_FORBIDDEN);
         }
@@ -81,48 +75,36 @@ public class CategoryService {
         if (user.getCategories().stream().anyMatch(userCategory -> userCategory.getId().equals(categoryId))) {
             throw new CategoryException(CATEGORY_ALREADY_OWNED);
         }
-        // category 갯수 제한
         if (user.getCategories().size() >= 30) {
             throw new CategoryException(CATEGORY_LIMIT_EXCEEDED);
         }
         if (categoryRepository.findByCategoryNameAndUser(category.getAsCategoryName(), user).isPresent()) {
             throw new CategoryException(CATEGORY_ALREADY_EXISTED);
         }
-        // 새카테고리 생성 및 user 설정
         Category newCategory = new Category(category.getAsCategoryName(), category.getAsCategoryName(), user);
-        // 원본 카테고리의 링크를 가져옴
         List<Link> originalLinks = category.getLinks();
-        // 링크를 복사하여 새로운 카테고리에 추가
         List<Link> newLinks = originalLinks.stream()
                 .map(link -> new Link(link.getTitle(), link.getSummary(), link.getUrl(), newCategory, user))
                 .collect(Collectors.toList());
         newLinks.forEach(linkRepository::save);
         newCategory.getLinks().addAll(newLinks);
-        // 새카테고리를 사용자의 카테고리 목록에 추가
         user.getCategories().add(newCategory);
-        // 새 카테고리 저장
         categoryRepository.save(newCategory);
 
         return CopyCategoryResult.of(newCategory);
     }
 
-    // 카테고리 속 링크 이동
     public CategoryDetailResult moveCategory(Long categoryId, MoveCategoryRequest moveCategoryRequest, Long userId) {
-        // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        // 원래 카테고리 조회
         Category originalCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        // 원래 카테고리의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (originalCategory.getCategoryState().equals(CategoryState.PRIVATE) && !originalCategory.getUser().getId().equals(userId)) {
             throw new CategoryException(CATEGORY_FORBIDDEN);
         }
-        // 대상 카테고리 조회
         Category targetCategory = categoryRepository.findById(moveCategoryRequest.getTargetCategoryId())
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        // 대상 카테고리의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (targetCategory.getCategoryState().equals(CategoryState.PRIVATE) && !targetCategory.getUser().getId().equals(userId)) {
             throw new CategoryException(CATEGORY_FORBIDDEN);
         }
@@ -140,7 +122,6 @@ public class CategoryService {
                 })
                 .collect(Collectors.toList());
 
-        // 대상 카테고리의 링크 목록 조회하며 각 링크별 정보 입력
         List<LinkInfo> linkInfoList = targetCategory.getLinks().stream()
                 .map(link -> LinkInfo.builder()
                         .linkId(link.getId())
@@ -155,14 +136,11 @@ public class CategoryService {
     }
 
     public CategoryDetailResult getCategoryDetail(Long categoryId, Long userId) {
-        // 카테고리 조회
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (category.getCategoryState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
             throw new CategoryException(CATEGORY_FORBIDDEN);
         }
-        // 조회한 category 의 링크 목록 조회하며 각 링크별 정보 입력
         List<LinkInfo> linkInfoList = category.getLinks().stream()
                 .map(link -> LinkInfo.builder()
                         .linkId(link.getId())
@@ -178,10 +156,8 @@ public class CategoryService {
     }
 
     public CategoryListResult getMyCategoryList(Long userId) {
-        // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        // 조회한 user 의 카테고리 목록 조회하며 각 카테고리별 정보 입력
         List<CategoryInfo> myCategoryInfoList = user.getCategories().stream()
                 .map(category -> CategoryInfo.builder()
                         .categoryId(category.getId())
@@ -204,10 +180,8 @@ public class CategoryService {
     }
 
     public Page<CategoryInfo> getPublicCategoryList(Pageable pageable, Long userId) {
-        // user 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("lastModifiedAt").descending());
         Page<Category> categories = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC, pageRequest);
         return categories.map(category -> CategoryInfo.builder()
@@ -255,10 +229,8 @@ public class CategoryService {
     }
 
     public UpdateCategoryResult updateCategory(Long categoryId, UpdateCategoryRequest updateCategoryRequest, Long userId) {
-        // 카테고리 조회
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryException(CATEGORY_NOT_FOUND));
-        // category 의 state 가 private 인데 카테고리의 소유주가 아닌 user 가 접근하는 경우
         if (category.getCategoryState().equals(CategoryState.PRIVATE) && !category.getUser().getId().equals(userId)) {
             throw new CategoryException(CATEGORY_FORBIDDEN);
         }

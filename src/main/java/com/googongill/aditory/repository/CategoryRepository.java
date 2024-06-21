@@ -26,8 +26,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query(value = "select * from category where category_state = :categoryState order by rand() limit 10", nativeQuery = true)
     List<Category> findRandomByCategoryState(@Param("categoryState") String categoryState);
 
-    List<Category> findByAsCategoryNameContaining(String categoryName);
-
     Optional<Category> findByCategoryNameAndUser(String categoryName, User user);
 
     Page<Category> findByCategoryNameContainingAndUser(String query, User user, Pageable pageable);

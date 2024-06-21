@@ -46,18 +46,14 @@ public class LinkController {
     @GetMapping("/links/{linkId}")
     public ResponseEntity<ApiResponse<LinkDetailResponse>> getLink(@PathVariable Long linkId,
                                                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        // link 조회
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new LinkException(LINK_NOT_FOUND));
-        // link 가 소속된 category 의 state 가 private 인데 category 의 소유주가 아닌 user 가 접근하는 경우
         if (link.getCategory().getCategoryState().equals(CategoryState.PRIVATE) &&
             !link.getUser().getId().equals(principalDetails.getUserId())) {
             throw new LinkException(LINK_FORBIDDEN);
         }
-        // link 읽음 상태 true 로
         link.updateLinkState();
         linkRepository.save(link);
-        // link 반환
         return ApiResponse.success(GET_LINK_SUCCESS,
                 LinkDetailResponse.of(link));
     }

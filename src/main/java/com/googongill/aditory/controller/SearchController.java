@@ -23,14 +23,6 @@ public class SearchController {
 
     private final SearchService searchService;
 
-//    @PostMapping("/search")
-//    public ResponseEntity<ApiResponse<SearchResponse>> searchTitle(@RequestBody SearchRequest searchRequest,
-//                                                                   @AuthenticationPrincipal PrincipalDetails principalDetails) {
-//    return ApiResponse.success(SEARCH_SUCCESS,
-//            SearchResponse.of(searchService.searchTitle(searchRequest, principalDetails.getUserId())));
-//    }
-
-    // ====================================
     @GetMapping("/search/categories")
     public ResponseEntity<ApiResponse<CategoryListResponse>> searchCategories(@Valid @ModelAttribute SearchRequest searchRequest, Pageable pageable,
                                                                               @AuthenticationPrincipal PrincipalDetails principalDetails) {

@@ -24,7 +24,7 @@ public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
-    // 성공
+    // success
     public static <T> ResponseEntity<ApiResponse<T>> success(SuccessCode successCode) {
         return ResponseEntity.status(successCode.getHttpStatus())
                 .body(ApiResponse.<T>builder()
@@ -44,7 +44,7 @@ public class ApiResponse<T> {
                         .build());
     }
 
-    // 실패
+    // fail
     public static <T> ResponseEntity<ApiResponse<T>> fail(BusinessErrorCode businessErrorCode) {
         return ResponseEntity.status(businessErrorCode.getHttpStatus())
                 .body(ApiResponse.<T>builder()

@@ -12,8 +12,6 @@ import java.util.List;
 public interface LinkRepository extends JpaRepository<Link, Long> {
     List<Link> findTop10ByUserAndLinkStateOrderByCreatedAtAsc(User user, boolean linkState);
 
-    List<Link> findByTitleContaining(String title);
-
     Page<Link> findByTitleContainingAndUser(String query, User user, Pageable pageable);
 
     Page<Link> findByTitleContainingAndCategory_CategoryState(String query, CategoryState categoryState, Pageable pageable);

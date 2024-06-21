@@ -63,11 +63,8 @@ public class ChatGptService {
     }
 
     public AutoCategorizeResult autoCategorizeLink(String url, List<String> userCategoryNameList) {
-        // message-content 생성
         String messageContent = createMessageContent(url, userCategoryNameList);
-        // messages 생성
         ArrayList<Message> messages = createMessages(messageContent);
-        // http entity 생성
         HttpEntity<ChatGptRequest> chatGptRequestHttpEntity = buildHttpEntity(ChatGptRequest.builder()
                 .model(chatGptConfig.getModel())
                 .messages(messages)
@@ -75,10 +72,8 @@ public class ChatGptService {
                 .temperature(chatGptConfig.getTemperature())
                 .topP(chatGptConfig.getTopP())
                 .build());
-        // response 수신
         ChatGptResponse chatGptResponse = getResponse(chatGptRequestHttpEntity);
 
-        // 자동 분류 결과 반환
         return AutoCategorizeResult.of(chatGptResponse);
     }
 }

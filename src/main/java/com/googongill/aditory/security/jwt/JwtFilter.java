@@ -35,14 +35,10 @@ public class JwtFilter extends OncePerRequestFilter {
             log.info("token: {}", authorization);
 
             if (authorization != null) {
-                // 접두사 제외한 실제 token
                 String token = TokenProvider.resolveToken(authorization);
-                // 토큰 검증
                 tokenProvider.validateToken(token);
-                // 토큰에서 username 추출
                 String username = tokenProvider.getUsername(token);
                 UserDetails userDetails = principalDetailsService.loadUserByUsername(username);
-                // authentication 객체 생성, UserDetails 담기
                 UsernamePasswordAuthenticationToken authentication = tokenProvider.getAuthentication(userDetails);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -52,7 +48,6 @@ public class JwtFilter extends OncePerRequestFilter {
             throw new BusinessException(AUTHENTICATE_JWT_FAIL);
         }
 
-        // 다음 필터로 요청 전달
         filterChain.doFilter(request, response);
     }
 }

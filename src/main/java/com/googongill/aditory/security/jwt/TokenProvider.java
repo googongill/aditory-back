@@ -36,9 +36,7 @@ public class TokenProvider {
     }
 
     public static JwtResult createTokens(Long userId, String username, Role role) {
-        // access-token 발급
         String accessToken = createAccessToken(userId, username, role);
-        // refresh-token 발급
         String refreshToken = createRefreshToken();
 
         return JwtResult.builder()
@@ -63,20 +61,6 @@ public class TokenProvider {
                 .compact();
     }
 
-    public static String createAccessToken(String username) {
-        Claims claims = Jwts.claims();
-        claims.put("username", username);
-
-        return Jwts.builder()
-                .setSubject("access-token")
-                .setClaims(claims)
-                .setIssuer("social")
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredMs * 1000))
-                .signWith(secretKey, SignatureAlgorithm.HS512)
-                .compact();
-    }
-
     public static String createRefreshToken() {
         return Jwts.builder()
                 .setSubject("refresh-token")
@@ -87,7 +71,6 @@ public class TokenProvider {
                 .compact();
     }
 
-    // Token 에서 "Bearer " 제외한 실제 토큰 반환
     public static String resolveToken(String token) {
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
             return token.substring(7);

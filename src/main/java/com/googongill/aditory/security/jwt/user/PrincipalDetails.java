@@ -14,7 +14,6 @@ public class PrincipalDetails implements UserDetails {
         this.user = user;
     }
 
-    // 해당 유저 권한 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> collect = new ArrayList<>();

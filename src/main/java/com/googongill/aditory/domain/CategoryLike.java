@@ -26,7 +26,6 @@ public class CategoryLike {
         this.category = category;
     }
 
-    // 연관관계 메서드
     public void setCategory(Category category) {
         this.category = category;
     }

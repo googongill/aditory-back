@@ -22,7 +22,6 @@ public class UserTokenResponse {
     @Builder.Default
     private List<CategoryResult> userCategories = new ArrayList<>();
 
-
     public static UserTokenResponse of(UserTokenResult userTokenResult) {
         return UserTokenResponse.builder()
                 .userId(userTokenResult.getUserId())
