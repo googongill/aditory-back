@@ -43,31 +43,3 @@
 <img src="assets/api.png" width="700px">
 
 <br/>
-
-## 시작 가이드
-### Requirements
-For building and running the application you need:
-
-- Java Development Kit (JDK) 17
-- Spring Boot 3.2.4
-- MySQL 8.0.35
-
-### Installation
-```bash
-$ git clone https://github.com/googongill/aditory-back
-$ cd aditory-back
-```
-### Run Server 
-```
-$ ./gradlew bootJar
-$ ./gradlew bootRun
-```
-You can use .jar file to run server either in the foreground
-```
-$ java -jar JARFILE.jar
-```
-or in Daemon
-```
-$ nohup java -jar JARFILE.jar &
-```
-
