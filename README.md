@@ -41,6 +41,8 @@
 ## ☁️ ERD
 <img src="assets/erd.png" width="700px">
 
+<br/>
+
 ## 📄 API 명세서
 <img src="assets/api.png" width="700px">
 
