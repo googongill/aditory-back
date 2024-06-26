@@ -1,4 +1,4 @@
-# aDitory
+# aDitory API server
 
 > **링크 자동 분류 웹 서비스** <br/>
 <img src="assets/aditory.png">
