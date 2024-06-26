@@ -18,15 +18,16 @@
 ## 🛠️ 개발 환경
 | 통합 개발 환경                 | IntelliJ                                   |
 |--------------------------|-----------------------------------------------|
-| 배포                       | AWS EC2(Ubuntu)                              |
-| Database                 | AWS RDS(MySQL)                                |
-| Spring Version           | 3.2.4                                         |
+| 배포                      | AWS EC2 (Ubuntu)                             |
+| Database                 | AWS RDS (MySQL)                               |
+| Spring Boot Version      | 3.2.4                                         |
 | Project Build Management | Gradle                                        |
 | CI/CD Process            | Github Actions, Docker Compose                |
 | ERD Diagram              | ERD Cloud, IntelliJ                           |
 | API Document             | Notion                                        |
 | Java version             | Java 17                                       |
 | File Upload              | AWS S3                                        |
+| External API             | OpenAI - Chat Gpt 3.5 turbo                   |
 | ETC                      | Spring Data JPA, Spring Security, OAuth2      |
 
 <br/>
