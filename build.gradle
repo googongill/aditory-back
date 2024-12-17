@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.4'
 	id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.25'
+	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.25'
 }
 
 group = 'com.googongill'
@@ -27,6 +29,7 @@ dependencies {
 
 	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation "org.jetbrains.kotlin:kotlin-reflect:1.9.25"
 
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -62,6 +65,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 tasks.named('test') {
@@ -70,4 +74,7 @@ tasks.named('test') {
 
 jar {
 	enabled = false
+}
+kotlin {
+    jvmToolchain(17)
 }

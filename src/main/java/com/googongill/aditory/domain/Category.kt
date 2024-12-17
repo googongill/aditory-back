@@ -2,13 +2,15 @@ package com.googongill.aditory.domain
 
 import com.googongill.aditory.domain.enums.CategoryState
 import jakarta.persistence.*
-import lombok.AccessLevel
-import lombok.Getter
-import lombok.NoArgsConstructor
+import java.time.LocalDateTime
+
+//import lombok.AccessLevel
+//import lombok.Getter
+//import lombok.NoArgsConstructor
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@Getter
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 class Category : BaseEntity {
     @Id
     @Column(name = "category_id")
@@ -43,6 +45,15 @@ class Category : BaseEntity {
         this.user = user
     }
 
+    // getter
+    fun getId(): Long? = id
+    fun getCategoryName(): String = categoryName
+    fun getAsCategoryName(): String? = asCategoryName
+    fun getCategoryState(): CategoryState? = categoryState
+    fun getUser(): User? = user
+    fun getLinks(): MutableList<Link> = links
+    fun getCategoryLikes(): MutableList<CategoryLike> = categoryLikes
+
     // 연관관계 메서드
     fun setUser(user: User?) {
         this.user = user
@@ -50,12 +61,12 @@ class Category : BaseEntity {
 
     fun addLink(link: Link) {
         links.add(link)
-        link.category = this
+        link.setCategory(this)
     }
 
     fun addCategoryLike(categoryLike: CategoryLike) {
         categoryLikes.add(categoryLike)
-        categoryLike.category = this
+        categoryLike.setCategory(this)
     }
 
     fun deleteCategoryLike(categoryLike: CategoryLike) {

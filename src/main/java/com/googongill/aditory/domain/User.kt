@@ -3,14 +3,14 @@ package com.googongill.aditory.domain
 import com.googongill.aditory.domain.enums.Role
 import com.googongill.aditory.domain.enums.SocialType
 import jakarta.persistence.*
-import lombok.AccessLevel
-import lombok.Getter
-import lombok.NoArgsConstructor
+//import lombok.AccessLevel
+//import lombok.Getter
+//import lombok.NoArgsConstructor
 import java.util.*
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@Getter
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 class User : BaseTimeEntity {
     @Id
     @Column(name = "user_id")
@@ -56,22 +56,35 @@ class User : BaseTimeEntity {
         this.nickname = nickname
     }
 
+    // getter
+    fun getId(): Long? = id
+    fun getUsername(): String? = username
+    fun getPassword(): String? = password
+    fun getRole(): Role = role
+    fun getSocialType(): SocialType = socialType
+    fun getSocialId(): String? = socialId
+    fun getNickname(): String? = nickname
+    fun getContact(): String? = contact
+    fun getRefreshToken(): String? = refreshToken
+    fun getCategories(): MutableList<Category> = categories
+    fun getLinks(): MutableList<Link> = links
+
     // 연관관계 메서드
     fun addCategory(category: Category) {
         categories.add(category)
-        category.user = this
+        category.setUser(this)
     }
 
     fun addCategories(categories: List<Category>) {
         for (category in categories) {
             this.categories.add(category)
-            category.user = this
+            category.setUser(this)
         }
     }
 
     fun addLink(link: Link) {
         links.add(link)
-        link.user = this
+        link.setUser(this)
     }
 
     fun updateProfileImage(profileImage: ProfileImage?) {

@@ -1,13 +1,13 @@
 package com.googongill.aditory.domain
 
 import jakarta.persistence.*
-import lombok.AccessLevel
-import lombok.Getter
-import lombok.NoArgsConstructor
+//import lombok.AccessLevel
+//import lombok.Getter
+//import lombok.NoArgsConstructor
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@Getter
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 class Link : BaseEntity {
     @Id
     @Column(name = "link_id")
@@ -42,6 +42,15 @@ class Link : BaseEntity {
         this.category = category
         this.user = user
     }
+
+    // getter
+    fun getId(): Long? = id
+    fun getTitle(): String = title
+    fun getSummary(): String? = summary
+    fun getUrl(): String = url
+    fun getLinkState(): Boolean = linkState
+    fun getCategory(): Category = category
+    fun getUser(): User = user
 
     // 연관관계 메서드
     fun setCategory(category: Category) {
