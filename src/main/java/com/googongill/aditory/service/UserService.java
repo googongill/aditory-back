@@ -136,7 +136,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
-        user.getProfileImage().ifPresent(profileImage -> {
+        user.fetchProfileImage().ifPresent(profileImage -> {
             String uploadedName = profileImage.getUploadedName();
             awss3Service.deleteOne(uploadedName);
         });

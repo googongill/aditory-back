@@ -90,7 +90,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<ProfileImageResponse>> getProfileImage(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         User user = userRepository.findById(principalDetails.getUserId())
                 .orElseThrow(() -> new UserException(USER_NOT_FOUND));
-        ProfileImage profileImage = user.getProfileImage()
+        ProfileImage profileImage = user.fetchProfileImage()
                 .orElseThrow(() -> new UserException(PROFILE_IMAGE_NOT_FOUND));
         return ApiResponse.success(GET_PROFILE_IMAGE_SUCCESS,
                 ProfileImageResponse.of(user, awss3Service.downloadOne(profileImage)));
