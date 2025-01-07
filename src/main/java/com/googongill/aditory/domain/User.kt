@@ -13,7 +13,7 @@ class User : BaseTimeEntity {
     val id: Long? = null
 
     var username: String
-    var password: String? = null
+    lateinit var password: String
 
     @Enumerated(EnumType.STRING)
     var role: Role
@@ -22,7 +22,7 @@ class User : BaseTimeEntity {
     var socialType: SocialType
 
     var socialId: String? = null
-    var nickname: String
+    var nickname: String? = null
     var contact: String? = null
     var refreshToken: String? = null
 
@@ -36,7 +36,7 @@ class User : BaseTimeEntity {
     @JoinColumn(name = "profile_image_id")
     var profileImage: ProfileImage? = null
 
-    constructor(username: String, password: String?, role: Role, socialType: SocialType, nickname: String, contact: String?) {
+    constructor(username: String, password: String, role: Role, socialType: SocialType, nickname: String, contact: String?) {
         this.username = username
         this.password = password
         this.role = role
@@ -45,7 +45,7 @@ class User : BaseTimeEntity {
         this.contact = contact
     }
 
-    constructor(username: String, role: Role, socialType: SocialType, socialId: String?, nickname: String) {
+    constructor(username: String, role: Role, socialType: SocialType, socialId: String, nickname: String) {
         this.username = username
         this.role = role
         this.socialType = socialType

@@ -11,15 +11,16 @@ class Category : BaseEntity {
     val id: Long? = null
 
     var categoryName: String
-    var asCategoryName: String? = null
+    lateinit var asCategoryName: String
 
     @Enumerated(EnumType.STRING)
-    var categoryState: CategoryState? = null
+    lateinit var categoryState: CategoryState
+
     var viewCount: Int? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    var user: User? = null
+    lateinit var user: User
 
     @OneToMany(mappedBy = "category", cascade = [CascadeType.ALL], orphanRemoval = true)
     var links: MutableList<Link> = ArrayList()
@@ -31,7 +32,7 @@ class Category : BaseEntity {
         this.categoryName = categoryName
     }
 
-    constructor(categoryName: String, asCategoryName: String?, user: User?) {
+    constructor(categoryName: String, asCategoryName: String, user: User) {
         this.categoryName = categoryName
         this.asCategoryName = asCategoryName
         viewCount = 0
@@ -40,7 +41,7 @@ class Category : BaseEntity {
     }
 
     // 연관관계 메서드
-    fun createUser(user: User?) {
+    fun createUser(user: User) {
         this.user = user
     }
 
@@ -58,7 +59,7 @@ class Category : BaseEntity {
         categoryLikes.remove(categoryLike)
     }
 
-    fun updateCategoryInfo(categoryName: String, asCategoryName: String?, categoryState: CategoryState?) {
+    fun updateCategoryInfo(categoryName: String, asCategoryName: String, categoryState: CategoryState) {
         this.categoryName = categoryName
         this.asCategoryName = asCategoryName
         this.categoryState = categoryState
