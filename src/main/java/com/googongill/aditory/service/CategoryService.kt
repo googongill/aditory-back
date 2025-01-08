@@ -1,8 +1,6 @@
 package com.googongill.aditory.service
 
-import com.googongill.aditory.common.code.CategoryErrorCode
 import com.googongill.aditory.common.code.CategoryErrorCode.*
-import com.googongill.aditory.common.code.LinkErrorCode
 import com.googongill.aditory.common.code.LinkErrorCode.*
 import com.googongill.aditory.common.code.UserErrorCode
 import com.googongill.aditory.controller.dto.category.request.CreateCategoryRequest
@@ -31,10 +29,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
-import java.util.function.Consumer
-import java.util.function.Supplier
 import java.util.stream.Collectors
-import kotlin.math.ln
 
 @Service
 //@Transactional
@@ -96,6 +91,7 @@ class CategoryService(
         user.categories.add(newCategory)
         // 새 카테고리 저장
         categoryRepository.save(newCategory)
+
         return CopyCategoryResult.of(newCategory)
     }
 
@@ -167,6 +163,7 @@ class CategoryService(
                     .lastModifiedAt(link.lastModifiedAt)
                     .build()
             }.collect(Collectors.toList())
+
         return CategoryDetailResult.of(category, linkInfoList)
     }
 
@@ -196,6 +193,7 @@ class CategoryService(
                     .build()
             }
             .collect(Collectors.toList())
+
         return CategoryListResult.of(myCategoryInfoList)
     }
 
@@ -251,6 +249,7 @@ class CategoryService(
                     .build()
             }
             .collect(Collectors.toList())
+
         return CategoryListResult.of(categoryInfos)
     }
 
@@ -272,6 +271,7 @@ class CategoryService(
             updateCategoryRequest.categoryState
         )
         categoryRepository.save(category)
+
         return UpdateCategoryResult.of(category)
     }
 
@@ -288,6 +288,7 @@ class CategoryService(
         } catch (e: IOException) {
             throw CategoryException(IMPORT_FILE_PARSE_FAIL)
         }
+
         return newCategories
     }
 
