@@ -127,17 +127,17 @@ class CategoryService(
         }
 
         // 대상 카테고리의 링크 목록 조회하며 각 링크별 정보 입력
-        val linkInfoList = targetCategory.links.stream()
-            .map { link ->
-                LinkInfo.builder()
-                    .linkId(link.id)
-                    .title(link.title)
-                    .summary(link.summary)
-                    .linkState(link.linkState)
-                    .createdAt(link.createdAt)
-                    .lastModifiedAt(link.lastModifiedAt)
-                    .build()
-            }.collect(Collectors.toList())
+        val linkInfoList = targetCategory.links.map { link ->
+            LinkInfo(
+                linkId = link.id,
+                title = link.title,
+                summary = link.summary,
+                url = link.url,
+                linkState = link.linkState,
+                createdAt = link.createdAt,
+                lastModifiedAt = link.lastModifiedAt
+            )
+        }
 
         return CategoryDetailResult.of(targetCategory, linkInfoList)
     }
@@ -151,18 +151,17 @@ class CategoryService(
             throw CategoryException(CATEGORY_FORBIDDEN)
         }
         // 조회한 category 의 링크 목록 조회하며 각 링크별 정보 입력
-        val linkInfoList = category.links.stream()
-            .map { link: Link ->
-                LinkInfo.builder()
-                    .linkId(link.id)
-                    .title(link.title)
-                    .summary(link.summary)
-                    .url(link.url)
-                    .linkState(link.linkState)
-                    .createdAt(link.createdAt)
-                    .lastModifiedAt(link.lastModifiedAt)
-                    .build()
-            }.collect(Collectors.toList())
+        val linkInfoList = category.links.map { link: Link ->
+            LinkInfo(
+                linkId = link.id,
+                title = link.title,
+                summary = link.summary,
+                url = link.url,
+                linkState = link.linkState,
+                createdAt = link.createdAt,
+                lastModifiedAt = link.lastModifiedAt
+            )
+        }
 
         return CategoryDetailResult.of(category, linkInfoList)
     }
@@ -172,27 +171,22 @@ class CategoryService(
         val user: User = userRepository.findById(userId!!)
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
         // 조회한 user 의 카테고리 목록 조회하며 각 카테고리별 정보 입력
-        val myCategoryInfoList = user.categories.stream()
-            .map { category: Category ->
-                CategoryInfo.builder()
-                    .categoryId(category.id)
-                    .categoryName(category.categoryName)
-                    .asCategoryName(category.asCategoryName)
-                    .linkCount(category.links.size)
-                    .likeCount(category.categoryLikes.size)
-                    .categoryState(category.categoryState)
-                    .prevLinks(
-                        category.links.stream()
-                            .sorted(Comparator.comparing(Link::createdAt).reversed())
-                            .limit(4)
-                            .map(Link::url)
-                            .collect(Collectors.toList())
-                    )
-                    .createdAt(category.createdAt)
-                    .lastModifiedAt(category.lastModifiedAt)
-                    .build()
-            }
-            .collect(Collectors.toList())
+        val myCategoryInfoList = user.categories.map { category: Category ->
+            CategoryInfo(
+                categoryId = category.id,
+                categoryName = category.categoryName,
+                asCategoryName = category.asCategoryName,
+                linkCount = category.links.size,
+                likeCount = category.categoryLikes.size,
+                categoryState = category.categoryState,
+                prevLinks = category.links
+                    .sortedByDescending { it.createdAt }
+                    .take(4)
+                    .map{ it.url },
+                createdAt = category.createdAt,
+                lastModifiedAt = category.lastModifiedAt
+            )
+        }
 
         return CategoryListResult.of(myCategoryInfoList)
     }
@@ -203,52 +197,44 @@ class CategoryService(
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
         // 모든 사용자 카테고리 중에서 state가 public 인 것만 조회
         val pageRequest = PageRequest.of(pageable.pageNumber, pageable.pageSize, Sort.by("lastModifiedAt").descending())
-        val categories = categoryRepository!!.findAllByCategoryState(CategoryState.PUBLIC, pageRequest)
+        val categories = categoryRepository.findAllByCategoryState(CategoryState.PUBLIC, pageRequest)
         return categories.map { category: Category ->
-            CategoryInfo.builder()
-                .categoryId(category.id)
-                .categoryName(category.categoryName)
-                .asCategoryName(category.asCategoryName)
-                .linkCount(category.links.size)
-                .likeCount(category.categoryLikes.size)
-                .categoryState(category.categoryState)
-                .prevLinks(
-                    category.links.stream()
-                        .sorted(Comparator.comparing(Link::createdAt).reversed())
-                        .limit(4)
-                        .map(Link::url)
-                        .collect(Collectors.toList())
-                )
-                .createdAt(category.createdAt)
-                .lastModifiedAt(category.lastModifiedAt)
-                .build()
+            CategoryInfo(
+                categoryId = category.id,
+                categoryName = category.categoryName,
+                asCategoryName = category.asCategoryName,
+                linkCount = category.links.size,
+                likeCount = category.categoryLikes.size,
+                categoryState = category.categoryState,
+                prevLinks = category.links
+                    .sortedByDescending { it.createdAt }
+                    .take(4)
+                    .map { it.url },
+                createdAt = category.createdAt,
+                lastModifiedAt = category.lastModifiedAt
+            )
         }
     }
 
     fun getTodayPublicCategoryList(userId: Long?): CategoryListResult {
-        val user: User = userRepository!!.findById(userId!!)
+        val user: User = userRepository.findById(userId!!)
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
-        val categoryInfos = categoryRepository!!.findRandomByCategoryState(CategoryState.PUBLIC.toString()).stream()
-            .map { category: Category ->
-                CategoryInfo.builder()
-                    .categoryId(category.id)
-                    .categoryName(category.categoryName)
-                    .asCategoryName(category.asCategoryName)
-                    .linkCount(category.links.size)
-                    .likeCount(category.categoryLikes.size)
-                    .categoryState(category.categoryState)
-                    .prevLinks(
-                        category.links.stream()
-                            .sorted(Comparator.comparing(Link::createdAt).reversed())
-                            .limit(4)
-                            .map(Link::url)
-                            .collect(Collectors.toList())
-                    )
-                    .createdAt(category.createdAt)
-                    .lastModifiedAt(category.lastModifiedAt)
-                    .build()
+        val categoryInfos = categoryRepository.findRandomByCategoryState(CategoryState.PUBLIC.toString()).map { category: Category ->
+                CategoryInfo(
+                    categoryId = category.id,
+                    categoryName = category.categoryName,
+                    asCategoryName = category.asCategoryName,
+                    linkCount = category.links.size,
+                    likeCount = category.categoryLikes.size,
+                    categoryState = category.categoryState,
+                    prevLinks = category.links
+                            .sortedByDescending { it.createdAt }
+                            .take(4)
+                            .map { it.url },
+                    createdAt = category.createdAt,
+                    lastModifiedAt= category.lastModifiedAt
+                )
             }
-            .collect(Collectors.toList())
 
         return CategoryListResult.of(categoryInfos)
     }
@@ -276,7 +262,7 @@ class CategoryService(
     }
 
     fun importCategories(importFile: MultipartFile, userId: Long?): List<Category> {
-        val user: User = userRepository!!.findById(userId!!)
+        val user: User = userRepository.findById(userId!!)
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
         val newCategories: MutableList<Category> = ArrayList()
         try {
@@ -292,25 +278,18 @@ class CategoryService(
         return newCategories
     }
 
-    private fun processElements(
-        elements: Elements,
-        user: User,
-        linkState: Boolean,
-        newCategories: MutableList<Category>
-    ) {
-        elements.stream()
-            .map { element: Element ->
+    private fun processElements(elements: Elements, user: User, linkState: Boolean, newCategories: MutableList<Category>) {
+        elements.map { element: Element ->
                 val categoryName = element.attr("tags")
                 val linkTitle = element.text()
                 val url = element.attr("href")
-                if (!categoryName.isEmpty()) {
+
+                if (categoryName.isNotEmpty()) {
                     addLinkToAlreadyExistingCategory(user, linkState, categoryName, linkTitle, url, newCategories)
                 } else {
                     addLinkAndCategory(user, linkState, linkTitle, url, newCategories)
                 }
-                element
             }
-            .collect(Collectors.toList())
     }
 
     private fun addLinkToAlreadyExistingCategory(
@@ -334,14 +313,8 @@ class CategoryService(
         user.addLink(link)
     }
 
-    private fun addLinkAndCategory(
-        user: User,
-        linkState: Boolean,
-        linkTitle: String,
-        url: String,
-        newCategories: MutableList<Category>
-    ) {
-        val category: Category = categoryRepository!!.findByCategoryName("imported Category")
+    private fun addLinkAndCategory(user: User, linkState: Boolean, linkTitle: String, url: String, newCategories: MutableList<Category>) {
+        val category: Category = categoryRepository.findByCategoryName("imported Category")
             ?: run {
                 val newCategory = categoryRepository.save(Category("imported Category", "imported Category", user))
                 user.addCategory(newCategory)
@@ -349,7 +322,7 @@ class CategoryService(
                 newCategory
             }
         val link = Link(linkTitle, url, linkState, category, user)
-        linkRepository!!.save(link)
+        linkRepository.save(link)
         category.addLink(link)
         user.addLink(link)
     }
