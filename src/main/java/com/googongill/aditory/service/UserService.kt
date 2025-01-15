@@ -13,7 +13,6 @@ import com.googongill.aditory.repository.CategoryRepository
 import com.googongill.aditory.repository.ProfileImageRepository
 import com.googongill.aditory.repository.UserRepository
 import com.googongill.aditory.security.jwt.TokenProvider
-import com.googongill.aditory.security.jwt.TokenProvider.validateToken
 import com.googongill.aditory.security.oauth.KakaoUserProfile
 import com.googongill.aditory.security.oauth.OAuth2UserInfo
 import com.googongill.aditory.service.dto.user.*
@@ -36,7 +35,8 @@ class UserService(
     private val categoryRepository: CategoryRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val profileImageRepository: ProfileImageRepository,
-    private val inMemoryRepository: InMemoryClientRegistrationRepository
+    private val inMemoryRepository: InMemoryClientRegistrationRepository,
+    private val tokenProvider: TokenProvider
 ) {
 
     fun createUser(signupRequest: SignupRequest): SignupResult {
@@ -67,7 +67,7 @@ class UserService(
             throw UserException(PASSWORD_INVALID)
         }
         // 토큰 발급
-        val jwtResult = TokenProvider.createTokens(user.id, user.username, user.role)
+        val jwtResult = tokenProvider.createTokens(user.id!!, user.username, user.role)
         // User 에 refresh Token 저장
         val refreshToken = jwtResult.refreshToken
         user.saveRefreshToken(refreshToken)
@@ -98,7 +98,7 @@ class UserService(
             throw UserException(TOKEN_INVALID)
         }
 
-        val newToken = TokenProvider.createTokens(user.id, user.username, user.role)
+        val newToken = tokenProvider.createTokens(user.id!!, user.username, user.role)
         // User 에 refresh Token 저장
         val refreshToken = newToken.refreshToken
         user.saveRefreshToken(refreshToken)
@@ -127,7 +127,7 @@ class UserService(
         val provider = inMemoryRepository.findByRegistrationId(socialLoginRequest.provider)
         val tokenResponse = getToken(socialLoginRequest.code, provider)
         val user = getUserProfile(socialLoginRequest.provider, tokenResponse.access_token, provider)
-        val newToken = TokenProvider.createTokens(user.id, user.username, user.role)
+        val newToken = tokenProvider.createTokens(user.id!!, user.username, user.role)
         val refreshToken = newToken.refreshToken
         user.saveRefreshToken(refreshToken)
         userRepository.save(user)
@@ -209,16 +209,14 @@ class UserService(
         return UpdateUserResult.of(user)
     }
 
-    companion object {
-        private fun getRequestRefreshToken(refreshRequest: RefreshRequest): String {
-            val requestRefreshToken = TokenProvider.resolveToken(refreshRequest.refreshToken)
-            validateToken(requestRefreshToken)
-            return requestRefreshToken
-        }
+    private fun getRequestRefreshToken(refreshRequest: RefreshRequest): String {
+        val requestRefreshToken = tokenProvider.resolveToken(refreshRequest.refreshToken)
+        tokenProvider.validateToken(requestRefreshToken)
+        return requestRefreshToken
+    }
 
-        private fun getDbRefreshToken(user: User): String {
-            return user.refreshToken
-                ?: throw UserException(TOKEN_NOT_FOUND)
-        }
+    private fun getDbRefreshToken(user: User): String {
+        return user.refreshToken
+            ?: throw UserException(TOKEN_NOT_FOUND)
     }
 }

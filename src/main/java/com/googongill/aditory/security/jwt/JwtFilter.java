@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (authorization != null) {
                 // 접두사 제외한 실제 token
-                String token = TokenProvider.resolveToken(authorization);
+                String token = tokenProvider.resolveToken(authorization);
                 // 토큰 검증
                 tokenProvider.validateToken(token);
                 // 토큰에서 username 추출
