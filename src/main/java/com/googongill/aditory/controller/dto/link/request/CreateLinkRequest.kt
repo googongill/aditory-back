@@ -17,10 +17,10 @@ data class CreateLinkRequest(
     val categoryId: Long? = null
 ) {
     fun toEntity(category: Category?, user: User?): Link {
-        return Link(title!!, summary, url!!, category!!, user!!)
+        return Link(title!!, summary, url, category!!, user!!)
     }
 
     fun toEntity(autoCategorizeResult: AutoCategorizeResult, category: Category?, user: User?): Link {
-        return Link(autoCategorizeResult.title, autoCategorizeResult.summary, url!!, category!!, user!!)
+        return Link(autoCategorizeResult.title, autoCategorizeResult.summary, url, category!!, user!!)
     }
 }

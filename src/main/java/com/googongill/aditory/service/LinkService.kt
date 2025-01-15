@@ -104,10 +104,10 @@ class LinkService(
     }
 
     fun getReminder(userId: Long?): LinkListResult {
-        val user: User = userRepository!!.findById(userId!!)
+        val user: User = userRepository.findById(userId!!)
             ?: throw UserException(USER_NOT_FOUND)
 
-        val oldestLinks = linkRepository!!.findTop10ByUserAndLinkStateOrderByCreatedAtAsc(user, false)
+        val oldestLinks = linkRepository.findTop10ByUserAndLinkStateOrderByCreatedAtAsc(user, false)
         if (oldestLinks.isEmpty()) {
             throw LinkException(REMINDER_EMPTY)
         }
