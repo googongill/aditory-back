@@ -107,7 +107,7 @@ class UserService(
         return UserTokenResult.of(user, newToken)
     }
 
-    fun updateProfileImage(multipartFile: MultipartFile?, userId: Long?): ProfileImageResult {
+    fun updateProfileImage(multipartFile: MultipartFile, userId: Long?): ProfileImageResult {
         val user: User = userRepository.findById(userId!!)
             ?: throw UserException(USER_NOT_FOUND)
 
