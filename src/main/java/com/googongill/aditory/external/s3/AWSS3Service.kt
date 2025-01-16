@@ -51,7 +51,7 @@ class AWSS3Service(
         }
         val url = "https://s3.$area.amazonaws.com/$bucket/${profileImage.uploadedName}"
 
-        return S3DownloadResult.of(profileImage.id, profileImage.originalName, url)
+        return S3DownloadResult.of(profileImage.id!!, profileImage.originalName, url)
     }
 
     fun deleteOne(uploadedName: String?) {
