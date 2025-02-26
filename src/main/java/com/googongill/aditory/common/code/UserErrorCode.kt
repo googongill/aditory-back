@@ -1,13 +1,11 @@
-package com.googongill.aditory.common.code;
+package com.googongill.aditory.common.code
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
 
-@Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum UserErrorCode implements BusinessErrorCode {
+enum class UserErrorCode(
+    override val httpStatus: HttpStatus,
+    override val message: String
+) : BusinessErrorCode {
 
     /**
      * 400 Bad Request
@@ -34,10 +32,6 @@ public enum UserErrorCode implements BusinessErrorCode {
     /**
      * 409 Conflict
      */
-    ALREADY_EXISTING_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
+    ALREADY_EXISTING_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다.");
 
-    ;
-
-    private final HttpStatus httpStatus;
-    private final String message;
 }

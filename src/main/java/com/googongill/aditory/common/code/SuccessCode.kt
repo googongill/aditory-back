@@ -1,13 +1,11 @@
-package com.googongill.aditory.common.code;
+package com.googongill.aditory.common.code
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
 
-@Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum SuccessCode {
+enum class SuccessCode(
+    val httpStatus: HttpStatus,
+    val message: String
+) {
 
     /**
      * 200 OK
@@ -21,11 +19,13 @@ public enum SuccessCode {
     UPDATE_USER_SUCCESS(HttpStatus.OK, "회원 정보 수정에 성공했습니다."),
     UPDATE_PROFILE_IMAGE_SUCCESS(HttpStatus.OK, "프로필 사진 수정에 성공했습니다."),
     SIGNOUT_SUCCESS(HttpStatus.OK, "회원 탈퇴에 성공했습니다."),
+
     // Link
     GET_LINK_SUCCESS(HttpStatus.OK, "링크 조회에 성공했습니다."),
     GET_REMINDER_SUCCESS(HttpStatus.OK, "링크 리마인더 조회에 성공했습니다."),
     UPDATE_LINK_SUCCESS(HttpStatus.OK, "링크 수정에 성공했습니다."),
     DELETE_LINK_SUCCESS(HttpStatus.OK, "링크 삭제에 성공했습니다."),
+
     // Category
     GET_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 조회에 성공했습니다."),
     GET_CATEGORY_PUBLIC_LIST_SUCCESS(HttpStatus.OK, "공개 카테고리 목록 조회에 성공했습니다."),
@@ -34,11 +34,14 @@ public enum SuccessCode {
     GET_TODAY_PUBLIC_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "오늘의 추천 카테고리 목록 조회에 성공했습니다."),
     UPDATE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 수정에 성공했습니다."),
     DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다."),
+
     // CategoryLike
     GET_LIKE_CATEGORY_LIST_SUCCESS(HttpStatus.OK, "좋아요 한 카테고리 목록 조회에 성공했습니다."),
     DELETE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요 삭제에 성공했습니다."),
+
     // Move Link to another category
     MOVE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 이동에 성공했습니다."),
+
     //Search
     CATEGORY_SEARCH_SUCCESS(HttpStatus.OK, "카테고리 검색에 성공했습니다."),
     LINK_SEARCH_SUCCESS(HttpStatus.OK, "링크 검색에 성공했습니다."),
@@ -48,16 +51,14 @@ public enum SuccessCode {
      */
     // User
     SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입에 성공했습니다."),
+
     // Link
     SAVE_LINK_SUCCESS(HttpStatus.CREATED, "링크 저장에 성공했습니다."),
+
     // Category
     SAVE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 저장에 성공했습니다."),
     COPY_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 복사에 성공했습니다."),
     SAVE_CATEGORY_LIKE_SUCCESS(HttpStatus.OK, "공개 카테고리 좋아요에 성공했습니다."),
-    IMPORT_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 가져오기에 성공했습니다."),
+    IMPORT_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 가져오기에 성공했습니다.");
 
-    ;
-
-    private final HttpStatus httpStatus;
-    private final String message;
 }

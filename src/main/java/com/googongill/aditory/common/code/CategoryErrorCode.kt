@@ -1,13 +1,11 @@
-package com.googongill.aditory.common.code;
+package com.googongill.aditory.common.code
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
 
-@Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum CategoryErrorCode implements BusinessErrorCode {
+enum class CategoryErrorCode(
+    override val httpStatus: HttpStatus,
+    override val message: String
+) : BusinessErrorCode {
 
     /**
      * 400 Bad Request
@@ -31,10 +29,6 @@ public enum CategoryErrorCode implements BusinessErrorCode {
     CATEGORY_ALREADY_EXISTED(HttpStatus.CONFLICT, "이미 존재하는 카테고리입니다."),
     CATEGORY_ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요한 카테고리입니다."),
     CATEGORY_LIMIT_EXCEEDED(HttpStatus.CONFLICT, "카테고리는 최대 30개까지 추가할 수 있습니다."),
-    CATEGORY_ALREADY_OWNED(HttpStatus.CONFLICT, "이미 소유하고 있는 카테고리입니다."),
+    CATEGORY_ALREADY_OWNED(HttpStatus.CONFLICT, "이미 소유하고 있는 카테고리입니다.");
 
-    ;
-
-    private final HttpStatus httpStatus;
-    private final String message;
 }

@@ -1,13 +1,11 @@
-package com.googongill.aditory.common.code;
+package com.googongill.aditory.common.code
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
 
-@Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum CommonErrorCode implements BusinessErrorCode {
+enum class CommonErrorCode(
+    override val httpStatus: HttpStatus,
+    override val message: String
+) : BusinessErrorCode {
 
     /**
      * 400 Bad Request
@@ -32,10 +30,6 @@ public enum CommonErrorCode implements BusinessErrorCode {
     /**
      * 500 Internal Server Error
      */
-    GET_IMAGE_TO_S3_BUCKET_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3에서 이미지를 불러오는 데에 실패했습니다."),
+    GET_IMAGE_TO_S3_BUCKET_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3에서 이미지를 불러오는 데에 실패했습니다.");
 
-    ;
-
-    private final HttpStatus httpStatus;
-    private final String message;
 }
