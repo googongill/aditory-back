@@ -11,4 +11,5 @@ data class LikeCategoryListResult(
             )
         }
     }
+
 }

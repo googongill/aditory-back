@@ -16,6 +16,7 @@ data class CreateLinkRequest(
     val url:  String,
     val categoryId: Long? = null
 ) {
+
     fun toEntity(category: Category?, user: User?): Link {
         return Link(title!!, summary, url, category!!, user!!)
     }
@@ -23,4 +24,5 @@ data class CreateLinkRequest(
     fun toEntity(autoCategorizeResult: AutoCategorizeResult, category: Category?, user: User?): Link {
         return Link(autoCategorizeResult.title, autoCategorizeResult.summary, url, category!!, user!!)
     }
+
 }

@@ -22,4 +22,5 @@ data class SignupRequest(
         val encodedPassword = bCryptPasswordEncoder.encode(password)
         return User(username, encodedPassword, Role.ROLE_USER, SocialType.LOCAL, nickname, contact)
     }
+
 }

@@ -8,6 +8,7 @@ import java.util.*
 
 @Service
 class UserAuditorAware : AuditorAware<String> {
+
     override fun getCurrentAuditor(): Optional<String> {
         val authentication = SecurityContextHolder.getContext().authentication
 
@@ -20,4 +21,5 @@ class UserAuditorAware : AuditorAware<String> {
             Optional.empty()
         }
     }
+
 }

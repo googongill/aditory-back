@@ -30,4 +30,5 @@ data class SearchResponse(
             }
         }
     }
+
 }

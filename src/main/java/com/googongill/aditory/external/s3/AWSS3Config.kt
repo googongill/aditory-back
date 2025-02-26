@@ -27,4 +27,5 @@ class AWSS3Config(
             .withRegion(region)
             .build()
     }
+
 }

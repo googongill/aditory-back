@@ -13,4 +13,5 @@ data class CategoryListResult(
             )
         }
     }
+
 }

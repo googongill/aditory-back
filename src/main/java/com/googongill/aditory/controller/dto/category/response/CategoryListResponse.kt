@@ -34,4 +34,5 @@ data class CategoryListResponse(
             )
         }
     }
+
 }

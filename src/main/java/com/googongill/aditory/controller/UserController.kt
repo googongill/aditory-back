@@ -156,4 +156,5 @@ class UserController(
             SignoutResponse.of(user.id, user.username)
         )
     }
+
 }

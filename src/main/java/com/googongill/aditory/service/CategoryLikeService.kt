@@ -15,8 +15,6 @@ import com.googongill.aditory.service.dto.category.LikeCategoryListResult
 import com.googongill.aditory.service.dto.category.LikeCategoryResult
 //import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import java.util.function.Supplier
-import java.util.stream.Collectors
 
 @Service
 //@Transactional
@@ -25,6 +23,7 @@ class CategoryLikeService(
     private val categoryRepository: CategoryRepository,
     private val categoryLikeRepository: CategoryLikeRepository
 ) {
+
     fun likeCategory(categoryId: Long?, userId: Long?): LikeCategoryResult {
         val user: User = userRepository.findById(userId!!)
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
@@ -76,4 +75,5 @@ class CategoryLikeService(
 
         return LikeCategoryListResult.of(likeCategoryIdList)
     }
+
 }

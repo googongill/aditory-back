@@ -17,4 +17,5 @@ data class LikeCategoryListResponse(
             )
         }
     }
+
 }

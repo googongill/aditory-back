@@ -9,6 +9,7 @@ data class AutoCategorizeResult(
     val summary: String,
     val categoryName: String
 ) {
+
     companion object {
         fun of(chatGptResponse: ChatGptResponse): AutoCategorizeResult {
             val jsonString = chatGptResponse.choices[0].message.content
@@ -26,4 +27,5 @@ data class AutoCategorizeResult(
             )
         }
     }
+
 }

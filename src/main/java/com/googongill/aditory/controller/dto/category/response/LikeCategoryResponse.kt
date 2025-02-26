@@ -16,4 +16,5 @@ data class LikeCategoryResponse(
             return LikeCategoryResponse(likeCategoryResult.categoryId, likeCategoryResult.likeCount)
         }
     }
+
 }

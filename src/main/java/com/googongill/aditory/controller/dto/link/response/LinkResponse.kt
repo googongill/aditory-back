@@ -24,4 +24,5 @@ data class LinkResponse(
             )
         }
     }
+
 }

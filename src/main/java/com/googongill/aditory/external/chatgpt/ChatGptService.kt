@@ -76,4 +76,5 @@ class ChatGptService(
                     "and selecting the most appropriate category among $categories, returning it as a JSON object named 'category'."
         }
     }
+
 }

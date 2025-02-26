@@ -1,10 +1,7 @@
 package com.googongill.aditory.service
 
-import com.googongill.aditory.common.code.CategoryErrorCode
 import com.googongill.aditory.common.code.CategoryErrorCode.*
-import com.googongill.aditory.common.code.LinkErrorCode
 import com.googongill.aditory.common.code.LinkErrorCode.*
-import com.googongill.aditory.common.code.UserErrorCode
 import com.googongill.aditory.common.code.UserErrorCode.*
 import com.googongill.aditory.controller.dto.link.request.CreateLinkRequest
 import com.googongill.aditory.controller.dto.link.request.UpdateLinkRequest
@@ -23,7 +20,6 @@ import com.googongill.aditory.service.dto.link.LinkListResult
 import com.googongill.aditory.service.dto.link.LinkResult
 //import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import java.util.stream.Collectors
 
 @Service
 //@Transactional
@@ -33,6 +29,7 @@ class LinkService(
     private val chatGptService: ChatGptService,
     private val categoryRepository: CategoryRepository
 ) {
+
     fun createLink(createLinkRequest: CreateLinkRequest, userId: Long): LinkResult {
         return if (createLinkRequest.autoComplete) {
             getAutoCreateLinkResult(createLinkRequest, userId)
@@ -125,4 +122,5 @@ class LinkService(
 
         return LinkListResult.of(linkInfoList)
     }
+
 }

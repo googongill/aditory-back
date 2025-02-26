@@ -2,7 +2,6 @@ package com.googongill.aditory.external.s3
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata
-import com.googongill.aditory.common.code.AWSS3ErrorCode
 import com.googongill.aditory.common.code.AWSS3ErrorCode.*
 import com.googongill.aditory.domain.ProfileImage
 import com.googongill.aditory.exception.AWSS3Exception
@@ -61,4 +60,5 @@ class AWSS3Service(
             throw AWSS3Exception(DELETE_IMAGE_FAIL)
         }
     }
+
 }

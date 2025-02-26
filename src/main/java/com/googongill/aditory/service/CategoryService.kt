@@ -29,7 +29,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
-import java.util.stream.Collectors
 
 @Service
 //@Transactional
@@ -38,6 +37,7 @@ class CategoryService(
     private val linkRepository: LinkRepository,
     private val categoryRepository: CategoryRepository
 ) {
+
     fun createCategory(createCategoryRequest: CreateCategoryRequest, userId: Long?): CreateCategoryResult {
         // user 조회
         val user: User = userRepository.findById(userId!!)
@@ -326,4 +326,5 @@ class CategoryService(
         category.addLink(link)
         user.addLink(link)
     }
+
 }

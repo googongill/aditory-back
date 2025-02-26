@@ -31,4 +31,5 @@ data class CategoryDetailResponse(
             )
         }
     }
+
 }

@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param
 import java.util.*
 
 interface CategoryRepository : JpaRepository<Category?, Long?> {
+
     @EntityGraph(attributePaths = ["links"])
     fun findById(id: Long): Category?
 
@@ -33,4 +34,5 @@ interface CategoryRepository : JpaRepository<Category?, Long?> {
     fun findByCategoryNameContainingAndUser(query: String, user: User, pageable: Pageable): Page<Category>
 
     fun findByAsCategoryNameContainingAndCategoryState(query: String, categoryState: CategoryState, pageable: Pageable): Page<Category>
+
 }

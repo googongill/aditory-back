@@ -28,4 +28,5 @@ data class SignupResult(
             )
         }
     }
+
 }
