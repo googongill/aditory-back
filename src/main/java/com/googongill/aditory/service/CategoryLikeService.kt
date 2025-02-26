@@ -72,7 +72,7 @@ class CategoryLikeService(
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
 
         val categoryLikeList = categoryLikeRepository.findByUser(user)
-        val likeCategoryIdList = categoryLikeList.map { it.category.id }
+        val likeCategoryIdList = categoryLikeList.map { it.category.id!! }
 
         return LikeCategoryListResult.of(likeCategoryIdList)
     }

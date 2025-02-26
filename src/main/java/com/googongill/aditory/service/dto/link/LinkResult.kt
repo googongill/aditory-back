@@ -4,7 +4,7 @@ import com.googongill.aditory.domain.Category
 import com.googongill.aditory.domain.Link
 import java.time.LocalDateTime
 
-class LinkResult(
+data class LinkResult(
     val linkId: Long?,
     val categoryId: Long?,
     val createdAt: LocalDateTime?,
