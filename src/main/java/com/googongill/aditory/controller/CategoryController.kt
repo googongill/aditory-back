@@ -176,7 +176,7 @@ class CategoryController(
         return ApiResponse.success(
             UPDATE_CATEGORY_SUCCESS,
             UpdateCategoryResponse.of(
-                categoryService.updateCategory(categoryId, updateCategoryRequest, principalDetails.userId)
+                categoryService.updateCategory(categoryId, updateCategoryRequest, principalDetails.userId!!)
             )
         )
     }

@@ -102,7 +102,7 @@ class UserController(
     fun getUserInfo(
         @AuthenticationPrincipal principalDetails: PrincipalDetails
     ): ResponseEntity<ApiResponse<UserInfoResponse>> {
-        val user: User = userRepository.findById(principalDetails.userId)
+        val user: User = userRepository.findById(principalDetails.userId!!)
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
 
         return ApiResponse.success(
@@ -115,7 +115,7 @@ class UserController(
     fun getProfileImage(
         @AuthenticationPrincipal principalDetails: PrincipalDetails
     ): ResponseEntity<ApiResponse<ProfileImageResponse>> {
-        val user: User = userRepository.findById(principalDetails.userId)
+        val user: User = userRepository.findById(principalDetails.userId!!)
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
 
         val profileImage = user.fetchProfileImage()
@@ -146,7 +146,7 @@ class UserController(
     fun signout(
         @AuthenticationPrincipal principalDetails: PrincipalDetails
     ): ResponseEntity<ApiResponse<SignoutResponse>> {
-        val user: User = userRepository.findById(principalDetails.userId)
+        val user: User = userRepository.findById(principalDetails.userId!!)
             ?: throw UserException(UserErrorCode.USER_NOT_FOUND)
 
         userRepository.delete(user)

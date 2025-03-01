@@ -33,7 +33,7 @@ class LinkController(
     ): ResponseEntity<ApiResponse<LinkResponse>> {
         return ApiResponse.success(
             SAVE_LINK_SUCCESS,
-            LinkResponse.of(linkService.createLink(createLinkRequest, principalDetails.userId))
+            LinkResponse.of(linkService.createLink(createLinkRequest, principalDetails.userId!!))
         )
     }
 
@@ -79,7 +79,7 @@ class LinkController(
     ): ResponseEntity<ApiResponse<LinkResponse>> {
         return ApiResponse.success(
             UPDATE_LINK_SUCCESS,
-            LinkResponse.of(linkService.updateLink(linkId, updateLinkRequest, principalDetails.userId))
+            LinkResponse.of(linkService.updateLink(linkId, updateLinkRequest, principalDetails.userId!!))
         )
     }
 

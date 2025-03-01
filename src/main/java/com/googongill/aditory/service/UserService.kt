@@ -156,12 +156,12 @@ class UserService(
         val userAttributes = getUserAttributes(provider, code)
         val oAuth2UserInfo = getOAuthUserInfo(providerName, userAttributes)
         val socialType = getSocialType(providerName)
-        val providerId = oAuth2UserInfo.providerId
-        val nickname = oAuth2UserInfo.nickname
+        val providerId = oAuth2UserInfo.getProviderId()
+        val nickname = oAuth2UserInfo.getNickname()
 
         return userRepository.findBySocialId(providerId)
             ?.let { it }
-            ?: saveUser(socialType, providerId, nickname)
+            ?: saveUser(socialType, providerId!!, nickname!!)
     }
 
     private fun getUserAttributes(provider: ClientRegistration, code: String): Map<String, Any> {

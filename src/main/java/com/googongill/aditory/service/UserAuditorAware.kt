@@ -16,7 +16,7 @@ class UserAuditorAware : AuditorAware<String> {
             Optional.empty()
         } else try {
             val principalDetails = authentication.principal as PrincipalDetails
-            Optional.of(principalDetails.nickname)
+            Optional.of(principalDetails.nickname!!)
         } catch (e: ClassCastException) {
             Optional.empty()
         }
