@@ -15,9 +15,11 @@ import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
 
 @Component
-class JwtFilter : OncePerRequestFilter() {
-    private val tokenProvider: TokenProvider? = null
-    private val principalDetailsService: PrincipalDetailsService? = null
+class JwtFilter(
+    val tokenProvider: TokenProvider,
+    val principalDetailsService: PrincipalDetailsService
+) : OncePerRequestFilter() {
+
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -46,4 +48,5 @@ class JwtFilter : OncePerRequestFilter() {
         // 다음 필터로 요청 전달
         filterChain.doFilter(request, response)
     }
+
 }

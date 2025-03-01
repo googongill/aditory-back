@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class PrincipalDetailsService(
-    private val userRepository: UserRepository
-) : UserDetailsService {
+class PrincipalDetailsService(val userRepository: UserRepository) : UserDetailsService {
 
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
@@ -19,4 +17,5 @@ class PrincipalDetailsService(
             .map { user : User -> PrincipalDetails(user) }
             .orElseThrow { UsernameNotFoundException("사용자 $username 를 찾을 수 없습니다.") }
     }
+
 }

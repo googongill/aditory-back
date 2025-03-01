@@ -10,6 +10,7 @@ import java.io.IOException
 
 @Component
 class JwtAuthenticationEntryPoint : AuthenticationEntryPoint {
+
     @Throws(IOException::class, ServletException::class)
     override fun commence(
         request: HttpServletRequest,
@@ -22,4 +23,5 @@ class JwtAuthenticationEntryPoint : AuthenticationEntryPoint {
     private fun setResponse(response: HttpServletResponse) {
         response.status = HttpServletResponse.SC_UNAUTHORIZED
     }
+
 }

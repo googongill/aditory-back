@@ -16,9 +16,9 @@ import java.security.Key
 import java.util.*
 
 @Component
-class TokenProvider(@Value("\${jwt.secret}") private val secret: String) {
+class TokenProvider(@Value("\${jwt.secret}") val secret: String) {
 
-    private val secretKey: Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret))
+    val secretKey: Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret))
 
     companion object {
         // access-token : 30 min = 60 * 30
@@ -131,4 +131,5 @@ class TokenProvider(@Value("\${jwt.secret}") private val secret: String) {
             throw UserException(UserErrorCode.TOKEN_NOT_FOUND)
         }
     }
+
 }

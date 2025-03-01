@@ -10,6 +10,7 @@ import java.io.IOException
 
 @Component
 class JwtAccessDeniedHandler : AccessDeniedHandler {
+
     @Throws(IOException::class, ServletException::class)
     override fun handle(
         request: HttpServletRequest,
@@ -22,4 +23,5 @@ class JwtAccessDeniedHandler : AccessDeniedHandler {
     private fun setResponse(response: HttpServletResponse) {
         response.status = HttpServletResponse.SC_FORBIDDEN
     }
+
 }

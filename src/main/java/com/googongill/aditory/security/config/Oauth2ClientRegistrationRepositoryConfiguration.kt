@@ -14,11 +14,10 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 
 @Configuration
-@Conditional(
-    ClientsConfiguredCondition::class
-)
+@Conditional(ClientsConfiguredCondition::class)
 @EnableConfigurationProperties(OAuth2ClientProperties::class)
-class Oauth2ClientRegistrationRepositoryConfiguration internal constructor(private val properties: OAuth2ClientProperties) {
+class Oauth2ClientRegistrationRepositoryConfiguration internal constructor(val properties: OAuth2ClientProperties) {
+
     @Bean
     @ConditionalOnMissingBean(ClientRegistrationRepository::class)
     fun clientRegistrationRepository(): InMemoryClientRegistrationRepository {
@@ -45,4 +44,5 @@ class Oauth2ClientRegistrationRepositoryConfiguration internal constructor(priva
             .userNameAttributeName(provider.userNameAttribute)
             .build()
     }
+
 }

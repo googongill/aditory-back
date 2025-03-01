@@ -4,7 +4,7 @@ import com.googongill.aditory.domain.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class PrincipalDetails(private val user: User) : UserDetails {
+class PrincipalDetails(val user: User) : UserDetails {
     // 해당 유저 권한 반환
     override fun getAuthorities(): Collection<GrantedAuthority> {
         val collect = ArrayList<GrantedAuthority>()
